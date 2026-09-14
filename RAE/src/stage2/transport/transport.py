@@ -308,10 +308,10 @@ class Transport:
             training_lq_cond = cfg.mvrm.get('training_lq_cond', False)
             
             if training_lq_cond:
-                print('LQ2HQ: Using double conditioning for training !!')
+                _debug_print('LQ2HQ: Using double conditioning for training !!')
                 xt = xt + xcond
             else:
-                print('LQ2HQ: Using single conditioning for training !!')
+                _debug_print('LQ2HQ: Using single conditioning for training !!')
         
         
         else:
@@ -333,7 +333,7 @@ class Transport:
         
             mvrm_maps = {}
             for layer_idx in mvrm_analysis.mvrm_attn_map.extract_idx:
-                print('MVRM ATTENTION MAP EXTRACTION - LAYER ', layer_idx)
+                _debug_print('MVRM ATTENTION MAP EXTRACTION - LAYER ', layer_idx)
                 attn_idx, attn_type, attn_map = model.module.blocks[layer_idx].attn.attn_map
                 assert layer_idx == attn_idx
                 mvrm_maps[('mvrm', attn_idx, attn_type)] = attn_map.mean(dim=1) 
@@ -492,7 +492,7 @@ class Transport:
                     # if _step_counter[0] % 15 == 0:
                     if _step_counter[0] == 30:
                         mvrm_maps = {}
-                        print(f"MVRM ATTN_MAP EXTRACTION (step {_step_counter[0]})")
+                        _debug_print(f"MVRM ATTN_MAP EXTRACTION (step {_step_counter[0]})")
                         for layer_idx in analysis.mvrm_attn_map.extract_idx:
                             attn_idx, attn_type, attn_map = model.__self__.blocks[layer_idx].attn.attn_map
                             assert layer_idx == attn_idx
@@ -721,3 +721,7 @@ class Sampler:
         )
         
         return _ode.sample
+
+def _debug_print(*args):
+    import logging
+    logging.getLogger(__name__).debug(" ".join(str(arg) for arg in args))

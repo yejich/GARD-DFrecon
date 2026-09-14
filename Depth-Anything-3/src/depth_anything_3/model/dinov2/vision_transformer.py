@@ -349,17 +349,17 @@ class DinoVisionTransformer(nn.Module):
 
             if self.alt_start != -1 and (i == self.alt_start - 1) and x.shape[1] >= THRESH_FOR_REF_SELECTION and kwargs.get("cam_token", None) is None:
                 ref_view_start_idx = i
-                print(f'{i} ref selection')
-                print('ref_view_start_idx: ', ref_view_start_idx)
+                logger.debug(f'{i} ref selection')
+                logger.debug('ref_view_start_idx: ', ref_view_start_idx)
                 if kwargs['ref_b_idx'] is not None:
-                    logger.info("Using reference view index provided by PHO")
+                    logger.debug("Using reference view index provided by PHO")
                     b_idx = kwargs['ref_b_idx']
                 else:
                     # Select reference view using configured strategy
                     strategy = kwargs.get("ref_view_strategy", "saddle_balanced")
-                    logger.info(f"Selecting reference view using strategy: {strategy}")
+                    logger.debug(f"Selecting reference view using strategy: {strategy}")
                     b_idx = select_reference_view(x, strategy=strategy)
-                logger.info(f"Current ref_b_idx: {b_idx}")
+                logger.debug(f"Current ref_b_idx: {b_idx}")
                 # Reorder views to place reference view first
                 x = reorder_by_reference(x, b_idx)
                 local_x = reorder_by_reference(local_x, b_idx)
@@ -368,9 +368,9 @@ class DinoVisionTransformer(nn.Module):
             
             use_gt_cam_tkn = False
             if self.alt_start != -1 and i == self.alt_start:
-                print(f'{i} add camera token')
+                logger.debug(f'{i} add camera token')
                 if kwargs.get("cam_token", None) is not None:  
-                    logger.info("Using camera conditions provided by the user")
+                    logger.debug("Using camera conditions provided by the user")
                     cam_token = kwargs.get("cam_token")
                     use_gt_cam_tkn = True
                 else:
@@ -401,7 +401,7 @@ class DinoVisionTransformer(nn.Module):
             if kwargs['mode'] == 'train':
                 mvrm_train_cfg = kwargs['mvrm_cfg']
                 if i in mvrm_train_cfg.extract_feat_layers:
-                    print(f'train - {i} EXTRACTING LQ LATENT')     
+                    logger.debug(f'train - {i} EXTRACTING LQ LATENT')
                     # print('ref_view_start_idx: ', ref_view_start_idx)
                     if mvrm_train_cfg.concat_feat: 
                         mvrm_output[('extract_feat', i)] = torch.cat([local_x, x], dim=-1)   # b v n+1 2d
@@ -416,7 +416,7 @@ class DinoVisionTransformer(nn.Module):
             if kwargs['mode'] == 'val':
                 mvrm_val_cfg = kwargs['mvrm_cfg']
                 if i in mvrm_val_cfg.restore_feat_layers:
-                    print(f'val - {i} APPLIED RESTORED LATENT!')
+                    logger.debug(f'val - {i} APPLIED RESTORED LATENT!')
                     # print('ref_view_start_idx: ', ref_view_start_idx)
                     restored_latent = kwargs['mvrm_result'][('restored_latent', i)]
                     if mvrm_val_cfg.concat_feat:
@@ -435,7 +435,7 @@ class DinoVisionTransformer(nn.Module):
             if kwargs['front_connect_back_mvrm_cfg'] is not None:
                 mvrm2_cfg = kwargs['front_connect_back_mvrm_cfg']
                 if i in mvrm2_cfg.train.extract_feat_layers:
-                    print(f'front_connect_back MVRM - {i} EXTRACTING FRONT-CONNECT-BACK LQ LATENT')     
+                    logger.debug(f'front_connect_back MVRM - {i} EXTRACTING FRONT-CONNECT-BACK LQ LATENT')
                     if mvrm2_cfg.train.concat_feat: 
                         mvrm_output[('extract_feat', i)] = torch.cat([local_x, x], dim=-1)   # b v n+1 2d
                     else:

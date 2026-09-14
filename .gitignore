@@ -204,3 +204,12 @@ NVIDIA_SERVER_CKPT/
 extrinsic2pyramid/
 results/
 .claude/
+# Hypersim experiment outputs and private local state
+result_eval/
+result_train/
+checkpoints/
+*.safetensors
+.env.*
+!.env.example
+*.bundle
+*.tar.gz

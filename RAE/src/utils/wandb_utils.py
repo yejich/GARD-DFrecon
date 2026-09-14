@@ -75,15 +75,19 @@ def initialize_wandb(cfg, entity, exp_name, project_name):
         # else:
         #     # assert already logged in
         #     pass
-        wandb.init(
-            entity=entity,
-            project=project_name,
-            name=exp_name,
-            # config=config_dict,
-            id=generate_run_id(exp_name),
-            resume="allow",
-            reinit=True,
-        )
+        options = cfg.log.tracker.wandb
+        run_name = options.get('run_name') or exp_name
+        kwargs = dict(entity=entity, project=project_name, name=run_name, reinit=True)
+        if options.get('unique_run', False):
+            # New fine-tuning runs get a fresh ID even when the display name repeats.
+            from omegaconf import OmegaConf
+            run_config = OmegaConf.to_container(cfg, resolve=True)
+            run_config['log']['tracker']['wandb'].pop('key', None)
+            kwargs['config'] = run_config
+        else:
+            kwargs.update(id=generate_run_id(exp_name), resume='allow')
+        wandb.init(**kwargs)
+
 
 
 def log(stats, step=None):
