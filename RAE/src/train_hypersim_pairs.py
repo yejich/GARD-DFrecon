@@ -143,6 +143,8 @@ def main():
 
     # load training and validation data
     train_loader, train_sampler = load_train_data(full_cfg, micro_batch_size, rank, world_size)
+    from mvr.dataset.hypersim_manifest import fingerprint
+    manifest_fingerprint = fingerprint(train_loader.dataset.manifest)
     loader_batches = len(train_loader)
     steps_per_epoch = math.ceil(loader_batches / grad_accum_steps)
 
@@ -180,11 +182,14 @@ def main():
 
     if args.resume:
         start_epoch, global_train_step, optimizer_step = resume_training(
-            args.resume, models, optimizer, scheduler, rank)
+            args.resume, models, optimizer, scheduler, rank, manifest_fingerprint=manifest_fingerprint)
     else:
         load_weights(full_cfg.stage_2.ckpt, models)
     if rank == 0:
         save_worktree(experiment_dir, full_cfg)
+        import json
+        (Path(experiment_dir) / 'pairs_manifest.json').write_text(
+            json.dumps(train_loader.dataset.manifest, indent=2))
 
     ### Logging experiment details
     if rank == 0:
@@ -464,7 +469,8 @@ def main():
             if full_cfg.log.tracker.name == 'wandb':
                 wandb_utils.log({'eval/group_mse': eval_loss, 'epoch': epoch}, step=global_train_step)
         save_training_checkpoint(Path(checkpoint_dir) / 'latest.pt', epoch + 1,
-                                 global_train_step, optimizer_step, models, optimizer, scheduler, rank)
+                                 global_train_step, optimizer_step, models, optimizer, scheduler, rank,
+                                 manifest_fingerprint=manifest_fingerprint)
 
         # log epoch stats
         if rank == 0 and num_batches > 0:

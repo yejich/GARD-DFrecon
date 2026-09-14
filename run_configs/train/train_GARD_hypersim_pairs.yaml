@@ -138,7 +138,7 @@ data:
       patch_size: 14
     min_num_input_view: 1
     pairs:
-      manifest: manifests/hypersim_001_groups.json
+      manifest: data/hypersim_pairs/groups.json
 mvrm:
   training_lq_cond: true
   noise_lvl: 0.3

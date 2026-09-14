@@ -127,46 +127,8 @@ def load_train_data(cfg, batch_size, rank, world_size):
     return loader, sampler
 
 
-def build_manifest(root, output, threshold=.25, probability=.7, eval_scene='ai_001_001', seed=42):
-    root = Path(root).resolve()
-    splits = {'train': [], 'eval': []}
-    for complete in sorted(root.glob('*/cam_*/frame.*/complete.json')):
-        folder = complete.parent
-        if not all((folder / name).is_file() for name in ('clean.png', 'distractor.png')):
-            raise ValueError(f'Missing pair images: {folder}')
-        relative = folder.relative_to(root)
-        scene, camera, frame = relative.parts
-        splits['eval' if scene == eval_scene else 'train'].append(
-            dict(directory=str(relative), scene=scene, camera=camera, frame=int(frame.split('.')[1])))
-    if not splits['train'] or not splits['eval']:
-        raise ValueError('Both train and eval splits must be nonempty')
-    cache = {}
-    for records in splits.values():
-        lookup = {(r['scene'], r['camera'], r['frame']): i for i, r in enumerate(records)}
-        for record in records:
-            key = (record['scene'], record['camera'])
-            if key not in cache:
-                cache[key] = json.loads((root / key[0] / key[1] / 'clean_multiview.json').read_text())
-            candidates = cache[key][str(record['frame'])]['eligible_candidates']
-            record['candidates'] = sorted({lookup[(*key, c['frame_id'])] for c in candidates
-                if c['covisibility'] >= threshold and (*key, c['frame_id']) in lookup
-                and c['frame_id'] != record['frame']})
-    rng = random.Random(seed)
-    groups = []
-    for i, record in enumerate(splits['eval']):
-        if len(record['candidates']) >= 3:
-            indices = [i] + rng.sample(record['candidates'], 3)
-            groups.append(dict(indices=indices, distractor=[rng.random() < probability for _ in indices]))
-    data = dict(root=str(root), eval_scene=eval_scene, minimum_covisibility=threshold,
-                overlap_definition='fraction of clean anchor GT points visible in candidate; same camera trajectory',
-                distractor_probability=probability, seed=seed, eval_views=4, eval_groups=groups, **splits)
-    output = Path(output); output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(data, indent=2))
-    summary = dict(train_pairs=len(splits['train']), eval_pairs=len(splits['eval']),
-                   eval_groups=len(groups), split_scene_counts={k: len({r['scene'] for r in v}) for k,v in splits.items()},
-                   eligible_anchors={k: {n: sum(len(r['candidates']) >= n-1 for r in v) for n in range(1,5)} for k,v in splits.items()})
-    output.with_suffix('.summary.json').write_text(json.dumps(summary, indent=2))
-    print(json.dumps(summary, indent=2))
+# Compatibility import for existing manifest-building commands.
+from .hypersim_manifest import build_manifest
 
 
 if __name__ == '__main__':

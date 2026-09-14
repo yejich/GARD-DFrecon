@@ -52,7 +52,7 @@ def evaluate_pairs(cfg, models, transport, device, rank, world_size, max_groups=
     return (stats[0]/stats[1].clamp_min(1)).item()
 
 
-def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, optimizer, scheduler, rank):
+def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, optimizer, scheduler, rank, manifest_fingerprint=None):
     rng = dict(torch=torch.get_rng_state(), cuda=torch.cuda.get_rng_state(),
                python=random.getstate(), numpy=np.random.get_state())
     states = [None] * dist.get_world_size()
@@ -60,7 +60,8 @@ def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, opt
     if rank == 0:
         data = dict(model=models['denoiser'].state_dict(), ema=models['ema_denoiser'].state_dict(),
                     optimizer=optimizer.state_dict(), scheduler=scheduler.state_dict() if scheduler else None,
-                    next_epoch=next_epoch, step=step, optimizer_step=optimizer_step, rng=states)
+                    next_epoch=next_epoch, step=step, optimizer_step=optimizer_step, rng=states,
+                    manifest_fingerprint=manifest_fingerprint)
         path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_suffix('.tmp')
         torch.save(data, temporary)
@@ -68,8 +69,11 @@ def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, opt
     dist.barrier()
 
 
-def resume_training(path, models, optimizer, scheduler, rank):
+def resume_training(path, models, optimizer, scheduler, rank, manifest_fingerprint=None):
     data = torch.load(path, map_location='cpu', weights_only=False, mmap=True)
+    saved_fingerprint = data.get('manifest_fingerprint')
+    if saved_fingerprint and manifest_fingerprint and saved_fingerprint != manifest_fingerprint:
+        raise ValueError('Resume dataset differs from the checkpoint. Resume with the original manifest/data, or start a new fine-tuning run.')
     if len(data['rng']) != dist.get_world_size():
         raise ValueError('Resume requires the same world size')
     models['denoiser'].load_state_dict(data['model'], strict=True)

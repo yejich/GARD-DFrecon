@@ -1,12 +1,18 @@
 """Validate the shared fixed manifest and required pair files without loading models."""
-import argparse,json,os
+import argparse,json,os,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST=ROOT/'manifests/hypersim_001_groups.json'
+sys.path.insert(0,str(ROOT))
+DEFAULT_MANIFEST=None
 PAIR_FILES=('clean.png','distractor.png','mask_object.png','mask_shadow.png')
 
 def validate(manifest,root):
- m=json.loads(Path(manifest).read_text());root=Path(root);missing=[];pairs=[]
+ if manifest:
+  m=json.loads(Path(manifest).read_text())
+ else:
+  from mvr.dataset.hypersim_manifest import collect_manifest
+  m,_=collect_manifest(root)
+ root=Path(root);missing=[];pairs=[]
  for split in ('train','eval'):
   records=m[split]
   for r in records:
@@ -28,7 +34,7 @@ def validate(manifest,root):
  return m,pairs
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--root',default=os.environ.get('HYPERSIM_PAIRS_ROOT'));ap.add_argument('--manifest',default=str(DEFAULT_MANIFEST));args=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--root',default=os.environ.get('HYPERSIM_PAIRS_ROOT'));ap.add_argument('--manifest',default=DEFAULT_MANIFEST);args=ap.parse_args()
  if not args.root:ap.error('Set --root or HYPERSIM_PAIRS_ROOT')
  m,files=validate(args.manifest,args.root)
  print(json.dumps(dict(train_pairs=len(m['train']),eval_pairs=len(m['eval']),fixed_eval_groups=len(m['eval_groups']),required_files=len(files)),indent=2))

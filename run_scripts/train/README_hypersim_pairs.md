@@ -1,6 +1,6 @@
 # Hypersim clean–distractor GARD fine-tuning
 
-Set `HYPERSIM_PAIRS_ROOT` to the transferred `scenes_v2` directory. The original fixed group manifest is included; images are not.
+Set `HYPERSIM_PAIRS_ROOT` to the downloaded pair parent directory (containing `scenes_v2`, `scenes_002`, etc.) or a single collection. The launcher builds a fresh manifest before DDP starts. Transfer each camera’s `clean_multiview.json` as well as the four image/mask files. The original 10-epoch fixed group manifest is available only for explicit `--manifest` replay.
 
 Run from the repository root:
 
@@ -12,12 +12,12 @@ The script defaults to visible GPUs **0,1** (override `CUDA_VISIBLE_DEVICES`; th
 
 - Frozen DA3-GIANT-1.1; GARD initialized strictly from `ckpts/gard_denoiser.pt` EMA weights, fresh optimizer.
 - BF16 autocast, original GARD feature flow loss and attention alignment loss, learning rate 2e-5, 10 epochs, one warmup epoch.
-- Train: 6,743 saved pairs from 41 scenes with successful synthesis; held out: all 80 successful pairs from `ai_001_001`. The five scenes with zero successful synthesis are absent.
+- Default train: every usable downloaded pair outside `ai_001_001`. The original 10-epoch experiment used 6,743 pairs from 41 scenes; its holdout had 80 pairs from `ai_001_001`. The five scenes with zero successful synthesis are absent.
 - Train N is uniform 1–4 per microbatch, synchronized across DDP ranks. Scene is uniformly sampled among scenes having a suitable anchor; anchor is random and may recur. N−1 candidates are sampled without replacement from successful pairs in the same camera trajectory with cached clean anchor-to-candidate GT covisibility ≥25%. This is directional overlap and does not impose candidate-to-candidate overlap or minimum baseline.
 - Each selected input independently uses distractor.png with p=0.7, otherwise clean.png. Every HQ target uses clean.png. No additional blur. All-clean/all-distractor groups are permitted.
 - Long edge 504, patch-aligned 378×504 images. Training uses full images rather than crops.
-- `manifests/hypersim_001_groups.json` snapshots eligible candidates and 80 fixed four-view eval groups with fixed clean/distractor switches. No eval scene enters training candidates. Existing backbone/GARD pretraining may include this scene; this split is a fine-tuning holdout, not a verified unseen-pretraining benchmark.
-- Each epoch evaluates fixed-seed flow velocity loss using EMA weights on all 80 groups. This is a training diagnostic, not rendered RGB PSNR or downstream geometry evaluation.
+- Generated `data/hypersim_pairs/manifests/groups_<fingerprint>.json` snapshots eligible candidates and fixed four-view eval groups with fixed clean/distractor switches. `manifests/hypersim_001_groups.json` preserves the old run only. No eval scene enters training candidates. Existing backbone/GARD pretraining may include this scene; this split is a fine-tuning holdout, not a verified unseen-pretraining benchmark.
+- Each epoch evaluates fixed-seed flow velocity loss using EMA weights on all current fixed groups (80 with the original holdout). This is a training diagnostic, not rendered RGB PSNR or downstream geometry evaluation.
 - Each completed epoch atomically replaces `checkpoints/latest.pt` under `result_train/hypersim_pairs_ai001_eval/`. It includes raw/EMA weights, Adam state, scheduler and each rank's RNG. Resume at epoch boundaries with `--resume /absolute/path/to/latest.pt`; retain the same manifest/config and world size. Full checkpoints and the temporary atomic replacement require substantial disk space.
 
 Validation commands:

@@ -19,3 +19,15 @@ as part of publishing this code.
   4,210 optimizer updates. Reported fixed eval flow loss is from that run.
 - Fine-tuned checkpoints, images, training/evaluation output directories,
   20-epoch extension work and local W&B credentials are excluded.
+
+## Downloaded-data expansion
+
+- Fifteen tests pass, including collection discovery, incomplete-pair exclusion,
+  duplicate detection, required covisibility caches, and stable held-out groups.
+- A current scan of scenes_v2 and scenes_002 through scenes_006 found 19,696
+  training pairs from 153 scenes and 80 evaluation pairs from ai_001_001.
+  Counts are a snapshot; synthesis continues independently.
+- All 80 fixed evaluation groups exactly match the historical manifest.
+- A real four-view group from an added _002 scene loaded and collated to
+  (1, 4, 3, 378, 504). Bash syntax and modified Python compilation passed.
+- No new full GPU training was launched for this update.

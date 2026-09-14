@@ -14,5 +14,19 @@ if [[ "$NUM_GPUS" -lt 1 || -z "$CUDA_VISIBLE_DEVICES" ]]; then
   echo 'Set CUDA_VISIBLE_DEVICES to NVIDIA GPU indices or UUIDs.' >&2
   exit 1
 fi
+# Build once before DDP starts. An explicit --manifest retains snapshot/replay mode.
+EXPLICIT_MANIFEST=0
+for ARG in "$@"; do
+  case "$ARG" in
+    --manifest|--manifest=*) EXPLICIT_MANIFEST=1 ;;
+  esac
+done
+MANIFEST_ARGS=()
+if [[ "$EXPLICIT_MANIFEST" == 0 ]]; then
+  : "${HYPERSIM_PAIRS_ROOT:?Set HYPERSIM_PAIRS_ROOT to the downloaded pair directory}"
+  MANIFEST=$("$PYTHON_BIN" -m mvr.dataset.hypersim_manifest \
+    --root "$HYPERSIM_PAIRS_ROOT" --output-dir "$GARD_ROOT/data/hypersim_pairs/manifests")
+  MANIFEST_ARGS=(--manifest "$MANIFEST")
+fi
 exec "$PYTHON_BIN" -m torch.distributed.run --standalone --nproc_per_node="$NUM_GPUS" \
-  RAE/src/train_hypersim_pairs.py --config "$CONFIG" "$@"
+  RAE/src/train_hypersim_pairs.py --config "$CONFIG" "${MANIFEST_ARGS[@]}" "$@"
