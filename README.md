@@ -2,7 +2,7 @@
 
 ## 1. 환경 설정
 
-[MVR 설치 방법](https://github.com/jinlovespho/MVR#-installation-walkthrough)을 기반으로 합니다. Python 3.10, PyTorch 2.4.1, CUDA 12.1을 사용하며 이 feature 학습 경로에는 gsplat을 설치하지 않습니다.
+[MVR 설치 방법](https://github.com/jinlovespho/MVR#-installation-walkthrough)을 기반으로 합니다. 
 
 ```bash
 git clone https://github.com/yejich/GARD-DFrecon.git
