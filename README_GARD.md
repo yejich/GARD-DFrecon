@@ -10,7 +10,7 @@ GARD: Geometry-Aware Representation Denoising for <br>Robust Multi-view 3D Recon
 **Claire Kim**<sup>1</sup>,&nbsp;&nbsp;
 **Kyoungjin Oh**<sup>1</sup>,&nbsp;&nbsp;
 **Paul Hyunbin Cho**<sup>1</sup>,&nbsp;&nbsp;
-[**Jaewon Min**](https://github.com/Min-Jaewon/)<sup>1</sup>,&nbsp;&nbsp; 
+[**Jaewon Min**](https://github.com/Min-Jaewon/)<sup>1</sup>,&nbsp;&nbsp;
 **Yeji Choi**<sup>1</sup>,&nbsp;&nbsp;
 <br>
 **Jihye Park**<sup>2</sup>,&nbsp;&nbsp;
@@ -19,7 +19,7 @@ GARD: Geometry-Aware Representation Denoising for <br>Robust Multi-view 3D Recon
 [**Seungryong Kim**](https://scholar.google.com/citations?hl=zh-CN&user=cIK1hS8AAAAJ)<sup>1&dagger;</sup>
 
   <p align="center">
-    <sup>1</sup> KAIST&nbsp;AI · 
+    <sup>1</sup> KAIST&nbsp;AI ·
     <sup>2</sup> Samsung&nbsp;Electronics
   </p>
 
@@ -38,8 +38,8 @@ GARD: Geometry-Aware Representation Denoising for <br>Robust Multi-view 3D Recon
 
 </div>
 
-# 🔈 News 
-- 📄 **[2026-05-25]** GARD paper released in [arxiv](https://arxiv.org/abs/2605.26230) 
+# 🔈 News
+- 📄 **[2026-05-25]** GARD paper released in [arxiv](https://arxiv.org/abs/2605.26230)
 - 🔥 **[2026-08-16]**  Initial release of the training/inferece code, data, and model weights
 
 
@@ -60,14 +60,14 @@ This repository provides:
 #  👟 Installation Walkthrough
 
 ```bash
-# clone the GARD repo 
+# clone the GARD repo
 git clone https://github.com/cvlab-kaist/GARD.git
 
-# Move inside the GARD repo 
+# Move inside the GARD repo
 cd GARD/
 
-# Set up the environment using uv 
-uv sync 
+# Set up the environment using uv
+uv sync
 
 # Activate the uv environment
 source .venv/bin/activate
@@ -75,7 +75,7 @@ source .venv/bin/activate
 
 
 
-# 🚀 Inference 
+# 🚀 Inference
 
 ### 🎯 Checkpoint preparation
 Download the GARD checkpoints from [HuggingFace](https://huggingface.co/jinlovespho/GARD) into `ckpts/`:
@@ -108,14 +108,14 @@ Results are written to `result_val/GARD_da3_bench/` and `result_val/GARD_real_be
 
 
 
-# 🔥 Training 
+# 🔥 Training
 
 ### 📁 Training data preparation
 ```bash
 # download hypersim
 bash download_scripts/hypersim/download_hypersim.sh
 
-# download tartanair 
+# download tartanair
 bash download_scripts/tartanair_tools/download_tartanair.sh
 ```
 

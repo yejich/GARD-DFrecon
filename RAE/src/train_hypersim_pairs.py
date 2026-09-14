@@ -8,17 +8,17 @@ import argparse
 import math
 import os
 from collections import defaultdict
-import cv2 
+import cv2
 import torch
 import torch.distributed as dist
 import numpy as np
-from tqdm import tqdm 
+from tqdm import tqdm
 import argparse
 from pathlib import Path
 import math
 from omegaconf import OmegaConf
 
-from depth_anything_3.utils.export.glb import _depths_to_world_points_with_colors   
+from depth_anything_3.utils.export.glb import _depths_to_world_points_with_colors
 from depth_anything_3.utils.geometry import unproject_depth, affine_inverse, as_homogeneous
 
 
@@ -36,8 +36,8 @@ from utils.dist_utils import *
 from utils.vis_utils import *
 from utils.loss_utils import velocity_direction_loss, camera_loss_single
 
-import torch.nn.functional as F 
-from torchvision.utils import save_image 
+import torch.nn.functional as F
+from torchvision.utils import save_image
 from utils.vis_utils import depth_to_colormap, depth_error_to_colormap_thresholded, tensor_to_uint8_image
 import torchvision
 
@@ -46,7 +46,7 @@ from RAE.src import initialize
 from mvr.dataset.hypersim_pairs import load_train_data
 from mvr.grouped_mse import token_groups, grouped_mse
 from mvr.pair_training import evaluate_pairs, load_weights, save_training_checkpoint, resume_training
-from motionblur.motionblur import Kernel 
+from motionblur.motionblur import Kernel
 import matplotlib.pyplot as plt
 
 
@@ -75,11 +75,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
-    
+
     args = parse_args()
     # set up ddp setting
     rank, world_size, device = setup_distributed()
-    
+
     # load configs
     full_cfg = OmegaConf.load(args.config)
     if args.manifest:
@@ -103,11 +103,11 @@ def main():
         full_cfg.log.tracker.wandb.run_name = args.wandb_run_name
         full_cfg.log.tracker.wandb.entity = args.wandb_entity
         full_cfg.log.tracker.wandb.unique_run = True
-    training_cfg = full_cfg.training 
-    
+    training_cfg = full_cfg.training
+
     # set logger and directories
     experiment_dir, checkpoint_dir, logger = configure_experiment_dirs(full_cfg, rank)
-    
+
     # config setting
     time_dist_shift = math.sqrt(full_cfg.misc.time_dist_shift_dim / full_cfg.misc.time_dist_shift_base)
     grad_accum_steps = int(training_cfg.get("grad_accum_steps", 1))
@@ -135,13 +135,13 @@ def main():
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     micro_batch_size = global_batch_size // (world_size * grad_accum_steps)
-    
-    # load encoder and denoiser 
+
+    # load encoder and denoiser
     models, processors = initialize.load_model(full_cfg, rank, device)
     models['encoder'].requires_grad_(False)
     models['encoder'].eval()
-    
-    # load training and validation data 
+
+    # load training and validation data
     train_loader, train_sampler = load_train_data(full_cfg, micro_batch_size, rank, world_size)
     loader_batches = len(train_loader)
     steps_per_epoch = math.ceil(loader_batches / grad_accum_steps)
@@ -152,32 +152,32 @@ def main():
     for group in optimizer.param_groups:
         group['foreach'] = False  # Avoid an extra parameter-sized optimizer temporary.
 
-    # load scheduler 
+    # load scheduler
     if training_cfg.get('scheduler'):
         scheduler, sched_msg = build_scheduler(optimizer, steps_per_epoch, training_cfg)
     else:
         scheduler=None
         sched_msg=None
-    
-    # load Transport 
+
+    # load Transport
     transport = create_transport(**full_cfg.transport.params, time_dist_shift=time_dist_shift,)
     transport_sampler = Sampler(transport)
 
-    # load sampler 
+    # load sampler
     eval_sampler = initialize.load_sampler(full_cfg, transport_sampler)
     ema_model_fn = models['ema_denoiser'].forward
     val_noise_generator = torch.Generator(device=device)
     val_noise_generator.manual_seed(global_seed)  # any fixed seed you like
 
-    
+
     ### Resuming and checkpointing
     start_epoch = 0
     global_train_step = 0
-    optimizer_step = 0 
+    optimizer_step = 0
     running_loss = 0.0
     running_loss_count = 0
 
-    
+
     if args.resume:
         start_epoch, global_train_step, optimizer_step = resume_training(
             args.resume, models, optimizer, scheduler, rank)
@@ -204,7 +204,7 @@ def main():
 
     IMAGENET_NORMALIZE = torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225],)
 
-    dist.barrier() 
+    dist.barrier()
     for epoch in range(start_epoch, num_epochs):
         models['ddp_denoiser'].train()
         train_sampler.set_epoch(epoch)
@@ -221,17 +221,17 @@ def main():
             train_lq_views = batch['lq_views'].to(device)     # b v 3 378 504
 
             # apply imagenet normalization
-            train_b, train_v, train_c, train_h, train_w = train_hq_views.shape 
+            train_b, train_v, train_c, train_h, train_w = train_hq_views.shape
             train_hq_views = IMAGENET_NORMALIZE(train_hq_views.view(train_b*train_v, train_c, train_h, train_w)).view(train_b, train_v, train_c, train_h, train_w)
             train_lq_views = IMAGENET_NORMALIZE(train_lq_views.view(train_b*train_v, train_c, train_h, train_w)).view(train_b, train_v, train_c, train_h, train_w)
             logger.debug(train_hq_views.shape)
-            
+
             # lq view forward pass
             with torch.no_grad():
                 lq_encoder_out, lq_mvrm_out = models['encoder'](
-                                                    image=train_lq_views, 
-                                                    export_feat_layers=[], 
-                                                    mvrm_cfg=full_cfg.mvrm.train, 
+                                                    image=train_lq_views,
+                                                    export_feat_layers=[],
+                                                    mvrm_cfg=full_cfg.mvrm.train,
                                                     mode='train'
                                                     )
             lq_pred_pose_enc = lq_encoder_out.pose_enc
@@ -239,15 +239,15 @@ def main():
             lq_ref_b_idx = lq_encoder_out.ref_b_idx
             lq_encoder_out = processors['encoder_output_processor'](lq_encoder_out)
             train_lq_pred_depth_np = lq_encoder_out.depth                  # b v 378 504
-            train_lq_pred_depth = torch.from_numpy(train_lq_pred_depth_np).to(device) 
+            train_lq_pred_depth = torch.from_numpy(train_lq_pred_depth_np).to(device)
             lq_latent = lq_mvrm_out[('extract_feat', full_cfg.mvrm.train.extract_feat_layers[0])].clone().float()
-                        
+
             # hq forward pass
             with torch.no_grad():
                 hq_encoder_out, hq_mvrm_out = models['encoder'](
-                                                    image=train_hq_views, 
-                                                    export_feat_layers=[], 
-                                                    mvrm_cfg=full_cfg.mvrm.train, 
+                                                    image=train_hq_views,
+                                                    export_feat_layers=[],
+                                                    mvrm_cfg=full_cfg.mvrm.train,
                                                     mode='train',
                                                     ref_b_idx=lq_ref_b_idx,
                                                     # ref_b_idx=None
@@ -258,14 +258,14 @@ def main():
             hq_pred_pose = hq_encoder_out['extrinsics'] # b v 3 4
             hq_encoder_out = processors['encoder_output_processor'](hq_encoder_out)
             train_hq_pred_depth_np = hq_encoder_out.depth                  # b v 378 504
-            train_hq_pred_depth = torch.from_numpy(train_hq_pred_depth_np).to(device) 
+            train_hq_pred_depth = torch.from_numpy(train_hq_pred_depth_np).to(device)
             hq_latent = hq_mvrm_out[('extract_feat', full_cfg.mvrm.train.extract_feat_layers[0])].clone().float()
-            assert lq_latent.shape == hq_latent.shape 
-            
+            assert lq_latent.shape == hq_latent.shape
+
             # processing for when batch size = 1
             if train_b==1 and len(train_hq_pred_depth_np.shape)<4 and len(train_lq_pred_depth_np.shape)<4:
                 train_hq_pred_depth_np = np.expand_dims(train_hq_pred_depth_np, axis=0)
-                train_lq_pred_depth_np = np.expand_dims(train_lq_pred_depth_np, axis=0)                
+                train_lq_pred_depth_np = np.expand_dims(train_lq_pred_depth_np, axis=0)
 
 
             # compute loss (per microbatch)
@@ -277,13 +277,13 @@ def main():
                     model_img_size=(train_h, train_w),
                     cfg=full_cfg
                 )
-            
-            
-            mvrm_maps = None 
+
+
+            mvrm_maps = None
             if full_cfg.mvrm.analysis.vis_attn_map:
                 mvrm_maps = transport_output.get('mvrm_maps', None)
-                
-                            
+
+
             # flow matching velocity loss
             token_mask, view_flags = token_groups(
                 batch['pixel_masks'].to(device), batch['distractor_views'].to(device), lq_ref_b_idx)
@@ -291,8 +291,8 @@ def main():
                 transport_output['pred'], transport_output['target_velocity'], token_mask, view_flags,
                 full_cfg.mvrm.loss.group_mse)
             loss = transport_loss
-                        
-                        
+
+
             def cross_entropy_attn(pred, target, row_mask=None, eps=1e-8):
                 """CAMEO-style cross-entropy between attention probability distributions.
                 row_mask: (b, v*n) bool tensor; if given, averages only over True rows."""
@@ -392,8 +392,8 @@ def main():
                     row_mask  = valid_rows if vis_mask_type != 'none' else None
                     attn_loss = cross_entropy_attn(pred_map_spatial, geo_target, row_mask=row_mask)
                     loss = transport_loss + lambda_attn * attn_loss
-                    
-                    
+
+
             # ---------------------------
             # Backward
             # ---------------------------
@@ -443,7 +443,7 @@ def main():
                 running_loss = 0.0
                 running_loss_count = 0
 
-    
+
             num_batches += 1
             global_train_step += 1
             if args.max_steps and optimizer_step >= args.max_steps:
@@ -456,8 +456,8 @@ def main():
                     wandb_utils.wandb.finish()
                 cleanup_distributed()
                 return
-        
-        
+
+
         eval_loss = evaluate_pairs(full_cfg, models, transport, device, rank, world_size)
         if rank == 0:
             logger.info(f"[Epoch {epoch}] eval/fixed_flow_loss={eval_loss:.6f}")
@@ -468,7 +468,7 @@ def main():
 
         # log epoch stats
         if rank == 0 and num_batches > 0:
-            avg_loss = epoch_metrics['loss'].item() / num_batches 
+            avg_loss = epoch_metrics['loss'].item() / num_batches
             epoch_stats = {
                 "epoch/loss": avg_loss,
             }
@@ -478,8 +478,8 @@ def main():
             )
             if full_cfg.log.tracker.name == 'wandb':
                 wandb_utils.log(epoch_stats, step=global_train_step)
-    
-    
+
+
     dist.barrier()
     logger.info("Done!")
     if rank == 0 and full_cfg.log.tracker.name == 'wandb':
