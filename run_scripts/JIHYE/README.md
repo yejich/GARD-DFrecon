@@ -8,7 +8,7 @@ Bash는 `run_scripts/JIHYE/`, 같은 이름의 설정은 `run_configs/JIHYE/`에
 - Config: `../../run_configs/JIHYE/train_GARD_da3_hypersim_completed_260915.yaml`
 - 초기 가중치: `ckpts/gard_denoiser.pt`. 기존 10-epoch 학습 checkpoint에서 resume하지 않습니다.
 - DA3-GIANT-1.1 backbone은 고정하고 GARD denoiser를 학습합니다.
-- GPU 2개, global batch 8, GPU당 microbatch 1, gradient accumulation 4, fp32.
+- GPU 2/4/8개, global batch 8, GPU당 microbatch 1, gradient accumulation 자동 4/2/1, fp32.
 - 10 epochs, bf16, LR 2e-5 → 2e-6, warmup 1 epoch.
 - view 수 1~4, distractor 확률 0.7, 기존 group2 flow matching 및 attention alignment 설정 유지.
 - `ai_001_001`은 평가 전용: 80 pairs / 고정 80개 평가 그룹.
@@ -47,7 +47,7 @@ bash /work/GARD-DFrecon/run_scripts/JIHYE/train_GARD_da3_hypersim_completed_2609
 
 경로에 공백이 있다면 값을 따옴표로 감싸세요. `DATASET_ROOT`에는 절대 경로를 사용하세요. 예시의 `/work`, `/data`는 사용자 서버 경로로 바꿉니다.
 
-GPU 개수는 지정한 목록에서 자동 계산합니다. **기본 config는 GPU 1~2개**를 지원합니다. 더 많은 GPU를 사용하려면 config에서 `global_batch_size % (GPU 개수 × grad_accum_steps) == 0`이 되도록 설정하세요. 학습 코드는 모델 로딩 전에 이 조건을 확인합니다.
+DA3·Omega의 `completed_260915.bash`는 지정한 GPU 목록에서 개수를 계산합니다. **GPU 2/4/8개**를 지원하며, 전체 배치 8과 GPU당 microbatch 1을 유지하도록 gradient accumulation을 각각 **4/2/1**로 자동 설정합니다. 다른 GPU 개수는 실행 전에 오류로 안내합니다.
 
 ```bash
 # GPU 학습 없이 데이터 목록 생성·필수 파일 검사

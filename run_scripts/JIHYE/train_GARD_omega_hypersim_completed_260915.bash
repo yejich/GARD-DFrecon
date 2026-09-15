@@ -15,10 +15,17 @@ CONFIG="run_configs/JIHYE/train_GARD_omega_hypersim_completed_260915.yaml"
 export HYPERSIM_PAIRS_ROOT="$DATASET_ROOT"
 IFS=',' read -ra GPU_IDS <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS="${#GPU_IDS[@]}"
-if [[ -z "$CUDA_VISIBLE_DEVICES" ]]; then
-  echo "CUDA_VISIBLE_DEVICES에 사용할 GPU 번호를 지정하세요." >&2
+# 전체 배치 8 = GPU 수 × GPU당 1그룹 × 누적 횟수
+case "$NUM_GPUS" in
+  2|4|8) ;;
+  *) echo "GPU는 2개, 4개 또는 8개를 지정하세요." >&2; exit 1 ;;
+esac
+if [[ "$CUDA_VISIBLE_DEVICES" == ,* || "$CUDA_VISIBLE_DEVICES" == *, || "$CUDA_VISIBLE_DEVICES" == *,,* ]]; then
+  echo "CUDA_VISIBLE_DEVICES의 GPU 목록에 빈 항목이 있습니다." >&2
   exit 1
 fi
+export GARD_GRAD_ACCUM_STEPS="$((8 / NUM_GPUS))"
+echo "[batch] GPUs=$NUM_GPUS, microbatch=1/GPU, accum=$GARD_GRAD_ACCUM_STEPS, global_batch=8"
 export OMEGA_RUN_ID="$(date +%Y%m%d_%H%M%S_%N)"
 export PYTHONPATH="$PWD:$PWD/RAE/src:$PWD/src:$PWD/Depth-Anything-3/src"
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=1
@@ -35,6 +42,6 @@ fi
 CUDA_VISIBLE_DEVICES="${GPU_IDS[0]}" "$PYTHON" \
   RAE/src/compute_omega_latent_stats.py --config "$CONFIG"
 
-# 4. 공식 가중치에서 새로 10 epochs 학습
+# 4. 공식 가중치에서 config에 지정된 epochs만큼 학습
 "$PYTHON" -m torch.distributed.run --standalone --nproc_per_node="$NUM_GPUS" \
   RAE/src/train_omega_hypersim_pairs.py --config "$CONFIG" "$@"

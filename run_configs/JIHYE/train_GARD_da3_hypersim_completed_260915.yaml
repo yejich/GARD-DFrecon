@@ -73,7 +73,7 @@ training:
   precision: fp32
   epochs: 30
   global_batch_size: 8
-  grad_accum_steps: 4
+  grad_accum_steps: ${oc.env:GARD_GRAD_ACCUM_STEPS,4}  # bash: 2/4/8 GPUs -> 4/2/1
   ema_decay: 0.9995
   num_workers: 2
   shuffle: true
