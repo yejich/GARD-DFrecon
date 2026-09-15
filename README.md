@@ -74,7 +74,7 @@ conda activate gard-dfrecon
 export GARD_PYTHON="$CONDA_PREFIX/bin/python"
 export HYPERSIM_PAIRS_ROOT="$PWD/datasets/hypersim_pairs"
 export VGGT_OMEGA_CKPT="$PWD/ckpts/vggt_omega_1b_512.pt"
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_omega_hypersim_pairs.bash
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_omega_hypersim_completed_10ep.bash
 ```
 
 <!-- 기존 상세 설명: [readme_detail_260914.md](readme_detail_260914.md) -->
