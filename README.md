@@ -25,15 +25,17 @@ bash download_scripts/gard_ckpt/download_ckpts.sh
 
 [Hypersim-Distractor](https://huggingface.co/datasets/cyjcyj91/Hypersim-Distractor)의 TAR와 메타데이터를 내려받습니다. 
 
+저장소 루트에서 실행합니다. 데이터는 저장소 내부의 `datasets` 폴더에 저장합니다.
 
 ```bash
-mkdir ./datasets/hypersim_release
-mkdir -p "$DATA_ROOT"
+export DATA_ROOT="$PWD/datasets"
+mkdir -p "$DATA_ROOT/hypersim_release"
 hf download cyjcyj91/Hypersim-Distractor --repo-type dataset \
-  --local-dir ./datasets/hypersim_release
-python /datasets/hypersim_release/tools/extract_release.py --destination /datasets
+  --local-dir "$DATA_ROOT/hypersim_release"
+python "$DATA_ROOT/hypersim_release/tools/extract_release.py" \
+  --destination "$DATA_ROOT"
 
-export HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs
+export HYPERSIM_PAIRS_ROOT="$DATA_ROOT/hypersim_pairs"
 python scripts/check_hypersim_pairs.py
 ```
 
@@ -46,7 +48,7 @@ python scripts/check_hypersim_pairs.py
 ```bash
 conda activate gard-dfrecon
 export GARD_PYTHON="$CONDA_PREFIX/bin/python"
-export HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs
+export HYPERSIM_PAIRS_ROOT="$PWD/datasets/hypersim_pairs"
 
 CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh
 ```
