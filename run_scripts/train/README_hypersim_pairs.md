@@ -5,7 +5,7 @@ Set `HYPERSIM_PAIRS_ROOT` to the downloaded pair parent directory (containing `s
 Run from the repository root:
 
 ```bash
-bash run_scripts/train/train_GARD_hypersim_pairs.sh
+bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh
 ```
 
 The script defaults to visible GPUs **0,1** (override `CUDA_VISIBLE_DEVICES`; the original run used physical GPUs 6,7), two DDP ranks, one multiview group per GPU, and gradient accumulation over eight microbatches. `global_batch_size: 16` is the **effective** batch in this trainer: 2 GPUs × 1 group × 8 accumulation steps. Changing only the GPU count without adjusting this arithmetic will change microbatch size.
@@ -25,9 +25,9 @@ Validation commands:
 ```bash
 .venv/bin/python -m unittest discover -s tests -p test_hypersim_pairs.py
 # Eight N=4 microbatches, one optimizer update, then two fixed eval groups:
-bash run_scripts/train/train_GARD_hypersim_pairs.sh --max-steps 1 --fixed-views 4
+bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh --max-steps 1 --fixed-views 4
 # Dynamic N=1–4, same update/eval check:
-bash run_scripts/train/train_GARD_hypersim_pairs.sh --max-steps 1
+bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh --max-steps 1
 ```
 
 Smoke runs stop and do not write training checkpoints. A successful smoke run is not the full 10-epoch training run. CUDA visibility remaps the two selected physical GPUs to cuda:0/1 in logs.
@@ -45,7 +45,7 @@ Group metrics appear in the training log as `train_group/distractor`, `train_gro
 Use an existing W&B login or supply `WANDB_API_KEY` through your shell environment. Only rank 0 opens/logs a run. Each invocation creates a new W&B run, including checkpoint resumes (checkpoint training state is still restored).
 
 ```bash
-bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --wandb --wandb-project cross-view-feature-completion \
   --wandb-run-name "Hypersim_group2_p07_gpu67"
 ```

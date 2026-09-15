@@ -39,11 +39,12 @@ uv sync --frozen
 source .venv/bin/activate
 
 # 원본 GARD 초기 가중치 (이 저장소의 fine-tuned checkpoint가 아님)
-hf download jinlovespho/GARD gard_denoiser.pt --local-dir ckpts
+# 공식 GARD: https://github.com/cvlab-kaist/GARD (가중치 호스팅: Hugging Face)
+bash download_scripts/gard_ckpt/download_ckpts.sh
 # DA3-GIANT-1.1은 최초 모델 로딩 때 공식 Hugging Face에서 다운로드됩니다.
 ```
 
-RGB decoder는 이 학습 경로에서 사용하지 않습니다. 원본 GARD RGB 추론까지 사용할 경우 원본 checkpoint 다운로드 스크립트로 decoder도 받으세요.
+위 스크립트는 GARD denoiser와 RGB decoder를 함께 다운로드합니다. RGB decoder는 이 학습 경로에서는 사용하지 않으며, 원본 GARD RGB 추론에 사용합니다.
 
 ## 다운로드한 데이터로 학습
 
@@ -70,7 +71,7 @@ RGB decoder는 이 학습 경로에서 사용하지 않습니다. 원본 GARD RG
 ```bash
 export HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs
 python scripts/check_hypersim_pairs.py
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh
 ```
 
 학습 bash가 DDP 실행 전에 한 번 스캔하여 다음을 수행합니다.
@@ -107,7 +108,7 @@ python scripts/export_hypersim_pairs.py \
 
 ```bash
 HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs/scenes_v2 \
-  CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+  CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --manifest manifests/hypersim_001_groups.json
 ```
 
@@ -115,7 +116,7 @@ HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs/scenes_v2 \
 
 ```bash
 export HYPERSIM_PAIRS_ROOT=/datasets/hypersim_pairs
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh
 ```
 
 GPU 6,7을 쓰려면 `CUDA_VISIBLE_DEVICES=6,7`로 바꾸세요. 스크립트가 선택한 GPU 수에 맞춰 DDP 프로세스 수를 설정합니다. 기본 batch 설정은 **2 GPU용**입니다. GPU 수를 바꿀 때 effective batch와 accumulation도 확인해야 합니다.
@@ -123,7 +124,7 @@ GPU 6,7을 쓰려면 `CUDA_VISIBLE_DEVICES=6,7`로 바꾸세요. 스크립트가
 경로를 YAML 편집 없이 지정할 수 있습니다.
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --init-checkpoint ckpts/gard_denoiser.pt \
   --result-root result_train/hypersim_10ep
 ```
@@ -136,7 +137,7 @@ CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
 짧은 GPU 검증은 아래처럼 실행합니다. 8개 N=4 microbatch로 optimizer update 1회와 고정 eval 2그룹을 수행하고 종료하며 checkpoint를 쓰지 않습니다.
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --max-steps 1 --fixed-views 4
 ```
 
@@ -162,7 +163,7 @@ W&B는 로그인 또는 환경변수로 인증합니다. 저장소에 인증값�
 
 ```bash
 wandb login
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --wandb --wandb-project cross-view-feature-completion \
   --wandb-run-name Hypersim_group2_p07_10ep
 ```
@@ -174,7 +175,7 @@ CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
 Checkpoint는 epoch 종료마다 `result_train/.../checkpoints/latest.pt`로 저장합니다. model/EMA/optimizer/scheduler/각 rank RNG를 포함하며, 동일 world size·manifest·설정으로 epoch 경계에서 재개합니다.
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/JIHYE_train_GARD_da3_hypersim_20k.sh \
   --resume /checkpoints/latest.pt
 ```
 
@@ -182,8 +183,8 @@ CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/train/train_GARD_hypersim_pairs.sh \
 
 ## 파일과 검증
 
-- [학습 설정](run_configs/train/train_GARD_hypersim_pairs.yaml)
-- [학습 진입점](RAE/src/train_hypersim_pairs.py)
+- [학습 설정](run_configs/train/JIHYE_train_GARD_da3_hypersim_20k.yaml)
+- [학습 진입점](RAE/src/JIHYE_train_GARD_da3_hypersim_20k.py)
 - [데이터·그룹 샘플러](mvr/dataset/hypersim_pairs.py)
 - [Group2/Group3 loss](mvr/grouped_mse.py)
 - [고정 평가·resume](mvr/pair_training.py)

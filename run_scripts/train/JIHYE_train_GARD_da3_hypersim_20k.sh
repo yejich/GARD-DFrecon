@@ -7,7 +7,7 @@ export PYTHONPATH="$GARD_ROOT:$GARD_ROOT/Depth-Anything-3/src:$GARD_ROOT/RAE/src
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-4}" OPENBLAS_NUM_THREADS=1
 export MPLCONFIGDIR="${MPLCONFIGDIR:-/tmp/gard_dfrecon_mpl}"
 PYTHON_BIN="${GARD_PYTHON:-$GARD_ROOT/.venv/bin/python}"
-CONFIG="${GARD_CONFIG:-$GARD_ROOT/run_configs/train/train_GARD_hypersim_pairs.yaml}"
+CONFIG="${GARD_CONFIG:-$GARD_ROOT/run_configs/train/JIHYE_train_GARD_da3_hypersim_20k.yaml}"
 IFS=',' read -ra GPU_IDS <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS="${#GPU_IDS[@]}"
 if [[ "$NUM_GPUS" -lt 1 || -z "$CUDA_VISIBLE_DEVICES" ]]; then
@@ -29,4 +29,4 @@ if [[ "$EXPLICIT_MANIFEST" == 0 ]]; then
   MANIFEST_ARGS=(--manifest "$MANIFEST")
 fi
 exec "$PYTHON_BIN" -m torch.distributed.run --standalone --nproc_per_node="$NUM_GPUS" \
-  RAE/src/train_hypersim_pairs.py --config "$CONFIG" "${MANIFEST_ARGS[@]}" "$@"
+  RAE/src/JIHYE_train_GARD_da3_hypersim_20k.py --config "$CONFIG" "${MANIFEST_ARGS[@]}" "$@"
