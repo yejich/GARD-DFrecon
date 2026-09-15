@@ -8,7 +8,7 @@ export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1}"
 
 cd "$PROJECT_ROOT"
 PYTHON=python  # conda 또는 venv를 먼저 활성화하세요.
-CONFIG="run_configs/JIHYE/train_GARD_da3_hypersim_completed_10ep.yaml"
+CONFIG="run_configs/JIHYE/train_GARD_da3_hypersim_completed_260915.yaml"
 export HYPERSIM_PAIRS_ROOT="$DATASET_ROOT"
 IFS=',' read -ra GPU_IDS <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS="${#GPU_IDS[@]}"

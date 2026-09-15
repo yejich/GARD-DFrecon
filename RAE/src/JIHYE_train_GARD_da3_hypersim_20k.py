@@ -45,6 +45,7 @@ from einops import rearrange
 from RAE.src import initialize
 from mvr.dataset.hypersim_pairs import load_train_data
 from mvr.grouped_mse import token_groups, grouped_mse
+from mvr.distractor_attention import distractor_aware_target, distractor_aware_attn_loss
 from mvr.pair_training import evaluate_pairs, load_weights, save_training_checkpoint, resume_training
 from motionblur.motionblur import Kernel
 import matplotlib.pyplot as plt
@@ -357,6 +358,7 @@ def main():
                     pc_cfg       = full_cfg.mvrm.loss.attn_align.da3_point_cloud
                     vis_mask_type = pc_cfg.get('visibility_mask', 'none')  # [none, cycle_consistency, reprojection]
 
+                    vis_mask = None
                     if vis_mask_type != 'none':
                         vis_mask = torch.zeros(b, v * n, v * n, dtype=torch.bool, device=device)
                         if vis_mask_type == 'cycle_consistency':
@@ -395,7 +397,19 @@ def main():
                         spatial_mask[vi * (n + 1)] = False
                     pred_map_spatial = pred_map[:, spatial_mask, :][:, :, spatial_mask]  # (1, v*n, v*n)
                     row_mask  = valid_rows if vis_mask_type != 'none' else None
-                    attn_loss = cross_entropy_attn(pred_map_spatial, geo_target, row_mask=row_mask)
+                    distractor_cfg = full_cfg.mvrm.loss.attn_align.get('distractor_aware', {})
+                    if distractor_cfg.get('use', False):
+                        # token_groups already matches the reference-first attention order.
+                        # Drop DA3's one CLS token per view from the region mask.
+                        spatial_distractor = token_mask[:, :, 1:]
+                        if spatial_distractor.shape != (b, v, n):
+                            raise ValueError('DA3 distractor mask must match spatial attention tokens')
+                        target, valid = distractor_aware_target(
+                            neg_l2, geo_target, vis_mask, spatial_distractor, T, distractor_cfg)
+                        attn_loss = distractor_aware_attn_loss(
+                            pred_map_spatial, target, valid, spatial_distractor, distractor_cfg)
+                    else:
+                        attn_loss = cross_entropy_attn(pred_map_spatial, geo_target, row_mask=row_mask)
                     loss = transport_loss + lambda_attn * attn_loss
 
 

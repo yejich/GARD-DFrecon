@@ -59,7 +59,7 @@ python scripts/check_hypersim_pairs.py
 conda activate gard-dfrecon
 export DATASET_ROOT="$PWD/datasets/hypersim_pairs"
 
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash
 ```
 
 
@@ -73,7 +73,7 @@ conda activate gard-dfrecon
 export GARD_PYTHON="$CONDA_PREFIX/bin/python"
 export HYPERSIM_PAIRS_ROOT="$PWD/datasets/hypersim_pairs"
 export VGGT_OMEGA_CKPT="$PWD/ckpts/vggt_omega_1b_512.pt"
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_omega_hypersim_completed_10ep.bash
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_omega_hypersim_completed_260915.bash
 ```
 
 <!-- 기존 상세 설명: [readme_detail_260914.md](readme_detail_260914.md) -->

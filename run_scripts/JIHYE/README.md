@@ -4,11 +4,11 @@ Bash는 `run_scripts/JIHYE/`, 같은 이름의 설정은 `run_configs/JIHYE/`에
 
 ## HF 배포본 Hypersim pairs로 DA3 10 epochs 재학습
 
-- Bash: `train_GARD_da3_hypersim_completed_10ep.bash`
-- Config: `../../run_configs/JIHYE/train_GARD_da3_hypersim_completed_10ep.yaml`
+- Bash: `train_GARD_da3_hypersim_completed_260915.bash`
+- Config: `../../run_configs/JIHYE/train_GARD_da3_hypersim_completed_260915.yaml`
 - 초기 가중치: `ckpts/gard_denoiser.pt`. 기존 10-epoch 학습 checkpoint에서 resume하지 않습니다.
 - DA3-GIANT-1.1 backbone은 고정하고 GARD denoiser를 학습합니다.
-- GPU 2개, global batch 16, GPU당 microbatch 1, gradient accumulation 8.
+- GPU 2개, global batch 8, GPU당 microbatch 1, gradient accumulation 4, fp32.
 - 10 epochs, bf16, LR 2e-5 → 2e-6, warmup 1 epoch.
 - view 수 1~4, distractor 확률 0.7, 기존 group2 flow matching 및 attention alignment 설정 유지.
 - `ai_001_001`은 평가 전용: 80 pairs / 고정 80개 평가 그룹.
@@ -23,7 +23,7 @@ Bash는 `run_scripts/JIHYE/`, 같은 이름의 설정은 `run_configs/JIHYE/`에
 ```bash
 conda activate gard-dfrecon
 # GARD-DFrecon 루트에서 실행
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash
 ```
 
 기존 venv를 사용하는 경우에는 `source .venv/bin/activate`로 대신 활성화하면 됩니다. Bash는 활성화된 환경의 `python`을 사용합니다.
@@ -42,7 +42,7 @@ Bash 상단을 수정하거나 실행 시 환경변수로 전달할 수 있습�
 PROJECT_ROOT=/work/GARD-DFrecon \
 DATASET_ROOT=/data/hypersim_pairs \
 CUDA_VISIBLE_DEVICES=2,3 \
-bash /work/GARD-DFrecon/run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash
+bash /work/GARD-DFrecon/run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash
 ```
 
 경로에 공백이 있다면 값을 따옴표로 감싸세요. `DATASET_ROOT`에는 절대 경로를 사용하세요. 예시의 `/work`, `/data`는 사용자 서버 경로로 바꿉니다.
@@ -51,10 +51,10 @@ GPU 개수는 지정한 목록에서 자동 계산합니다. **기본 config는 
 
 ```bash
 # GPU 학습 없이 데이터 목록 생성·필수 파일 검사
-bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash --prepare-only
+bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash --prepare-only
 
 # 짧은 학습 확인
-bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash --max-steps 1
+bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash --max-steps 1
 ```
 
 출력은 `result_train/da3_hypersim_completed_10ep/<실행 시각>/` 아래의 실험 폴더에 저장됩니다. 설정, `pairs_manifest.json`, 로그와 `checkpoints/latest.pt`를 포함합니다. 개인 서버의 원래 데이터 폴더나 원래 GARD 저장소는 필요하지 않습니다.

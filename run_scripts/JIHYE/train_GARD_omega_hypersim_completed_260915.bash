@@ -11,7 +11,7 @@ export VGGT_OMEGA_CKPT="${VGGT_OMEGA_CKPT:-$PROJECT_ROOT/ckpts/vggt_omega_1b_512
 
 cd "$PROJECT_ROOT"
 PYTHON=python  # conda 또는 venv를 먼저 활성화하세요.
-CONFIG="run_configs/JIHYE/train_GARD_omega_hypersim_completed_10ep.yaml"
+CONFIG="run_configs/JIHYE/train_GARD_omega_hypersim_completed_260915.yaml"
 export HYPERSIM_PAIRS_ROOT="$DATASET_ROOT"
 IFS=',' read -ra GPU_IDS <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS="${#GPU_IDS[@]}"
