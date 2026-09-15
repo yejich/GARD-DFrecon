@@ -213,3 +213,6 @@ checkpoints/
 !.env.example
 *.bundle
 *.tar.gz
+
+# Downloaded datasets and local dataset links
+datasets/

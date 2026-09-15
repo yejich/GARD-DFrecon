@@ -1,0 +1,188 @@
+# Fresh 10-epoch fine-tuning from ckpts/gard_denoiser.pt.
+# The launcher uses the fixed HF release pair manifest before DDP starts.
+stage_1:
+  model: da3
+  model_size: GIANT
+  rae:
+    target: null
+    params:
+      encoder_cls: null
+      encoder_config_path: null
+      encoder_input_size: null
+      encoder_params: null
+      decoder_config_path: null
+      pretrained_decoder_path: null
+      noise_tau: null
+      reshape_to_2d: null
+      normalization_stat_path: null
+  da3:
+    ckpt: depth-anything/DA3-GIANT-1.1
+stage_2:
+  model: mvrm
+  target: gard.GARD.GARD
+  params:
+    input_size: null
+    patch_size: 1
+    in_channels: 1536
+    hidden_size:
+    - 1536
+    - 3072
+    depth:
+    - 8
+    - 6
+    num_heads:
+    - 16
+    - 16
+    mlp_ratio: 4.0
+    class_dropout_prob: null
+    num_classes: null
+    use_qknorm: true
+    use_swiglu: true
+    use_rope: true
+    use_rmsnorm: true
+    wo_shift: false
+    use_pos_embed: false
+    use_global_residual: false
+  ckpt: ckpts/gard_denoiser.pt
+transport:
+  params:
+    path_type: Linear
+    prediction: velocity
+    loss_weight: null
+    time_dist_type: logit-normal_0_1
+sampler:
+  mode: ODE
+  params:
+    sampling_method: euler
+    num_steps: 50
+    atol: 1.0e-06
+    rtol: 0.001
+    reverse: false
+guidance:
+  method: cfg
+  scale: 1.0
+  t_min: 0.0
+  t_max: 1.0
+misc:
+  latent_size: null
+  num_classes: null
+  time_dist_shift_dim: 1492992
+  time_dist_shift_base: 4096
+training:
+  global_seed: 42
+  precision: bf16
+  epochs: 10
+  global_batch_size: 16
+  grad_accum_steps: 8
+  ema_decay: 0.9995
+  num_workers: 2
+  shuffle: true
+  log_interval: 10
+  ckpt_step_interval: 100000
+  clip_grad: 1.0
+  optimizer:
+    lr: 2.0e-05
+    betas:
+    - 0.9
+    - 0.95
+    weight_decay: 0.0
+  scheduler:
+    type: linear
+    warmup_epochs: 1
+    decay_end_epoch: 10
+    base_lr: 2.0e-05
+    final_lr: 2.0e-06
+    warmup_from_zero: false
+  guidance:
+    lq_drop: 0.1
+log:
+  result_root_dir: result_train/da3_hypersim_completed_10ep/${oc.env:DA3_RUN_ID,manual}
+  tracker:
+    name: null
+    wandb:
+      key: null
+      entity: null
+      project: null
+      msg: completed_pairs_p07_group2
+data:
+  train:
+    image_size: 512
+    max_num_input_view: 4
+    list:
+    - hypersim_pairs
+    hypersim:
+      ann_path: download_scripts/hypersim/metadata_images_split_scene_v1.csv
+      hq_root_path: data/train/hypersim
+      lq_kernel_size:
+      - 50
+      - 300
+      lq_intensity_range:
+      - 0.0
+      - 0.3
+      view_selection:
+        strategy: near_camera
+        expand_ratio: 2
+      process_res: 504
+      patch_size: 14
+    tartanair:
+      ann_path: null
+      hq_root_path: data/train/tartanair
+      lq_kernel_size:
+      - 50
+      - 300
+      lq_intensity_range:
+      - 0.0
+      - 0.3
+      view_selection:
+        strategy: near_random
+        expand_ratio: 4
+      process_res: 504
+      patch_size: 14
+    min_num_input_view: 1
+    pairs:
+      manifest: ${oc.env:DA3_COMPLETED_MANIFEST,manifests/hypersim_hf_a935b4e251fa.json}
+mvrm:
+  training_lq_cond: true
+  noise_lvl: 0.3
+  lq_latent_cond: addition
+  train:
+    extract_feat_layers:
+    - 17
+    concat_feat: false
+    break_and_return_feat: false
+  val:
+    restore_feat_layers:
+    - 17
+    concat_feat: false
+    skip_and_input_feat: false
+    guidance:
+      use_cfg: false
+      cfg_scale: 1.0
+  loss:
+    attn_align:
+      use: true
+      lambda_coeff: 1.0
+      mvrm_layer_idx: 9
+      da3_point_cloud:
+        use: true
+        vis_pc_temperature: 0.01
+        visibility_mask: cycle_consistency
+        vis_pc_cycle_threshold: 1.5
+        reprojection_depth_threshold: 0.1
+    group_mse:
+      mode: group2
+      lambda_distractor: 1.0
+      lambda_clean: 1.0
+      lambda_a: 1.0
+      lambda_b: 1.0
+      lambda_c: 1.0
+  analysis:
+    vis_attn_map: true
+    mvrm_attn_map:
+      extract_idx:
+      - 9
+analysis_HQ:
+  vis_map: false
+  da3_attn_map:
+    extract_idx:
+    - 17

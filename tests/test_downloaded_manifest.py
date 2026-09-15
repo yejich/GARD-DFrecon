@@ -47,6 +47,20 @@ class DownloadedManifestTests(unittest.TestCase):
         self.add('scenes_001','ai_002_001')
         with self.assertRaisesRegex(ValueError,'Duplicate source frame'):collect_manifest(self.root)
 
+    def test_completion_marker_excludes_in_progress_pair(self):
+        for folder in self.root.glob('*/ai_*/cam_*/frame.*'):
+            (folder/'complete.json').write_text('{}')
+        camera=self.add('scenes_002','ai_003_001',range(5))
+        for i in range(4):
+            (camera/f'frame.{i:04d}'/'complete.json').write_text('{}')
+        # Frame 4 already has every PNG, but the producer has not finished it.
+        data,summary=collect_manifest(self.root,require_complete=True)
+        self.assertEqual(len(data['train']),8)
+        self.assertEqual(summary['skipped_incomplete_pairs'],1)
+        self.assertTrue(all(r['frame']!=4 for r in data['train']))
+        for r in data['train']:
+            self.assertTrue(all(data['train'][i]['frame']!=4 for i in r['candidates']))
+
     def test_covisibility_cache_required(self):
         (self.root/'scenes_v2/ai_002_001/cam_00/clean_multiview.json').unlink()
         with self.assertRaisesRegex(FileNotFoundError,'clean_multiview.json'):collect_manifest(self.root)

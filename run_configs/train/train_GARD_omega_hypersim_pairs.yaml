@@ -1,0 +1,162 @@
+# ==============================================================================
+# GARD on VGGT-Omega features — Hypersim clean/distractor pairs
+# Counterpart of train_GARD_hypersim_pairs.yaml (DA3). Differences are marked [OMEGA].
+# ==============================================================================
+stage_1:
+  model: vggt_omega                     # [OMEGA] frozen backbone
+  model_size: 1B-512                    # descriptive only (run name)
+  vggt_omega:
+    repo: ${oc.env:VGGT_OMEGA_REPO,vggt-omega} # upstream backbone; GARD hooks live in mvr/omega_backbone
+    ckpt: ${oc.env:VGGT_OMEGA_CKPT,../vggt_omega_1b_512.pt}
+
+stage_2:
+  model: mvrm
+  target: gard.GARD_omega.GARDOmega     # [OMEGA] patch-16 / 17-special-token variant of gard.GARD.GARD
+  params:
+    input_size:
+    patch_size: 1
+    in_channels: 1024                   # [OMEGA] VGGT-Omega aggregator dim (DA3: 1536)
+    hidden_size: [1536, 3072]           # same as DA3 GARD -> transformer blocks can be initialised from it
+    depth: [8, 6]
+    num_heads: [16, 16]
+    mlp_ratio: 4.0
+    class_dropout_prob:
+    num_classes:
+    use_qknorm: true
+    use_swiglu: true
+    use_rope: true
+    use_rmsnorm: true
+    wo_shift: false
+    use_pos_embed: false
+    use_global_residual: false
+    vit_patch_size: 16                  # [OMEGA]
+    num_special_tokens: 17              # [OMEGA] 1 camera + 16 register tokens
+  ckpt:                                 # strict load of a GARDOmega checkpoint (takes priority)
+  init_from_da3_ckpt: ckpts/gard_denoiser.pt   # [OMEGA] shape-matched partial init; empty = scratch
+
+transport:
+  params:
+    path_type: Linear
+    prediction: velocity
+    loss_weight: null
+    time_dist_type: logit-normal_0_1
+
+sampler:
+  mode: ODE
+  params:
+    sampling_method: euler
+    num_steps: 50
+    atol: 1.0e-06
+    rtol: 0.001
+    reverse: false
+
+guidance:
+  method: cfg
+  scale: 1.0
+  t_min: 0.0
+  t_max: 1.0
+
+misc:
+  latent_size:
+  num_classes:
+  time_dist_shift_dim: 786432           # [OMEGA] 1024 * 24 * 32 (512x384 input, patch 16)
+  time_dist_shift_base: 4096
+
+training:
+  global_seed: 42
+  precision: bf16
+  epochs: 10
+  global_batch_size: 16                 # 2 GPUs x 1 group x 8 accumulation
+  grad_accum_steps: 8
+  ema_decay: 0.9995
+  num_workers: 2
+  shuffle: true
+  log_interval: 10
+  ckpt_step_interval: 100000
+  clip_grad: 1.0
+  optimizer:
+    lr: 1.0e-04                         # [OMEGA] higher than DA3 fine-tune (2e-5): new in/out layers + new feature space
+    betas: [0.9, 0.95]
+    weight_decay: 0.0
+  scheduler:
+    type: linear
+    warmup_epochs: 1
+    decay_end_epoch: 10
+    base_lr: 1.0e-04
+    final_lr: 1.0e-05
+    warmup_from_zero: true              # ramp LR up during the first epoch
+  guidance:
+    lq_drop: 0.1
+
+log:
+  result_root_dir: result_train/omega_hypersim_pairs_ai001_eval
+  tracker:
+    name:
+    wandb:
+      key:
+      entity:
+      project:
+      msg: omega_inter3_p07_group2
+
+data:
+  train:
+    image_size: 512
+    min_num_input_view: 1
+    max_num_input_view: 4
+    list: [hypersim_pairs]
+    hypersim:                           # only used for the run name
+      view_selection:
+        strategy: near_camera
+    tartanair:
+      view_selection:
+        strategy: near_random
+    pairs:
+      manifest: ${oc.env:OMEGA_PAIRS_MANIFEST,manifests/hypersim_hf_a935b4e251fa.json}
+      process_res: 512                  # [OMEGA] long edge; Hypersim 1024x768 -> 512x384 (24x32 patches)
+
+mvrm:
+  training_lq_cond: true
+  noise_lvl: 0.3
+  lq_latent_cond: addition
+  latent_norm:                          # [OMEGA] inter/3 patch-token std ~0.12 << noise; denoise in normalised space
+    use: true
+    stats_path: data/omega_latent_stats/hf_a935b4e251fa_inter3.pt
+  train:
+    extract_feat_layers: [3]            # [OMEGA] inter_frame_blocks[3] output (right before DPT layer 4)
+    concat_feat: false
+    break_and_return_feat: false
+  val:
+    restore_feat_layers: [3]
+    concat_feat: false
+    skip_and_input_feat: false
+    guidance:
+      use_cfg: false
+      cfg_scale: 1.0
+  loss:
+    attn_align:
+      use: true
+      lambda_coeff: 1.0
+      mvrm_layer_idx: 9
+      distractor_aware:
+        use: false                     # opt-in; false preserves the original attention loss
+        cross_view_only_for_distractor: true
+        max_correspondence_distance: 0.03  # HQ Omega 3D units, NOT guaranteed meters; calibrate on data
+        balance_query_groups: true     # per-sample distractor mean + clean mean; empty groups = 0
+        lambda_distractor: 1.0
+        lambda_clean: 1.0
+      da3_point_cloud:                  # name kept for compatibility; targets come from VGGT-Omega HQ depth/pose
+        use: true
+        vis_pc_temperature: 0.01
+        visibility_mask: cycle_consistency
+        vis_pc_cycle_threshold: 1.5
+    group_mse:
+      mode: group2
+      lambda_distractor: 1.0
+      lambda_clean: 1.0
+      lambda_a: 1.0
+      lambda_b: 1.0
+      lambda_c: 1.0
+  analysis:
+    vis_attn_map: true                  # required for attn_align (collects denoiser attention at mvrm_layer_idx)
+    mvrm_attn_map:
+      extract_idx: [9]

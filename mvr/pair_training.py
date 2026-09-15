@@ -52,7 +52,7 @@ def evaluate_pairs(cfg, models, transport, device, rank, world_size, max_groups=
     return (stats[0]/stats[1].clamp_min(1)).item()
 
 
-def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, optimizer, scheduler, rank, manifest_fingerprint=None):
+def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, optimizer, scheduler, rank, manifest_fingerprint=None, extra_state=None):
     rng = dict(torch=torch.get_rng_state(), cuda=torch.cuda.get_rng_state(),
                python=random.getstate(), numpy=np.random.get_state())
     states = [None] * dist.get_world_size()
@@ -62,6 +62,10 @@ def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, opt
                     optimizer=optimizer.state_dict(), scheduler=scheduler.state_dict() if scheduler else None,
                     next_epoch=next_epoch, step=step, optimizer_step=optimizer_step, rng=states,
                     manifest_fingerprint=manifest_fingerprint)
+        if extra_state:
+            if data.keys() & extra_state.keys():
+                raise ValueError("Extra checkpoint state overwrites training state")
+            data.update(extra_state)
         path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_suffix('.tmp')
         torch.save(data, temporary)

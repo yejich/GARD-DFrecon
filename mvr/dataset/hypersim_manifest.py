@@ -30,7 +30,8 @@ def fingerprint(data):
     return hashlib.sha256(json.dumps(stable, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
-def collect_manifest(root, threshold=.25, probability=.7, eval_scene='ai_001_001', seed=42):
+def collect_manifest(root, threshold=.25, probability=.7, eval_scene='ai_001_001', seed=42,
+                     require_complete=False):
     import random
     root = Path(root).expanduser().resolve()
     if not 0 <= threshold <= 1 or not 0 <= probability <= 1:
@@ -43,7 +44,7 @@ def collect_manifest(root, threshold=.25, probability=.7, eval_scene='ai_001_001
         for folder in sorted(source.glob('ai_*_*/cam_*/frame.*')):
             if not folder.is_dir() or not re.fullmatch(r'frame\.\d+', folder.name):
                 continue
-            if not all((folder / name).is_file() for name in PAIR_FILES):
+            if (require_complete and not (folder / 'complete.json').is_file()) or not all((folder / name).is_file() for name in PAIR_FILES):
                 skipped += 1
                 continue
             scene, camera, frame = folder.relative_to(source).parts
@@ -100,8 +101,9 @@ def collect_manifest(root, threshold=.25, probability=.7, eval_scene='ai_001_001
 
 
 def build_manifest(root, output=None, threshold=.25, probability=.7, eval_scene='ai_001_001', seed=42,
-                   output_dir=None, print_summary=True):
-    data, summary = collect_manifest(root, threshold, probability, eval_scene, seed)
+                   output_dir=None, print_summary=True, require_complete=False):
+    data, summary = collect_manifest(root, threshold, probability, eval_scene, seed,
+                                     require_complete=require_complete)
     if output_dir:
         output = Path(output_dir) / f"groups_{data['fingerprint'][:16]}.json"
     output = Path(output or 'data/hypersim_pairs/groups.json')
@@ -126,9 +128,11 @@ def main():
     out.add_argument('--output-dir')
     ap.add_argument('--threshold', type=float, default=.25)
     ap.add_argument('--probability', type=float, default=.7)
+    ap.add_argument('--require-complete', action='store_true',
+                    help='Only include pairs with the producer completion marker (complete.json)')
     args = ap.parse_args()
     print(build_manifest(args.root, args.output, threshold=args.threshold, probability=args.probability,
-                         output_dir=args.output_dir))
+                         output_dir=args.output_dir, require_complete=args.require_complete))
 
 if __name__ == '__main__':
     main()
