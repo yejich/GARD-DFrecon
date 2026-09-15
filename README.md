@@ -57,10 +57,9 @@ python scripts/check_hypersim_pairs.py
 
 ```bash
 conda activate gard-dfrecon
-export GARD_PYTHON="$CONDA_PREFIX/bin/python"
-export HYPERSIM_PAIRS_ROOT="$PWD/datasets/hypersim_pairs"
+export DATASET_ROOT="$PWD/datasets/hypersim_pairs"
 
-CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_20k.sh
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_10ep.bash
 ```
 
 
