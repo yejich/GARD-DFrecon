@@ -12,7 +12,7 @@ import torch.distributed as dist
 from omegaconf import OmegaConf
 
 from mvr.omega_training import build_normalizer
-from mvr.pair_training import save_training_checkpoint, resume_training
+from mvr.pair_training import save_training_checkpoint, resume_training, save_epoch_weights
 from train_omega_hypersim_pairs import load_denoiser
 from utils.train_utils import update_ema
 
@@ -109,6 +109,35 @@ class CheckpointTests(unittest.TestCase):
              patch('mvr.pair_training.torch.cuda.set_rng_state'):
             self.assertEqual(resume_training(path, models, optimizer, None, 0), (2, 16, 2))
         torch.testing.assert_close(model.weight, expected)
+        torch.testing.assert_close(self.normalizer(path).mean, norm.mean)
+
+    def test_epoch_exports_only_ema_and_keeps_latest(self):
+        model = torch.nn.Linear(2, 2)
+        models = dict(ema_denoiser=model)
+        latest = self.root / 'latest.pt'
+        latest.write_bytes(b'existing resumable checkpoint')
+        with patch('mvr.pair_training.dist.barrier'):
+            for epoch in range(1, 31):
+                save_epoch_weights(self.root, epoch, models, 0, [10, 20, 30])
+        self.assertEqual(sorted(p.name for p in self.root.glob('epoch_*.pt')),
+                         ['epoch_010.pt', 'epoch_020.pt', 'epoch_030.pt'])
+        state = torch.load(self.root / 'epoch_030.pt', weights_only=True)
+        self.assertEqual(set(state), {'ema'})
+        restored = torch.nn.Linear(2, 2)
+        restored.load_state_dict(state['ema'], strict=True)
+        torch.testing.assert_close(restored.weight, model.weight)
+        self.assertEqual(latest.read_bytes(), b'existing resumable checkpoint')
+
+    def test_omega_epoch_export_embeds_normalizer(self):
+        norm = self.normalizer()
+        with patch('mvr.pair_training.dist.barrier'):
+            save_epoch_weights(self.root, 10, dict(ema_denoiser=torch.nn.Linear(2, 2)),
+                               0, [10, 20, 30],
+                               extra_state={'omega_latent_norm': norm.checkpoint_state()})
+        path = self.root / 'epoch_010.pt'
+        state = torch.load(path, weights_only=True)
+        self.assertEqual(set(state), {'ema', 'omega_latent_norm'})
+        (self.root / 'stats.pt').unlink()
         torch.testing.assert_close(self.normalizer(path).mean, norm.mean)
 
 

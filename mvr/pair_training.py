@@ -73,6 +73,24 @@ def save_training_checkpoint(path, next_epoch, step, optimizer_step, models, opt
     dist.barrier()
 
 
+def save_epoch_weights(checkpoint_dir, completed_epoch, models, rank, save_epochs, extra_state=None):
+    """Export inference EMA weights at selected completed epochs, alongside latest.pt."""
+    if completed_epoch not in save_epochs:
+        return
+    if rank == 0:
+        data = {'ema': models['ema_denoiser'].state_dict()}
+        if extra_state:
+            if data.keys() & extra_state.keys():
+                raise ValueError('Extra checkpoint state overwrites EMA weights')
+            data.update(extra_state)
+        path = Path(checkpoint_dir) / f'epoch_{completed_epoch:03d}.pt'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix('.tmp')
+        torch.save(data, temporary)
+        os.replace(temporary, path)
+    dist.barrier()
+
+
 def resume_training(path, models, optimizer, scheduler, rank, manifest_fingerprint=None):
     data = torch.load(path, map_location='cpu', weights_only=False, mmap=True)
     saved_fingerprint = data.get('manifest_fingerprint')

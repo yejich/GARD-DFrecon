@@ -46,7 +46,7 @@ from RAE.src import initialize
 from mvr.dataset.hypersim_pairs import load_train_data
 from mvr.grouped_mse import token_groups, grouped_mse
 from mvr.distractor_attention import distractor_aware_target, distractor_aware_attn_loss
-from mvr.pair_training import evaluate_pairs, load_weights, save_training_checkpoint, resume_training
+from mvr.pair_training import evaluate_pairs, load_weights, save_training_checkpoint, resume_training, save_epoch_weights
 from motionblur.motionblur import Kernel
 import matplotlib.pyplot as plt
 
@@ -485,6 +485,8 @@ def main():
         save_training_checkpoint(Path(checkpoint_dir) / 'latest.pt', epoch + 1,
                                  global_train_step, optimizer_step, models, optimizer, scheduler, rank,
                                  manifest_fingerprint=manifest_fingerprint)
+        save_epoch_weights(checkpoint_dir, epoch + 1, models, rank,
+                           training_cfg.get('save_weight_epochs', []))
 
         # log epoch stats
         if rank == 0 and num_batches > 0:

@@ -78,6 +78,7 @@ training:
   num_workers: 2
   shuffle: true
   log_interval: 10
+  save_weight_epochs: [10, 20, 30]  # EMA exports; latest.pt still saves full state every epoch
   ckpt_step_interval: 100000
   clip_grad: 1.0
   optimizer:

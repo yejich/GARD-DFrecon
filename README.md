@@ -50,10 +50,15 @@ python scripts/check_hypersim_pairs.py
 
 
 ## 3. 학습 bash 실행
+
+두 백본 모두 global batch size는 **8**, 학습 기간은 **30 epochs**입니다. GPU는 **2개, 4개 또는 8개**를 사용할 수 있으며, `CUDA_VISIBLE_DEVICES`에 지정한 GPU 수에 따라 gradient accumulation이 각각 **4, 2, 1**로 자동 조절됩니다. GPU당 batch size는 1입니다.
+
+체크포인트는 실험 폴더의 `checkpoints/`에 저장됩니다. `latest.pt`는 매 epoch 완료 시 학습 재개용 전체 상태로 갱신하며, 10·20·30 epoch 완료 시 `epoch_010.pt`, `epoch_020.pt`, `epoch_030.pt`에 추론용 EMA 가중치를 별도로 저장합니다. Omega의 추론용 파일에는 특징 정규화 통계도 포함됩니다.
+
 ### 3.1 GARD-DA3 backbone
 
 저장소 루트에서 실행합니다. 
-기본 설정은 GPU 2개, 10 epochs 입니다.
+아래 예시는 GPU 2개를 사용합니다.
 
 ```bash
 conda activate gard-dfrecon

@@ -30,7 +30,7 @@ from gard.GARD_omega import load_shape_matched_state_dict
 from mvr.grouped_mse import grouped_mse
 from mvr.omega_training import (attn_align_loss_omega, build_normalizer, evaluate_pairs_omega,
                                 load_omega_encoder, load_train_data_omega, token_groups_omega)
-from mvr.pair_training import resume_training, save_training_checkpoint
+from mvr.pair_training import resume_training, save_training_checkpoint, save_epoch_weights
 
 
 def parse_args() -> argparse.Namespace:
@@ -264,6 +264,9 @@ def main():
                                  global_train_step, optimizer_step, models, optimizer, scheduler, rank,
                                  manifest_fingerprint=manifest_fingerprint,
                                  extra_state={"omega_latent_norm": normalizer.checkpoint_state()})
+        save_epoch_weights(checkpoint_dir, epoch + 1, models, rank,
+                           training_cfg.get('save_weight_epochs', []),
+                           extra_state={"omega_latent_norm": normalizer.checkpoint_state()})
 
     dist.barrier()
     logger.info("Done!")
