@@ -118,7 +118,7 @@ def pair_collate_fn(batch):
 def load_train_data(cfg, batch_size, rank, world_size):
     ds = HypersimPairs(cfg.data.train.pairs.manifest)
     sampler = PairBatchSampler(ds, batch_size, rank, world_size,
-                               accumulation=cfg.training.grad_accum_steps,
+                               accumulation=int(cfg.training.grad_accum_steps),
                                seed=cfg.training.global_seed,
                                min_views=cfg.data.train.get('min_num_input_view', 1),
                                max_views=cfg.data.train.max_num_input_view)

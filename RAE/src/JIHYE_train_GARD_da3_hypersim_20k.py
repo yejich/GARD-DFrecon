@@ -60,6 +60,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train Stage-2 transport model on RAE latents.")
     parser.add_argument("--config", type=str, required=True, help="YAML config containing stage_1 and stage_2 sections.")
     parser.add_argument("--max-steps", type=int, default=0, help="Stop after this many optimizer updates; 0 means full training")
+    parser.add_argument("--stop-after-epoch", type=int, default=0,
+                        help="Stop after this absolute completed epoch, saving the checkpoint; 0 means full training. Keeps the configured LR schedule.")
     parser.add_argument("--fixed-views", type=int, choices=[1,2,3,4], help="Use a fixed N, e.g. 4 for memory testing")
     parser.add_argument("--resume", type=str, help="Resume an epoch-boundary pair-training checkpoint")
     parser.add_argument('--wandb', action='store_true', help='Enable Weights & Biases logging')
@@ -72,6 +74,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--global-batch-size', type=int, help='Effective groups across all GPUs and accumulation')
     parser.add_argument('--grad-accum-steps', type=int, help='Microbatches per optimizer update')
     args = parser.parse_args()
+    if args.stop_after_epoch < 0:
+        parser.error('--stop-after-epoch must be nonnegative')
     return args
 
 
@@ -118,6 +122,7 @@ def main():
         clip_grad = None
     ema_decay = float(training_cfg.get("ema_decay", 0.9995))
     num_epochs = int(training_cfg.get("epochs", 1400))
+    stop_epoch = min(num_epochs, args.stop_after_epoch or num_epochs)
     global_batch_size = training_cfg.get("global_batch_size", None) # optional global batch size for override
     if global_batch_size is not None:
         global_batch_size = int(global_batch_size)
@@ -206,12 +211,12 @@ def main():
         logger.info(f"Dataset contains total {len(train_loader.dataset)} training samples, {steps_per_epoch} steps per epoch.")
         for train_ds in train_loader.dataset.datasets:
             logger.info(f'  - {train_ds.ds_name}: {len(train_ds)}')
-        logger.info(f"Running with world size {world_size}, starting from epoch {start_epoch} to {num_epochs}.")
+        logger.info(f"Running with world size {world_size}, starting from epoch {start_epoch} to {stop_epoch}; configured schedule: {num_epochs} epochs.")
 
     IMAGENET_NORMALIZE = torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225],)
 
     dist.barrier()
-    for epoch in range(start_epoch, num_epochs):
+    for epoch in range(start_epoch, stop_epoch):
         models['ddp_denoiser'].train()
         train_sampler.set_epoch(epoch)
         epoch_metrics = defaultdict(lambda: torch.zeros(1, device=device))

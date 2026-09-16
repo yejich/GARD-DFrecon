@@ -264,7 +264,7 @@ def pair_dataset(cfg, split, patch_size):
 def load_train_data_omega(cfg, batch_size, rank, world_size, patch_size=16):
     ds = pair_dataset(cfg, "train", patch_size)
     sampler = PairBatchSampler(ds, batch_size, rank, world_size,
-                               accumulation=cfg.training.grad_accum_steps,
+                               accumulation=int(cfg.training.grad_accum_steps),
                                seed=cfg.training.global_seed,
                                min_views=cfg.data.train.get("min_num_input_view", 1),
                                max_views=cfg.data.train.max_num_input_view)
