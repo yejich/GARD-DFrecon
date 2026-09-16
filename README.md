@@ -49,7 +49,7 @@ python scripts/check_hypersim_pairs.py
 ```
 
 
-## 3. 학습 bash 실행
+## 3. 학습 bash 실행 (260916)
 
 두 백본 모두 global batch size는 **8**, 학습 기간은 **30 epochs**입니다. GPU는 **2개, 4개 또는 8개**를 사용할 수 있으며, `CUDA_VISIBLE_DEVICES`에 지정한 GPU 수에 따라 gradient accumulation이 각각 **4, 2, 1**로 자동 조절됩니다. GPU당 batch size는 1입니다.
 
