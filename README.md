@@ -29,7 +29,68 @@ python -m pip install -e ./Depth-Anything-3 --no-deps
 bash download_scripts/gard_ckpt/download_ckpts.sh
 ```
 
-## 2. 데이터 다운로드 및 구분
+## 2. 데이터 다운로드
+
+[Hypersim-Distractor](https://huggingface.co/datasets/cyjcyj91/Hypersim-Distractor)의 TAR와 메타데이터를 내려받습니다. 
+
+저장소 루트에서 실행합니다. 데이터는 저장소 내부의 `datasets` 폴더에 저장합니다.
+
+```bash
+export DATA_ROOT="$PWD/datasets"
+mkdir -p "$DATA_ROOT/hypersim_release"
+hf download cyjcyj91/Hypersim-Distractor --repo-type dataset \
+  --revision a935b4e251faeaf1e96723a28463d44e8913c834 \
+  --local-dir "$DATA_ROOT/hypersim_release"
+python "$DATA_ROOT/hypersim_release/tools/extract_release.py" \
+  --destination "$DATA_ROOT"
+
+export HYPERSIM_PAIRS_ROOT="$DATA_ROOT/hypersim_pairs"
+python scripts/check_hypersim_pairs.py
+```
+
+
+## 3. 학습 bash 실행 (260916)
+
+두 백본 모두 global batch size는 **8**, 학습 기간은 **30 epochs**입니다. GPU는 **2개, 4개 또는 8개**를 사용할 수 있으며, `CUDA_VISIBLE_DEVICES`에 지정한 GPU 수에 따라 gradient accumulation이 각각 **4, 2, 1**로 자동 조절됩니다. GPU당 batch size는 1입니다.
+
+체크포인트는 실험 폴더의 `checkpoints/`에 저장됩니다. `latest.pt`는 매 epoch 완료 시 학습 재개용 전체 상태로 갱신하며, 10·20·30 epoch 완료 시 `epoch_010.pt`, `epoch_020.pt`, `epoch_030.pt`에 추론용 EMA 가중치를 별도로 저장합니다. Omega의 추론용 파일에는 특징 정규화 통계도 포함됩니다.
+
+### 3.1 GARD-DA3 backbone
+
+저장소 루트에서 실행합니다. 
+아래 예시는 GPU 2개를 사용합니다.
+
+```bash
+conda activate gard-dfrecon
+export DATASET_ROOT="$PWD/datasets/hypersim_pairs"
+
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_da3_hypersim_completed_260915.bash
+```
+
+
+
+### 3.2 GARD-VGGT-Omega backbone
+
+[VGGT-Omega 소스](https://github.com/facebookresearch/vggt-omega)에서 `vggt_omega_1b_512.pt`를 `./ckpts`에 다운받으세요.
+
+```bash
+conda activate gard-dfrecon
+export GARD_PYTHON="$CONDA_PREFIX/bin/python"
+export HYPERSIM_PAIRS_ROOT="$PWD/datasets/hypersim_pairs"
+export VGGT_OMEGA_CKPT="$PWD/ckpts/vggt_omega_1b_512.pt"
+CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_omega_hypersim_completed_260915.bash
+```
+
+<!-- 기존 상세 설명: [readme_detail_260914.md](readme_detail_260914.md) -->
+
+
+---
+
+## 2026-10-14 업데이트: 전체 synthetic 데이터 및 NVS 학습
+
+위의 기존 안내는 2026년 9월 snapshot과 학습 설정입니다. 아래는 확장 데이터 릴리스와 NVS 학습을 위한 추가 안내입니다.
+
+### 데이터 다운로드 및 구분
 
 HF 저장소는 **데이터만** 배포하고, 학습 코드와 설정은 이 Git 저장소에서 관리합니다.
 
@@ -48,7 +109,7 @@ python scripts/release/download_synthetic.py --destination /data/hypersim_synthe
 
 추출기는 기존 TAR를 새 폴더 구조로 변환하고 체크섬을 검증하며 중단 후 재개할 수 있습니다. 데이터 snapshot, held-out scene, 파일 구성은 [데이터 안내](docs/dataset_handoff.md)와 [HF 데이터 카드](https://huggingface.co/datasets/cyjcyj91/Hypersim-Distractor)를 확인하세요.
 
-## 3. NVS 학습: V=4, N=3, M=1
+### NVS 학습: V=4, N=3, M=1
 
 전체 뷰 V = 입력 N + novel M입니다. 입력 N개만 DA3 LQ 추출에 사용하며 M RGB는 all-clean teacher 감독에만 사용합니다. M 포즈는 Plucker 조건으로 주어집니다. 현재 아래 설정은 synthetic transient-only와 transient+static을 함께 사용하며, 아직 real 학습 경로를 구현한 설정은 아닙니다.
 
@@ -72,4 +133,3 @@ Loss = N clean group MSE + N distractor group MSE + M 전체 token MSE + attenti
 
 매 epoch transient-only에서 10,000그룹을 샘플링하고 transient+static의 train variant를 모두 한 번씩 사용합니다. EMA checkpoint는 1·3·10·20·30 epoch에 저장하며 `latest.pt`에는 model/EMA/optimizer/RNG 등 재시작 상태를 저장합니다. 재개 시 동일 명령에 `--resume result_train/handoff_nvs/checkpoints/latest.pt`를 추가하세요. 이 이식용 명령은 producer의 fixed eval을 자동 실행하지 않습니다. YAML의 `eval_epochs` 목록은 producer용 기록이며, 수신 환경의 평가 루틴을 별도로 실행하세요.
 
-기존 DA3/Omega 학습 방법은 [이전 README](https://github.com/yejich/GARD-DFrecon/blob/7293b67a76e6d1c3cece49af813e5578800ce9d7/README.md)에 보존되어 있습니다.
