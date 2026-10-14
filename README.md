@@ -133,3 +133,19 @@ Loss = N clean group MSE + N distractor group MSE + M 전체 token MSE + attenti
 
 매 epoch transient-only에서 10,000그룹을 샘플링하고 transient+static의 train variant를 모두 한 번씩 사용합니다. EMA checkpoint는 1·3·10·20·30 epoch에 저장하며 `latest.pt`에는 model/EMA/optimizer/RNG 등 재시작 상태를 저장합니다. 재개 시 동일 명령에 `--resume result_train/handoff_nvs/checkpoints/latest.pt`를 추가하세요. 이 이식용 명령은 producer의 fixed eval을 자동 실행하지 않습니다. YAML의 `eval_epochs` 목록은 producer용 기록이며, 수신 환경의 평가 루틴을 별도로 실행하세요.
 
+
+## 2026-10-14 추가 업데이트: V=4, N=2~3 가변 학습
+
+전체 V=4와 all-clean teacher 4뷰는 고정하고, 매 microstep마다 입력 N을 2 또는 3에서 균등하게 선택합니다. Novel M은 4−N으로, `(N,M)=(2,2)` 또는 `(3,1)`입니다. 같은 microstep의 모든 DDP rank는 같은 N을 사용합니다. Transient-only와 transient+static 모두 이 규칙을 적용하며 negative variant의 epoch당 1회 방문은 유지합니다.
+
+Source DA3에는 N뷰 RGB만 들어가고, teacher DA3에는 항상 clean N+M=4뷰가 들어갑니다. 모든 M뷰에 각각 Plucker 조건을 제공합니다. N camera token은 clean loss에 포함하며 M loss는 M의 모든 camera/patch token에 대한 평균입니다. 여러 M뷰를 추가했다고 M loss를 합산하지 않습니다. 포즈는 기존 source baseline 기반 DA3 scale 정렬을 유지하므로 이 설정에서는 N≥2가 필요합니다.
+
+새 이식용 기본 설정은 [nvs_v4_n2_3.yaml](run_configs/handoff/nvs_v4_n2_3.yaml)입니다. 위 `prepare_handoff_config.py` 명령은 이제 이 가변 설정을 기본으로 사용합니다. 기존 고정 N=3 설정이 필요하면 `--template run_configs/handoff/nvs_v4_n3_m1.yaml`을 명시하세요. `nvs` 항목이 없는 기존 run config는 계속 N=3, M=1로 처리됩니다.
+
+현재 서버에서 새 학습을 실행하려면:
+
+```bash
+bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+```
+
+기본 GPU는 2,3이며 FP32, attention alignment ON, mask-aware OFF입니다. 기존 1·3·10·20·30 EMA 저장, `latest.pt` 재시작, fixed eval 일정을 유지합니다. Fixed eval은 기존 평가 계획의 N=4, M=1 프로토콜을 사용하므로 학습의 V=4와 구분해야 합니다. 실행 중인 기존 학습을 자동으로 중단하거나 재시작하지 않습니다.

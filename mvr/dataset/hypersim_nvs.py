@@ -1,4 +1,4 @@
-"""Append held-out clean supervision; keep source LQ RGB V-only."""
+"""Add held-out clean supervision without encoding novel RGB in the source."""
 import random
 import numpy as np
 import torch
@@ -29,9 +29,10 @@ def nvs_collate_fn(samples):
  return out
 
 class MixedHypersimNVS(Dataset):
- """Hold out one covisible clean M while preserving mixed epoch ownership."""
- def __init__(self,pairs):
-  self.pairs=pairs
+ """Hold out M=total_views-N clean views, preserving mixed epoch ownership."""
+ def __init__(self,pairs,total_views=4):
+  if total_views!=4:raise ValueError("Mixed NVS currently requires V=4")
+  self.pairs=pairs;self.total_views=total_views
   self.negative_members={i:g['indices'] for g in pairs.negative_groups for i in g['indices']}
  def __len__(self):return len(self.pairs)
  def __getitem__(self,item):
@@ -40,12 +41,13 @@ class MixedHypersimNVS(Dataset):
   ids=[i-offset for i in sample['frame_ids']]
   candidates=self.negative_members[anchor] if source else ds.records[anchor]['candidates']
   pool=[i for i in candidates if i not in ids]
-  if not pool:raise ValueError('No distinct clean M remaining')
-  chosen=random.Random(seed^0x4e5653).choice(pool)
-  sample['nvs_frame_ids']=[chosen+offset];sample['nvs_hq_views']=[ds.image(ds.records[chosen],'clean.png')]
-  sample['nvs_directories']=[str(ds.root/ds.records[chosen]['directory'])]
+  novel_views=self.total_views-views
+  if novel_views<1 or len(pool)<novel_views:raise ValueError('Not enough distinct clean M views for fixed V')
+  chosen=random.Random(seed^0x4e5653).sample(pool,novel_views)
+  sample['nvs_frame_ids']=[i+offset for i in chosen];sample['nvs_hq_views']=[ds.image(ds.records[i],'clean.png') for i in chosen]
+  sample['nvs_directories']=[str(ds.root/ds.records[i]['directory']) for i in chosen]
   sample['source_directories']=[str(ds.root/ds.records[i]['directory']) for i in ids]
-  sample['camera_records']=[{k:ds.records[i][k] for k in ['scene','camera','frame']} for i in ids+[chosen]]
+  sample['camera_records']=[{k:ds.records[i][k] for k in ['scene','camera','frame']} for i in ids+chosen]
   return sample
 
 # The trainer uses these records only to place M in the source DA3 gauge;
@@ -56,3 +58,20 @@ def nvs_collate_fn(samples):
  if 'camera_records' in samples[0]:out['camera_records']=[s['camera_records'] for s in samples]
  if 'data_source' in samples[0]:out['data_source']=[s['data_source'] for s in samples]
  return out
+
+
+def mixed_nvs_sampler(pairs,batch_size,rank,world_size,*,total_views=4,min_source_views=2,max_source_views=3,**kwargs):
+ """Same N across ranks; every original anchor must support all V clean views."""
+ from .hypersim_mixed import MixedPairBatchSampler
+ if total_views!=4 or not 2<=min_source_views<=max_source_views<total_views:
+  raise ValueError('Require V=4 and 2 <= min_source_views <= max_source_views <= 3')
+ sampler=MixedPairBatchSampler(pairs,batch_size,rank,world_size,min_views=min_source_views,max_views=max_source_views,**kwargs)
+ for n,pool in sampler.original_pools.items():
+  eligible={scene:[i for i in ids if len(pairs.datasets[0].records[i]['candidates'])>=total_views-1] for scene,ids in pool.items()}
+  sampler.original_pools[n]={scene:ids for scene,ids in eligible.items() if ids}
+  if not sampler.original_pools[n]:raise ValueError(f'No original anchors support V={total_views} for N={n}')
+ if any(len(set(group['indices']))<total_views for group in pairs.negative_groups):
+  raise ValueError('Every negative variant must provide four distinct views')
+ sampler.summary.update(total_views=total_views,min_source_views=min_source_views,max_source_views=max_source_views,
+                        min_novel_views=total_views-max_source_views,max_novel_views=total_views-min_source_views)
+ return sampler

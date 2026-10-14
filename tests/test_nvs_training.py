@@ -9,6 +9,31 @@ from gard.GARD import GARD
 
 def options():return dict(in_channels=16,hidden_size=[32,32],depth=[2,2],num_heads=[2,2],mlp_ratio=2.,use_pos_embed=False)
 class NVSTests(unittest.TestCase):
+ def test_variable_source_multiple_novel_backward_and_pose_slicing(self):
+  from mvr.nvs_training import nvs_training_step
+  from mvr.nvs_camera import align_target_camera
+  import numpy as np
+  model=NVSGARD(**options()).train();model._nonreentrant_checkpoint=True
+  # Loaded GARD weights have a nonzero output head; fresh construction zero-initializes it.
+  for block in model.blocks:torch.nn.init.normal_(block.adaLN_modulation[-1].weight,std=.03)
+  torch.nn.init.normal_(model.final_layer.linear.weight,std=.03)
+  torch.nn.init.normal_(model.final_layer.adaLN_modulation[-1].weight,std=.03)
+  gt=np.repeat(np.eye(4)[None],4,axis=0);gt[:,0,3]=np.arange(4)
+  for n in [2,3,2]:
+   source=torch.randn(1,n,5,16);teacher=torch.randn(1,4,5,16)
+   targets,scale,residual=align_target_camera(gt,np.linalg.inv(gt[:n])[:,:3])
+   self.assertEqual(targets.shape,(4-n,4,4));self.assertAlmostEqual(scale,1.);self.assertAlmostEqual(residual,0.)
+   rays=target_plucker_rays(torch.tensor(targets,dtype=torch.float32)[None],torch.eye(3)[None,None].repeat(1,4-n,1,1),(28,28))
+   model.zero_grad(set_to_none=True)
+   losses=nvs_training_step(model,source,teacher,rays,torch.tensor([.6]),(28,28))
+   losses['loss'].backward()
+   self.assertTrue(torch.isfinite(losses['loss']))
+   self.assertGreater(model.nvs_camera_embedder.weight.grad.abs().sum().item(),0.)
+  # Novel loss is an average: duplicating identical novel errors does not double it.
+  for n in [2,3]:
+   flow=prepare_nvs_flow(torch.zeros(1,n,5,16),torch.zeros(1,4,5,16),torch.ones(1),noise=torch.zeros(1,4,5,16))
+   prediction=torch.zeros_like(flow.target_velocity);prediction[:,n:]=2.
+   self.assertAlmostEqual(nvs_flow_losses(prediction,flow)['nvs_loss'].item(),4.)
  def test_separate_loss_values_weights_and_gradients(self):
   source=torch.zeros(1,4,3,2);teacher=torch.zeros(1,5,3,2)
   batch=prepare_nvs_flow(source,teacher,torch.ones(1),noise=torch.zeros_like(teacher))

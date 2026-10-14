@@ -14,8 +14,8 @@ from mvr.nvs_training import NVSGARD,NVSLossTracker,nvs_training_step,target_plu
 from mvr.nvs_attention import geometry_target,clear_attention
 from mvr.grouped_mse import token_groups,grouped_mse
 from mvr.nvs_camera import HypersimCameraReferences,align_target_camera
-from mvr.dataset.hypersim_mixed import MixedHypersimPairs,MixedPairBatchSampler
-from mvr.dataset.hypersim_nvs import MixedHypersimNVS,nvs_collate_fn
+from mvr.dataset.hypersim_mixed import MixedHypersimPairs
+from mvr.dataset.hypersim_nvs import MixedHypersimNVS,nvs_collate_fn,mixed_nvs_sampler
 from depth_anything_3.api import DepthAnything3
 from stage2.transport import create_transport
 
@@ -44,12 +44,12 @@ def main():
   save_json(args.out/'status.json',dict(status='initializing',world_size=world))
  # Preserve original+negative scene split and exactly-once negative variants.
  ds=MixedHypersimPairs(cfg.data.manifest,cfg.data.negative_manifest,original_root=cfg.data.root,negative_root=cfg.data.negative_root,scene_split_policy=cfg.data.scene_split,process_res=cfg.resolution)
- sampler=MixedPairBatchSampler(ds,1,rank,world,accumulation=cfg.accumulation,seed=cfg.seed,min_views=3,max_views=3,original_samples=cfg.data.original_samples)
- sampler.original_pools[3]={scene:[i for i in ids if len(ds.datasets[0].records[i]['candidates'])>=3] for scene,ids in sampler.original_pools[3].items()}
- sampler.original_pools[3]={k:v for k,v in sampler.original_pools[3].items() if v}
- loader=DataLoader(MixedHypersimNVS(ds),batch_sampler=sampler,num_workers=cfg.workers,collate_fn=nvs_collate_fn,pin_memory=True)
+ nvs_cfg=cfg.get('nvs',{})
+ total_views=int(nvs_cfg.get('total_views',4));min_source=int(nvs_cfg.get('min_source_views',3));max_source=int(nvs_cfg.get('max_source_views',3))
+ sampler=mixed_nvs_sampler(ds,1,rank,world,total_views=total_views,min_source_views=min_source,max_source_views=max_source,accumulation=cfg.accumulation,seed=cfg.seed,original_samples=cfg.data.original_samples)
+ loader=DataLoader(MixedHypersimNVS(ds,total_views),batch_sampler=sampler,num_workers=cfg.workers,collate_fn=nvs_collate_fn,pin_memory=True)
  cameras=HypersimCameraReferences(cfg.camera.root,cfg.camera.parameters)
- if rank==0:save_json(args.out/'data_audit.json',dict(**sampler.summary,source_views=3,novel_views=1,held_out=ds.manifest['mixed_sampling']['held_out_scenes'],original_eligible_anchors=sum(map(len,sampler.original_pools[3].values()))))
+ if rank==0:save_json(args.out/'data_audit.json',dict(**sampler.summary,source_views=list(range(min_source,max_source+1)),novel_views=[total_views-n for n in range(min_source,max_source+1)],held_out=ds.manifest['mixed_sampling']['held_out_scenes'],original_eligible_anchors=sum(map(len,sampler.original_pools[max_source].values()))))
  model=NVSGARD(**OmegaConf.to_container(cfg.model,resolve=True));model._nonreentrant_checkpoint=True
  ckpt=torch.load(args.resume or cfg.checkpoint,map_location='cpu',weights_only=False,mmap=True);weights=ckpt.get('model') if args.resume else ckpt.get('ema',ckpt.get('model',ckpt))
  # Only complete new camera module may be absent when initializing old GARD.
@@ -72,9 +72,11 @@ def main():
  mean=torch.tensor([.485,.456,.406],device=device)[None,None,:,None,None];std=torch.tensor([.229,.224,.225],device=device)[None,None,:,None,None]
  transport=create_transport(path_type='Linear',prediction='velocity',loss_weight=None,time_dist_type='logit-normal_0_1',time_dist_shift=math.sqrt(1492992/4096))
  featcfg=SimpleNamespace(extract_feat_layers=[17],concat_feat=False,break_and_return_feat=True)
- meter=NVSLossTracker();source_counts={'original':0,'negative':0};micro=0;started=time.time()
+ meter=NVSLossTracker();source_counts={'original':0,'negative':0};view_counts={str(n):0 for n in range(min_source,max_source+1)};micro=0;started=time.time()
  def extract(batch):
   v=batch['lq_views'].to(device,non_blocking=True);hqs=torch.cat([batch['hq_views'],batch['nvs_hq_views']],1).to(device,non_blocking=True)
+  source_views=v.shape[1]
+  if hqs.shape[1]!=total_views or not min_source<=source_views<=max_source:raise ValueError('Invalid N/M batch layout')
   source,_=encoder.forward((v-mean)/std,export_feat_layers=[17],ref_view_strategy='first')
   if source.ref_b_idx is not None and not torch.all(source.ref_b_idx==0):raise RuntimeError('Source reference changed')
   lq=source.aux['feat_layer_17'].float().clone()
@@ -85,7 +87,7 @@ def main():
   alignment_target=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment) if cfg.attention_alignment.use else None
   for i,records in enumerate(batch['camera_records']):
    gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=align_target_camera(gt,pose[i]);scales.append(scale);residuals.append(residual)
-   rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[3:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
+   rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
   return lq,teacher,torch.cat(rays,0),v.shape[-2:],scales,residuals,alignment_target
  def checkpoint(epoch,next_batch):
   state=dict(torch=torch.get_rng_state(),cuda=torch.cuda.get_rng_state(),python=random.getstate(),numpy=np.random.get_state());states=[None]*world
@@ -96,7 +98,7 @@ def main():
   if world>1:dist.barrier()
  logger.info('Loaded real models/data; parameters=%s samples/epoch=%s',sum(p.numel() for p in model.parameters()),len(ds))
  if not args.resume:
-  # One actual V=3/M=1 data batch is reused ONLY for the memory preflight.
+  # One actual variable-N, fixed-V data batch is reused ONLY for the memory preflight.
   first=next(iter(loader));lq,hq,rays,size,_,_,alignment_target=extract(first)
   first_mask,first_flags=token_groups(first['pixel_masks'].to(device),first['distractor_views'].to(device),None)
   optimizer.zero_grad(set_to_none=True)
@@ -115,7 +117,7 @@ def main():
   reports=[None]*world
   if world>1:dist.all_gather_object(reports,dict(rank=rank,**peaks))
   else:reports=[dict(rank=rank,**peaks)]
-  if rank==0:save_json(args.out/'memory_preflight.json',dict(reports=reports,precision=precision,note='Real N3+M1 batch with group2 loss and configured attention alignment. Adam state allocated at step0; memory probes do not update model weights. Gradient checkpointing.'));logger.info('MEMORY %s',reports)
+  if rank==0:save_json(args.out/'memory_preflight.json',dict(reports=reports,precision=precision,note='Real variable-N, fixed-V batch with group2 loss and configured attention alignment. Adam state allocated at step0; memory probes do not update model weights. Gradient checkpointing.'));logger.info('MEMORY %s',reports)
 
  for epoch in range(start_epoch,cfg.epochs):
   sampler.set_epoch(epoch);optimizer.zero_grad(set_to_none=True)
@@ -131,7 +133,7 @@ def main():
     if not torch.isfinite(losses['loss']):raise RuntimeError('Nonfinite training loss')
     (losses['loss']/cfg.accumulation).backward()
     clear_attention(denoiser,cfg.attention_alignment)
-   source_counts[batch['data_source'][0]]+=1;micro+=1
+   source_counts[batch['data_source'][0]]+=1;view_counts[str(lq.shape[1])]+=1;micro+=1
    if not sync:continue
    norm=torch.nn.utils.clip_grad_norm_(model.parameters(),1.);optimizer.step();optimizer.zero_grad(set_to_none=True);step+=1
    with torch.no_grad():
@@ -147,9 +149,10 @@ def main():
     if world>1:dist.all_gather_object(memories,memory)
     else:memories=[memory]
     if rank==0:
-     extra={'train/epoch':epoch,'train/lr':optimizer.param_groups[0]['lr'],'train/grad_norm':float(norm),'train/elapsed_seconds':time.time()-started}
+     extra={'train/epoch':epoch,'train/lr':optimizer.param_groups[0]['lr'],'train/grad_norm':float(norm),'train/elapsed_seconds':time.time()-started,'train/source_views':lq.shape[1],'train/novel_views':hq.shape[1]-lq.shape[1]}
+     for n,count in view_counts.items():extra[f'train/source_N{n}_groups_rank0']=count
      for m in memories:extra[f'gpu{m["rank"]+2}/peak_allocated_GiB']=m['peak_allocated_GiB'];extra[f'gpu{m["rank"]+2}/peak_reserved_GiB']=m['peak_reserved_GiB']
-     run.log({**payload,**extra},step=step);save_json(args.out/'status.json',dict(status='running',step=step,epoch=epoch,source_counts_rank0=source_counts,memory=memories,wandb_url=run.url))
+     run.log({**payload,**extra},step=step);save_json(args.out/'status.json',dict(status='running',step=step,epoch=epoch,source_counts_rank0=source_counts,source_view_counts_rank0=view_counts,memory=memories,wandb_url=run.url))
    if step==1 or step%cfg.checkpoint_interval==0:checkpoint(epoch,batch_idx+1)
    if args.max_steps and step>=args.max_steps:
     checkpoint(epoch,batch_idx+1)
