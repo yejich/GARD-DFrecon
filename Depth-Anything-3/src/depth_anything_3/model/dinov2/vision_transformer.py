@@ -408,7 +408,7 @@ class DinoVisionTransformer(nn.Module):
                     else:
                         mvrm_output[('extract_feat', i)] = x     # b v n+1 d
                     if mvrm_train_cfg.break_and_return_feat and len(mvrm_train_cfg.extract_feat_layers) == 1:
-                        return None, None, mvrm_output
+                        return None, None, mvrm_output, b_idx
 
 
 
@@ -441,7 +441,7 @@ class DinoVisionTransformer(nn.Module):
                     else:
                         mvrm_output[('extract_feat', i)] = x     # b v n+1 d
                     if mvrm2_cfg.train.break_and_return_feat and len(mvrm2_cfg.train.extract_feat_layers) == 1:
-                        return None, None, mvrm_output
+                        return None, None, mvrm_output, b_idx
                 
             
             # collect feat layers for DPT Head

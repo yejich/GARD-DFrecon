@@ -279,6 +279,7 @@ class Transport:
         
         
         # CFG training: randomly zero out lq conditioning so the model learns unconditional denoising
+        should_drop = torch.zeros(b, device=x1.device, dtype=torch.bool)
         lq_drop_prob = cfg.training.guidance.get('lq_drop', 0.0)
         if lq_drop_prob > 0.0:
             should_drop = torch.rand(b, device=x1.device) < lq_drop_prob  # (b,) bool
@@ -323,8 +324,18 @@ class Transport:
                 xt = xt + xcond                          # b v n+1 d            
         
         
-        # mvrm forward pass 
-        model_output = model(xt, t, model_img_size, analysis=mvrm_analysis) # b v n+1 d
+        # Pass the same post-CFG-drop LQ features to the optional condition branch.
+        condition_kwargs = {}
+        if cfg.stage_2.params.get('c_feat_enabled', False):
+            condition_kwargs = dict(lq_latent=xcond, condition_mask=~should_drop)
+        # mvrm forward pass
+        if cfg.stage_2.params.get('mask_head_enabled', False):
+            auxiliary = model(xt, t, model_img_size, analysis=mvrm_analysis, return_aux=True, **condition_kwargs)
+            model_output = auxiliary['pred']
+            terms['mask_logits'] = auxiliary['mask_logits']
+            terms['mask_conditioned'] = ~should_drop
+        else:
+            model_output = model(xt, t, model_img_size, analysis=mvrm_analysis, **condition_kwargs) # b v n+1 d
         assert model_output.shape == ut.shape 
         
 
@@ -476,15 +487,26 @@ class Transport:
             else:
                 x_in = x
 
+            condition_kwargs, uncondition_kwargs = {}, {}
+            owner = getattr(model, '__self__', model)
+            owner = getattr(owner, 'module', owner)
+            if getattr(owner, 'c_feat_enabled', False):
+                cached = model_kwargs.pop('c_feat', None)
+                condition_kwargs = (dict(c_feat=cached) if cached is not None
+                                    else dict(lq_latent=lq_latent))
+                # Gating AFTER projection suppresses learned biases as well.
+                uncondition_kwargs = dict(condition_kwargs,
+                    condition_mask=torch.zeros(x.shape[0], device=x.device, dtype=torch.bool))
+
             if guidance.use_cfg and guidance.cfg_scale > 1.0:
                 cfg_scale = guidance.cfg_scale
                 x_uncond = x        # unconditional: no lq_latent (matches CFG dropout during training)
                 x_cond   = x_in     # conditional: lq_latent fused
-                v_uncond = model(x_uncond, t, model_img_size, analysis)
-                v_cond   = model(x_cond,   t, model_img_size, analysis)
+                v_uncond = model(x_uncond, t, model_img_size, analysis, **uncondition_kwargs)
+                v_cond   = model(x_cond,   t, model_img_size, analysis, **condition_kwargs)
                 model_output = v_uncond + cfg_scale * (v_cond - v_uncond)
             else:
-                model_output = model(x_in, t, model_img_size, analysis)
+                model_output = model(x_in, t, model_img_size, analysis, **condition_kwargs)
             
             if analysis is not None:
                 if analysis.vis_attn_map and len(analysis.mvrm_attn_map.extract_idx) != 0:
@@ -720,7 +742,18 @@ class Sampler:
             time_dist_shift=self.transport.time_dist_shift,
         )
         
-        return _ode.sample
+        def sample_with_condition(init, model, **kwargs):
+            owner = getattr(model, '__self__', model)
+            owner = getattr(owner, 'module', owner)
+            if getattr(owner, 'c_feat_enabled', False) and kwargs.get('c_feat') is None:
+                lq = kwargs.get('lq_latent')
+                if lq is None:
+                    raise ValueError('C_feat sampling requires lq_latent')
+                # Per-call cache: never reuse features across inputs or model weights.
+                kwargs['c_feat'] = owner.encode_condition(lq, kwargs['model_img_size'])
+            return _ode.sample(init, model, **kwargs)
+
+        return sample_with_condition
 
 def _debug_print(*args):
     import logging

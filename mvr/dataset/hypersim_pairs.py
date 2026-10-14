@@ -17,12 +17,14 @@ from .pho_concat_ds import multiview_collate_fn
 class HypersimPairs(Dataset):
     ds_name = 'hypersim_pairs'
 
-    def __init__(self, manifest, split='train', process_res=504, patch_size=14):
+    def __init__(self, manifest, split='train', process_res=504, patch_size=14, root=None,
+                 include_object_masks=False):
         self.manifest = json.loads(Path(manifest).read_text())
-        self.root = Path(os.environ.get('HYPERSIM_PAIRS_ROOT', self.manifest['root'])).expanduser()
+        self.root = Path(root if root is not None else os.environ.get('HYPERSIM_PAIRS_ROOT', self.manifest['root'])).expanduser()
         self.records = self.manifest[split]
         self.split = split
         self.process_res, self.patch_size = process_res, patch_size
+        self.include_object_masks = include_object_masks
         self.datasets = [self]  # Training logger compatibility.
 
     def __len__(self):
@@ -51,22 +53,30 @@ class HypersimPairs(Dataset):
         hq = [self.image(record, 'clean.png') for record in records]
         lq = [self.image(record, 'distractor.png') if flag else clean.copy()
               for record, flag, clean in zip(records, flags, hq)]
-        masks = []
+        masks, object_masks = [], []
         for record, flag, clean in zip(records, flags, hq):
             mask = np.zeros(clean.shape[:2], dtype=np.float32)
+            object_mask = mask.copy()
             if flag:
                 folder = self.root / record['directory']
                 with Image.open(folder / 'mask_object.png') as im:
                     raw = np.array(im) > 0
+                if self.include_object_masks:
+                    object_mask = cv2.resize(raw.astype(np.uint8), (clean.shape[1], clean.shape[0]),
+                                             interpolation=cv2.INTER_NEAREST).astype(np.float32)
                 with Image.open(folder / 'mask_shadow.png') as im:
                     raw |= np.array(im) > 0
                 mask = cv2.resize(raw.astype(np.uint8), (clean.shape[1], clean.shape[0]),
                                   interpolation=cv2.INTER_NEAREST).astype(np.float32)
             masks.append(mask)
+            object_masks.append(object_mask)
         ids = [record['directory'].replace('/', '_') for record in records]
-        return dict(frame_ids=indices, hq_ids=ids,
+        result = dict(frame_ids=indices, hq_ids=ids,
                     lq_ids=[f'{key}_{"distractor" if flag else "clean"}' for key, flag in zip(ids, flags)],
                     hq_views=hq, lq_views=lq, distractor_views=flags, pixel_masks=np.stack(masks))
+        if self.include_object_masks:
+            result['object_pixel_masks'] = np.stack(object_masks)
+        return result
 
 
 class PairBatchSampler(Sampler):
@@ -112,11 +122,19 @@ def pair_collate_fn(batch):
     output = multiview_collate_fn(batch)
     output['distractor_views'] = torch.tensor([x['distractor_views'] for x in batch], dtype=torch.bool)
     output['pixel_masks'] = torch.from_numpy(np.stack([x['pixel_masks'] for x in batch]))
+    if 'object_pixel_masks' in batch[0]:
+        output['object_pixel_masks'] = torch.from_numpy(np.stack([x['object_pixel_masks'] for x in batch]))
+    if 'data_source' in batch[0]:
+        output['data_source'] = [x['data_source'] for x in batch]
     return output
 
 
 def load_train_data(cfg, batch_size, rank, world_size):
-    ds = HypersimPairs(cfg.data.train.pairs.manifest)
+    if cfg.data.train.pairs.get('negative_manifest'):
+        from .hypersim_mixed import load_mixed_train_data
+        return load_mixed_train_data(cfg, batch_size, rank, world_size)
+    ds = HypersimPairs(cfg.data.train.pairs.manifest,
+                      include_object_masks=cfg.mvrm.loss.get('mask', {}).get('target', 'object_shadow') == 'object')
     sampler = PairBatchSampler(ds, batch_size, rank, world_size,
                                accumulation=int(cfg.training.grad_accum_steps),
                                seed=cfg.training.global_seed,

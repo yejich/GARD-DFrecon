@@ -8,7 +8,7 @@ from .wandb_utils import initialize_wandb, create_logger
 import logging
 
 def configure_experiment_dirs(cfg, rank) -> Tuple[str, str, logging.Logger]:
-    experiment_name = f'TRAIN__{cfg.training.precision}__{"-".join(cfg.data.train.list)}__{cfg.data.train.hypersim.view_selection.strategy}-{cfg.data.train.tartanair.view_selection.strategy}__{cfg.stage_1.model}-{cfg.stage_1.model_size}-extractfeat{cfg.mvrm.train.extract_feat_layers[0]}-{cfg.stage_2.model}__bs{cfg.training.global_batch_size}-maxview{cfg.data.train.max_num_input_view}-accum{cfg.training.grad_accum_steps}__lr-{cfg.training.optimizer.lr:.0e}__msg-{cfg.log.tracker.wandb.msg}'
+    experiment_name = f'TRAIN_{cfg.training.precision}_{"-".join(cfg.data.train.list)}_{cfg.stage_1.model}-{cfg.stage_1.model_size}-L{cfg.mvrm.train.extract_feat_layers[0]}_bs{cfg.training.global_batch_size}-maxview{cfg.data.train.max_num_input_view}-accum{cfg.training.grad_accum_steps}_lr-{cfg.training.optimizer.lr:.0e}'
     # experiment_name = os.environ.get("EXPERIMENT_NAME")
     # assert experiment_name is not None, "Please set the EXPERIMENT_NAME environment variable."
     experiment_dir = os.path.join(cfg.log.result_root_dir, "-".join(cfg.data.train.list), experiment_name)

@@ -27,6 +27,9 @@ def fingerprint(data):
     """Paths may move to another server; relative identities and groups must not."""
     stable = {k: data[k] for k in ('train', 'eval', 'eval_groups', 'eval_scene',
                                   'minimum_covisibility', 'distractor_probability', 'seed', 'eval_views')}
+    if 'mixed_sampling' in data:
+        stable['mixed_sampling'] = data['mixed_sampling']
+        stable['negative_fixed_groups'] = data['negative_fixed_groups']
     return hashlib.sha256(json.dumps(stable, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 

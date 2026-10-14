@@ -20,6 +20,7 @@ from einops import rearrange
 from RAE.src.stage2.models.model_utils import NormAttentionMVRM
 from RAE.src.stage2.models.rope import RotaryPositionEmbedding2D, PositionGetter
 from torch.utils.checkpoint import checkpoint
+from .condition_encoder import LQConditionEncoder
 
 
 def DDTModulate(x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor) -> torch.Tensor:
@@ -239,7 +240,13 @@ class GARD(nn.Module):
             wo_shift=False,
             use_pos_embed: bool = True,
             use_global_residual = False,
-            ddt_final_layer_output_dim = None
+            ddt_final_layer_output_dim = None,
+            mask_head_enabled: bool = False,
+            mask_head_hidden_size: int = 256,
+            mask_head_layer: Optional[int] = None,
+            mask_head_source: str = "encoder",
+            c_feat_enabled: bool = False,
+            c_feat_mlp_ratio: float = 2.0,
     ):
         super().__init__()
         
@@ -262,6 +269,19 @@ class GARD(nn.Module):
         self.num_encoder_blocks = depth[0]  # 28
         self.num_decoder_blocks = depth[1]  # 2
         self.num_blocks = depth[0] + depth[1]   # 30
+        # Public config uses one-based encoder block numbers; None preserves
+        # the original final-encoder-block head and checkpoint parameter names.
+        if mask_head_source not in ("encoder", "decoder"):
+            raise ValueError("mask_head_source must be encoder or decoder")
+        if c_feat_enabled and mask_head_source != "encoder":
+            raise ValueError("C_feat cannot use a decoder mask head")
+        self.mask_head_source = "c_feat" if c_feat_enabled else mask_head_source
+        head_depth = self.num_encoder_blocks if mask_head_source == "encoder" else self.num_decoder_blocks
+        self.mask_head_layer = head_depth if mask_head_layer is None else mask_head_layer
+        if (isinstance(self.mask_head_layer, bool) or
+                not isinstance(self.mask_head_layer, int) or
+                not 1 <= self.mask_head_layer <= head_depth):
+            raise ValueError('mask_head_layer must be a one-based block number within mask_head_source')
         
         self.use_rope = use_rope    # t
         # analyze patch size
@@ -342,6 +362,36 @@ class GARD(nn.Module):
         
         self.initialize_weights()
 
+        # Attach after base initialization without changing its RNG stream.
+        # Disabled models retain exactly the original parameter/state-dict keys.
+        self.c_feat_enabled = c_feat_enabled
+        self.condition_encoder = None
+        self.condition_projector = None
+        if c_feat_enabled:
+            if self.s_patch_size != 1 or c_feat_mlp_ratio <= 0:
+                raise ValueError('C_feat requires encoder patch_size=1 and positive MLP ratio')
+            if mask_head_layer is not None:
+                raise ValueError('C_feat mask head reads C_feat; do not set mask_head_layer')
+            with torch.random.fork_rng(devices=[]):
+                self.condition_encoder = LQConditionEncoder(
+                    in_channels, self.encoder_hidden_size, enc_num_heads,
+                    c_feat_mlp_ratio, self.rope, use_qknorm)
+                self.condition_projector = nn.Linear(self.encoder_hidden_size, self.encoder_hidden_size)
+                nn.init.zeros_(self.condition_projector.weight)
+                nn.init.zeros_(self.condition_projector.bias)
+        self.mask_head = None
+        if mask_head_enabled:
+            if self.s_patch_size != 1 or mask_head_hidden_size < 1:
+                raise ValueError('Mask head requires s_patch_size=1 and a positive hidden size')
+            head_dim = self.decoder_hidden_size if mask_head_source == "decoder" else self.encoder_hidden_size
+            with torch.random.fork_rng(devices=[]):
+                self.mask_head = nn.Sequential(
+                    nn.LayerNorm(head_dim),
+                    nn.Linear(head_dim, mask_head_hidden_size),
+                    nn.GELU(),
+                    nn.Linear(mask_head_hidden_size, 1),
+                )
+
 
     def initialize_weights(self, xavier_uniform_init: bool = False):
         if xavier_uniform_init:
@@ -421,6 +471,11 @@ class GARD(nn.Module):
     def process_attention_encoder(self, x, c, block, attn_type="global", pos=None, layer_idx=None, analysis=None):
         
         b, s, n, _ = x.shape
+        if c.ndim == 4:
+            if attn_type == "local":
+                c = rearrange(c, "b v n d -> (b v) n d")
+            elif attn_type == "global":
+                c = rearrange(c, "b v n d -> b (v n) d")
         if attn_type == "local":
             x = rearrange(x, "b s n c -> (b s) n c")
             if pos is not None:
@@ -440,7 +495,7 @@ class GARD(nn.Module):
             needs_attn_map = (analysis is not None and
                               analysis.vis_attn_map and
                               layer_idx in analysis.mvrm_attn_map.extract_idx)
-            if needs_attn_map:
+            if needs_attn_map or getattr(self, '_nonreentrant_checkpoint', False):
                 # use_reentrant=False: forward runs with autograd (attn gets grad_fn),
                 # but q/k/v are freed and recomputed during backward → saves memory
                 x = checkpoint(block_forward, x, c, pos, layer_idx, attn_type, analysis, use_reentrant=False)
@@ -482,7 +537,7 @@ class GARD(nn.Module):
             needs_attn_map = (analysis is not None and
                               analysis.vis_attn_map and
                               layer_idx in analysis.mvrm_attn_map.extract_idx)
-            if needs_attn_map:
+            if needs_attn_map or getattr(self, '_nonreentrant_checkpoint', False):
                 x = checkpoint(block_forward, x, c, pos, layer_idx, attn_type, analysis, use_reentrant=False)
             else:
                 x = checkpoint(block_forward, x, c, pos, layer_idx, attn_type, analysis)
@@ -497,7 +552,28 @@ class GARD(nn.Module):
         return x
 
 
-    def forward(self, x, t, model_img_size, analysis=None):
+    def encode_condition(self, lq_latent, model_img_size):
+        """Build C_feat once per input; callers may reuse it during ODE inference.
+
+        LQ tokens must already be in DA3 reference-first order, including CLS.
+        Do not detach the result during training.
+        """
+        if not self.c_feat_enabled:
+            raise ValueError('encode_condition requires c_feat_enabled=True')
+        h, w = model_img_size
+        if h % 14 or w % 14 or lq_latent.ndim != 4:
+            raise ValueError('C_feat requires [B,V,1+patches,C] and a patch-14 image grid')
+        b, v, n, d = lq_latent.shape
+        if n != 1 + (h // 14) * (w // 14) or d != self.in_channels:
+            raise ValueError('LQ token shape does not match image grid / input channels')
+        pos, global_pos = self._prepare_rope(b, v, h // 14, w // 14, lq_latent.device)
+        return self.condition_encoder(lq_latent, pos, global_pos)
+
+    def forward(self, x, t, model_img_size, analysis=None, return_aux=False,
+                lq_latent=None, c_feat=None, condition_mask=None,
+                encoder_token_condition=None):
+        if return_aux and self.mask_head is None:
+            raise ValueError('return_aux requires mask_head_enabled=True')
         
         
         if self.use_global_residual:
@@ -524,6 +600,28 @@ class GARD(nn.Module):
         c = nn.functional.silu(t)       # b*v d
         
 
+        condition_feature = None
+        if self.c_feat_enabled:
+            if c_feat is not None and lq_latent is not None:
+                raise ValueError('Pass lq_latent or cached c_feat, not both')
+            if c_feat is None:
+                if lq_latent is None:
+                    raise ValueError('C_feat enabled: pass lq_latent or cached c_feat')
+                if lq_latent.shape != (b, v, n + 1, self.in_channels):
+                    raise ValueError('LQ tokens must match denoising tokens')
+                if condition_mask is None:
+                    condition_mask = lq_latent.detach().abs().sum((1, 2, 3)) > 0
+                c_feat = self.encode_condition(lq_latent, model_img_size)
+            if c_feat.shape != (b, v, n + 1, self.encoder_hidden_size):
+                raise ValueError('Cached C_feat shape does not match denoising tokens')
+            condition_feature = c_feat
+            spatial = self.condition_projector(c_feat)
+            if condition_mask is not None:
+                if condition_mask.shape != (b,):
+                    raise ValueError('condition_mask must have shape [B]')
+                spatial = spatial * condition_mask[:, None, None, None].to(spatial.dtype)
+            c = F.silu(t[:, None, None, :] + spatial)
+
         # encoder - cls embedding 
         s_cls_tkn = self.s_cls_embedder(cls_tkn.reshape(b*v, 1, -1))
         
@@ -545,12 +643,20 @@ class GARD(nn.Module):
             
 
         # PHO prepare rope
+        if encoder_token_condition is not None:
+            if encoder_token_condition.shape != s.shape:
+                raise ValueError('Encoder token condition must match [B,V,CLS+patches,C]')
+            s = s + encoder_token_condition.to(device=s.device, dtype=s.dtype)
         pos, pos_nodiff = self._prepare_rope(b, v, num_pH, num_pW, s.device)  # b v n+1 2
         g_pos = pos_nodiff
         l_pos = pos
         
         
-        # ddt encoder forward apss     
+        # One auxiliary head reads one selected block; all encoder blocks still run.
+        mask_logits = None
+        if return_aux and self.c_feat_enabled:
+            mask_logits = self.mask_head(condition_feature[:, :, self.num_cls_tkn:]).squeeze(-1)
+        # ddt encoder forward apss
         for i in range(self.num_encoder_blocks):    # len: 28
             # s = self.blocks[i](s, c, feat_rope=self.enc_feat_rope)
             if i % 2 == 0:
@@ -559,9 +665,10 @@ class GARD(nn.Module):
             else:
                 # print(f'encoder - {i} global attn')
                 s = self.process_attention_encoder(s, c, self.blocks[i], 'global', pos=g_pos, layer_idx=i, analysis=analysis)    # b v n+1 d
+            if return_aux and self.mask_head_source == "encoder" and i + 1 == self.mask_head_layer:
+                # No detach: BCE trains the selected block and its predecessors.
+                mask_logits = self.mask_head(s[:, :, self.num_cls_tkn:]).squeeze(-1)
 
-
-        
         # reshape to (b*v n d)
         s = rearrange(s, 'b v n d -> (b v) n d')    # 16 973 1536
 
@@ -604,6 +711,9 @@ class GARD(nn.Module):
             else:
                 # print(f'decoder - {i} global attn')
                 x = self.process_attention_decoder(x, s, self.blocks[i], 'global', pos=g_pos, layer_idx=i, analysis=analysis)
+            if return_aux and self.mask_head_source == "decoder" and i - self.num_encoder_blocks + 1 == self.mask_head_layer:
+                # Full block output; BCE gradients reach this block and its predecessors.
+                mask_logits = self.mask_head(x[:, :, self.num_cls_tkn:]).squeeze(-1)
             
         
         # reshape to (b*v n d)
@@ -618,7 +728,9 @@ class GARD(nn.Module):
         
         if self.use_global_residual:
             x = x + global_residual
-        
+
+        if return_aux:
+            return {'pred': x, 'mask_logits': mask_logits}
         return x
 
 
@@ -667,6 +779,3 @@ class GARD(nn.Module):
         )
 
         return eps
-
-
-

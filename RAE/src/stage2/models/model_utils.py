@@ -525,7 +525,29 @@ class NormAttentionMVRM(nn.Module):
                            len(analysis['mvrm_attn_map']['extract_idx']) != 0 and
                            layer_idx in analysis['mvrm_attn_map']['extract_idx'])
 
-        if self.fused_attn and not use_manual_attn:
+        if use_manual_attn and (getattr(self, 'checkpoint_attention_heads', False) or getattr(self, 'retain_attention_head_mean', False)) and self.training:
+            # Checkpoint small head groups; reduce inside each group so only
+            # the mean escapes, avoiding H*N*N attention storage.
+            from torch.utils.checkpoint import checkpoint
+            outputs = []
+            mean_attn = None
+            def head_attention(qh, kh, vh):
+                probabilities = ((qh * self.scale) @ kh.transpose(-2, -1)).softmax(dim=-1)
+                probabilities = self.attn_drop(probabilities)
+                return probabilities @ vh, probabilities.sum(dim=1, keepdim=True) / self.num_heads
+            chunk_size = int(getattr(self, "attention_head_chunk_size", 1))
+            if chunk_size < 1: raise ValueError("Attention head chunk size must be positive")
+            for head in range(0, self.num_heads, chunk_size):
+                head_args = (q[:, head:head+chunk_size], k[:, head:head+chunk_size], v[:, head:head+chunk_size])
+                if getattr(self, 'checkpoint_attention_heads', False):
+                    head_out, contribution = checkpoint(head_attention, *head_args, use_reentrant=False)
+                else:
+                    head_out, contribution = head_attention(*head_args)
+                outputs.append(head_out)
+                mean_attn = contribution if mean_attn is None else mean_attn + contribution
+            x = torch.cat(outputs, dim=1)
+            attn = mean_attn
+        elif self.fused_attn and not use_manual_attn:
             q = q.to(v.dtype)
             k = k.to(v.dtype) # rope may change the q,k's dtype
             x = F.scaled_dot_product_attention(

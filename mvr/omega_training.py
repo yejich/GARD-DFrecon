@@ -262,6 +262,11 @@ def pair_dataset(cfg, split, patch_size):
 
 
 def load_train_data_omega(cfg, batch_size, rank, world_size, patch_size=16):
+    if cfg.data.train.pairs.get("negative_manifest"):
+        from mvr.dataset.hypersim_mixed import load_mixed_train_data
+        return load_mixed_train_data(cfg, batch_size, rank, world_size,
+                                    process_res=cfg.data.train.pairs.get("process_res", 512),
+                                    patch_size=patch_size)
     ds = pair_dataset(cfg, "train", patch_size)
     sampler = PairBatchSampler(ds, batch_size, rank, world_size,
                                accumulation=int(cfg.training.grad_accum_steps),
