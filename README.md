@@ -109,25 +109,74 @@ python scripts/release/download_synthetic.py --destination /data/hypersim_synthe
 
 추출기는 기존 TAR를 새 폴더 구조로 변환하고 체크섬을 검증하며 중단 후 재개할 수 있습니다. 데이터 snapshot, held-out scene, 파일 구성은 [데이터 안내](docs/dataset_handoff.md)와 [HF 데이터 카드](https://huggingface.co/datasets/cyjcyj91/Hypersim-Distractor)를 확인하세요.
 
-### NVS 학습: V=4, N=3, M=1
+### NVS 학습: V=4 고정, N=2~3, M=4-N
 
-전체 뷰 V = 입력 N + novel M입니다. 입력 N개만 DA3 LQ 추출에 사용하며 M RGB는 all-clean teacher 감독에만 사용합니다. M 포즈는 Plucker 조건으로 주어집니다. 현재 아래 설정은 synthetic transient-only와 transient+static을 함께 사용하며, 아직 real 학습 경로를 구현한 설정은 아닙니다.
+현재 NVS 학습의 전체 view 수 `V`는 4로 고정되어 있습니다. 입력 source view `N`은 매 microstep마다 2 또는 3으로 선택되고, novel view `M=4-N`입니다. 따라서 가능한 조합은 `(N,M)=(2,2)`와 `(3,1)`입니다. 입력 N개만 DA3 LQ 추출에 사용하며, M RGB는 all-clean teacher 감독에만 사용합니다. M 포즈는 Plucker 조건으로 주어집니다. 현재 아래 설정은 synthetic transient-only와 transient+static을 함께 사용하며, 아직 real 학습 경로를 구현한 설정은 아닙니다.
 
-```bash
-python scripts/train/nvs/prepare_handoff_config.py \
-  --data-root /data/hypersim_synthetic_full \
-  --output run_configs/handoff/local_nvs.yaml \
-  --wandb-entity YOUR_ENTITY
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.run \
-  --standalone --nproc_per_node=2 scripts/train/nvs/train.py \
-  --config run_configs/handoff/local_nvs.yaml \
-  --out result_train/handoff_nvs \
-  --checkpoint-dir result_train/handoff_nvs/checkpoints
+학습 launcher는 다음 Git 경로에 있습니다.
+
+```text
+run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 ```
 
-초기 체크포인트 `ckpts/gard_denoiser.pt`가 필요합니다. 경로가 다르면 config 준비 명령에 `--init-checkpoint /path/to/gard_denoiser.pt`를 추가하세요. W&B 인증은 본인 환경에서 설정하며 저장소에는 API key를 포함하지 않습니다.
+GPU 수와 global batch를 지정하면 launcher가 `accumulation = GLOBAL_BATCH_SIZE / GPU 수`를 자동 계산합니다. 예를 들어 GPU 4개에서 global batch 16이면 GPU당 batch 1, gradient accumulation 4입니다.
 
-설정은 [nvs_v4_n3_m1.yaml](run_configs/handoff/nvs_v4_n3_m1.yaml): GARD FP32, 504 해상도, GPU당 1그룹, GPU 2개 × accumulation 4 = global batch 8, 30 epochs, LR 2e-4, EMA 0.9995입니다. 위 명령은 GPU 2개 기준이며 다른 GPU 수에서는 global batch에 맞춰 accumulation을 조정해야 합니다. Mask head OFF, attention alignment ON, mask-aware attention OFF입니다. Frozen DA3는 기존 내부 mixed precision을 유지합니다.
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+```
+
+실행 전에 config와 경로만 검증하려면:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash --prepare-only
+```
+
+이 bash launcher가 데이터 경로와 학습 config를 생성하고, GPU 수에 맞춰 gradient accumulation을 계산한 뒤 `scripts/train/nvs/train.py`를 DDP로 실행합니다. 직접 `prepare_handoff_config.py`와 `torch.distributed.run`을 호출하는 방식은 이식용 저수준 경로이며, 현재 서버의 표준 실행 경로는 위 bash입니다.
+
+동일 launcher에서 주요 flow/NVS ablation을 바꿀 수 있습니다. 옵션은 자동으로 experiment name과 frozen `launch_config.yaml`에 기록됩니다.
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+NVS_BRANCH=true FLOWMAP_FROM=noise_lq \
+DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+```
+
+주요 ablation 실행 예시는 다음과 같습니다.
+
+```bash
+# 기본: NVS branch ON, flow map은 noise+LQ -> HQ
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  NVS_BRANCH=true FLOWMAP_FROM=noise_lq \
+  DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+
+# flow map만 noise -> HQ로 변경
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  NVS_BRANCH=true FLOWMAP_FROM=noise \
+  DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+
+# NVS branch를 끄고 source restoration만 학습
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  NVS_BRANCH=false FLOWMAP_FROM=noise \
+  DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+
+# distractor-aware attention alignment 추가
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  NVS_BRANCH=true FLOWMAP_FROM=noise \
+  DISTRACTOR_AWARE_ATTN_ALIGN=true ATTENTION_ALIGNMENT=true \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+```
+
+`FLOWMAP_FROM=noise_lq`는 source flow를 `LQ+0.3ε→HQ`로 시작하고 LQ condition을 유지합니다. `FLOWMAP_FROM=noise`는 source와 novel의 flow state를 `ε→HQ`로 시작하지만, LQ는 model condition으로 계속 제공합니다. 즉 두 옵션은 flow target/path만 비교하며 conditioning 유무를 섞지 않습니다. `NVS_BRANCH=false`는 novel view token/loss와 camera branch를 제외하고 source restoration만 학습합니다. `DISTRACTOR_AWARE_ATTN_ALIGN`은 attention target에서 distractor key를 제외하고 clean/distractor query group을 분리해 계산합니다.
+
+초기 체크포인트 `ckpts/gard_denoiser.pt`가 필요합니다. 경로가 다르면 실행 전에 `INIT_CHECKPOINT=/path/to/gard_denoiser.pt`를 지정하세요. W&B 인증은 본인 환경에서 설정하며 저장소에는 API key를 포함하지 않습니다.
+
+설정은 [nvs_v4_n2_3.yaml](run_configs/handoff/nvs_v4_n2_3.yaml): GARD FP32, 504 해상도, GPU당 1그룹, GPU 4개 × accumulation 4 = global batch 16, 30 epochs, LR 2e-4, EMA 0.9995입니다. GPU 수를 바꾸면 bash가 global batch에 맞춰 accumulation을 조정합니다. Mask head OFF, attention alignment ON, mask-aware attention OFF입니다. Frozen DA3는 기존 내부 mixed precision을 유지합니다.
 
 Loss = N clean group MSE + N distractor group MSE + M 전체 token MSE + attention alignment이며 가중치는 각각 1입니다. N camera token은 clean group에 포함되고 M camera token은 M의 전체 token 평균에 포함됩니다. Camera token에 별도 loss 가중치를 부여하지 않습니다. M에만 Plucker pose 조건을 주고 N에는 LQ feature를 addition으로 제공합니다.
 
@@ -145,7 +194,8 @@ Source DA3에는 N뷰 RGB만 들어가고, teacher DA3에는 항상 clean N+M=4�
 현재 서버에서 새 학습을 실행하려면:
 
 ```bash
-bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 ```
 
-기본 GPU는 2,3이며 FP32, attention alignment ON, mask-aware OFF입니다. 기존 1·3·10·20·30 EMA 저장, `latest.pt` 재시작, fixed eval 일정을 유지합니다. Fixed eval은 기존 평가 계획의 N=4, M=1 프로토콜을 사용하므로 학습의 V=4와 구분해야 합니다. 실행 중인 기존 학습을 자동으로 중단하거나 재시작하지 않습니다.
+기본 GPU는 0,1,2,3이며 FP32, attention alignment ON, mask-aware OFF입니다. 기존 1·3·10·20·30 EMA 저장, `latest.pt` 재시작, fixed eval 일정을 유지합니다. Fixed eval은 기존 평가 계획의 N=4, M=1 프로토콜을 사용하므로 학습의 V=4와 구분해야 합니다. 실행 중인 기존 학습을 자동으로 중단하거나 재시작하지 않습니다.

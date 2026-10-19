@@ -1,24 +1,30 @@
 #!/usr/bin/env bash
 # V=4 (N=2~3, M=4-N): group2 MSE + attention alignment; mask-aware OFF.
-# CUDA_VISIBLE_DEVICES=2,3 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+# CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+# Options: NVS_BRANCH=true|false, FLOWMAP_FROM=noise|noise_lq,
+#          DISTRACTOR_AWARE_ATTN_ALIGN=true|false, ATTENTION_ALIGNMENT=true|false
 # CPU 설정 준비만: 위 명령 끝에 --prepare-only 추가
 # 재시작: 위 명령 끝에 --resume /absolute/run/latest.pt 추가
 set -euo pipefail
 set +x
 
 # ==================== 여기서 실험 옵션 수정 ====================
-EXP_NAME="${EXP_NAME:-nvs_v4_n2-3_attn_align_on_mask_aware_off}"
+BASE_EXP_NAME="${EXP_NAME:-nvs_v4_n2-3}"
 ATTENTION_ALIGNMENT="${ATTENTION_ALIGNMENT:-true}"
 MASK_AWARE_ATTENTION="${MASK_AWARE_ATTENTION:-false}"
+DISTRACTOR_AWARE_ATTN_ALIGN="${DISTRACTOR_AWARE_ATTN_ALIGN:-false}"
+FLOWMAP_FROM="${FLOWMAP_FROM:-noise_lq}"
+NVS_BRANCH="${NVS_BRANCH:-true}"
 PRECISION="${PRECISION:-fp32}"
 NEGATIVE_MANIFEST="${NEGATIVE_MANIFEST:-manifests/hypersim_negative_mixed_snapshot.json}"
 INIT_CHECKPOINT="${INIT_CHECKPOINT:-ckpts/gard_denoiser.pt}"
 EPOCHS="${EPOCHS:-30}"
-GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-8}"  # GPU당 1그룹, accumulation 자동 계산
+GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"  # GPU당 1그룹, accumulation 자동 계산
 ORIGINAL_GROUPS_PER_EPOCH="${ORIGINAL_GROUPS_PER_EPOCH:-10000}"
 NUM_WORKERS="${NUM_WORKERS:-2}"
 LEARNING_RATE="${LEARNING_RATE:-0.0002}"
 NOVEL_WEIGHT="${NOVEL_WEIGHT:-1.0}"         # M의 전체 1+P token MSE 가중치
+EXP_NAME="${BASE_EXP_NAME}_nvs${NVS_BRANCH}_flow${FLOWMAP_FROM}_dattn${DISTRACTOR_AWARE_ATTN_ALIGN}_align${ATTENTION_ALIGNMENT}"
 LOG_EVERY_OPTIMIZER_STEPS="${LOG_EVERY_OPTIMIZER_STEPS:-4}"
 CHECKPOINT_INTERVAL="${CHECKPOINT_INTERVAL:-200}"
 SAVE_EPOCHS="${SAVE_EPOCHS:-1,3,10,20,30}"         # EMA; latest.pt에는 optimizer/RNG 포함
@@ -50,7 +56,7 @@ done
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
-export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-2,3}"
+export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1,2,3}"
 IFS=',' read -r -a GPU_DEVICES <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS=${#GPU_DEVICES[@]}
 if (( NUM_GPUS < 1 || GLOBAL_BATCH_SIZE < NUM_GPUS || GLOBAL_BATCH_SIZE % NUM_GPUS != 0 )); then
@@ -94,18 +100,24 @@ export NVS_LAUNCH_CONFIG="$CONFIG" NVS_INIT_CHECKPOINT="$INIT_CHECKPOINT"
 export PRECISION
 export EPOCHS ORIGINAL_GROUPS_PER_EPOCH NUM_WORKERS LEARNING_RATE NOVEL_WEIGHT ATTENTION_ALIGNMENT MASK_AWARE_ATTENTION
 export LOG_EVERY_OPTIMIZER_STEPS CHECKPOINT_INTERVAL SAVE_EPOCHS EVAL_EPOCHS NEGATIVE_MANIFEST WANDB_PROJECT WANDB_ENTITY
+export DISTRACTOR_AWARE_ATTN_ALIGN FLOWMAP_FROM NVS_BRANCH
 "$ROOT/.venv/bin/python" - <<'PY'
 import math, os
 from pathlib import Path
 from omegaconf import OmegaConf
 cfg = OmegaConf.load('run_configs/train/train_GARD_da3_nvs_v4_n2_3.yaml')
 cfg.precision = os.environ['PRECISION']
+for name, value in [('NVS_BRANCH', os.environ['NVS_BRANCH']), ('DISTRACTOR_AWARE_ATTN_ALIGN', os.environ['DISTRACTOR_AWARE_ATTN_ALIGN'])]:
+    if value.lower() not in ('true', 'false'): raise ValueError(f'{name} must be true/false')
+cfg.nvs_branch = os.environ['NVS_BRANCH'].lower() == 'true'
+cfg.flowmap_from = os.environ['FLOWMAP_FROM'].lower()
+if cfg.flowmap_from not in ('noise', 'noise_lq'): raise ValueError('FLOWMAP_FROM must be noise or noise_lq')
 for key, env in [('attention_alignment.use','ATTENTION_ALIGNMENT'), ('mask_aware_attention','MASK_AWARE_ATTENTION')]:
     value = os.environ[env].lower()
     if value not in ('true','false'): raise ValueError(f'{env} must be true/false')
     OmegaConf.update(cfg,key,value == 'true')
 if cfg.mask_aware_attention: raise ValueError('This NVS experiment requires mask-aware attention OFF')
-cfg.attention_alignment.distractor_aware.use = False
+cfg.attention_alignment.distractor_aware.use = os.environ['DISTRACTOR_AWARE_ATTN_ALIGN'].lower() == 'true'
 if cfg.precision not in ('fp32', 'bf16'): raise ValueError('PRECISION must be fp32 or bf16')
 for key, env in [('epochs','EPOCHS'), ('workers','NUM_WORKERS'), ('accumulation','GARD_GRAD_ACCUM_STEPS'), ('log_interval','LOG_EVERY_OPTIMIZER_STEPS'), ('checkpoint_interval','CHECKPOINT_INTERVAL')]:
     cfg[key] = int(os.environ[env])
@@ -127,7 +139,7 @@ cfg.wandb.project = os.environ['WANDB_PROJECT']
 cfg.wandb.name = Path(os.environ['NVS_LAUNCH_CONFIG']).parent.name
 OmegaConf.save(cfg, os.environ['NVS_LAUNCH_CONFIG'])
 print(f'Prepared config: {os.environ["NVS_LAUNCH_CONFIG"]}')
-print(f'V=4, N=2~3, M=4-N: N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment; camera tokens are clean')
+print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment; camera tokens are clean')
 PY
 if [[ "$PREPARE_ONLY" == true ]]; then exit 0; fi
 if [[ -f "$WANDB_ENV_FILE" ]]; then
