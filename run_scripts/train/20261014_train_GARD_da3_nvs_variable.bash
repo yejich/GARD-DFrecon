@@ -3,6 +3,8 @@
 # CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 # Options: NVS_BRANCH=true|false, FLOWMAP_FROM=noise|noise_lq,
 #          DISTRACTOR_AWARE_ATTN_ALIGN=true|false, ATTENTION_ALIGNMENT=true|false
+# NVS_CONFIG를 지정하면 prepare_handoff_config.py로 생성한 config를 기반으로
+# ablation/batch 옵션을 적용합니다.
 # CPU 설정 준비만: 위 명령 끝에 --prepare-only 추가
 # 재시작: 위 명령 끝에 --resume /absolute/run/latest.pt 추가
 set -euo pipefail
@@ -16,7 +18,9 @@ DISTRACTOR_AWARE_ATTN_ALIGN="${DISTRACTOR_AWARE_ATTN_ALIGN:-false}"
 FLOWMAP_FROM="${FLOWMAP_FROM:-noise_lq}"
 NVS_BRANCH="${NVS_BRANCH:-true}"
 PRECISION="${PRECISION:-fp32}"
-NEGATIVE_MANIFEST="${NEGATIVE_MANIFEST:-manifests/hypersim_negative_mixed_snapshot.json}"
+# 비워두면 NVS_CONFIG의 negative manifest를 그대로 사용합니다.
+NEGATIVE_MANIFEST="${NEGATIVE_MANIFEST:-}"
+NVS_CONFIG="${NVS_CONFIG:-run_configs/train/train_GARD_da3_nvs_v4_n2_3.yaml}"
 INIT_CHECKPOINT="${INIT_CHECKPOINT:-ckpts/gard_denoiser.pt}"
 EPOCHS="${EPOCHS:-30}"
 GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"  # GPU당 1그룹, accumulation 자동 계산
@@ -97,6 +101,8 @@ mkdir -p "$CHECKPOINT_DIR"
 CONFIG="$RUN_DIR/launch_config.yaml"
 
 export NVS_LAUNCH_CONFIG="$CONFIG" NVS_INIT_CHECKPOINT="$INIT_CHECKPOINT"
+NVS_CONFIG="$(realpath -e "$NVS_CONFIG")"
+export NVS_DATA_TEMPLATE="$NVS_CONFIG"
 export PRECISION
 export EPOCHS ORIGINAL_GROUPS_PER_EPOCH NUM_WORKERS LEARNING_RATE NOVEL_WEIGHT ATTENTION_ALIGNMENT MASK_AWARE_ATTENTION
 export LOG_EVERY_OPTIMIZER_STEPS CHECKPOINT_INTERVAL SAVE_EPOCHS EVAL_EPOCHS NEGATIVE_MANIFEST WANDB_PROJECT WANDB_ENTITY
@@ -105,7 +111,7 @@ export DISTRACTOR_AWARE_ATTN_ALIGN FLOWMAP_FROM NVS_BRANCH
 import math, os
 from pathlib import Path
 from omegaconf import OmegaConf
-cfg = OmegaConf.load('run_configs/train/train_GARD_da3_nvs_v4_n2_3.yaml')
+cfg = OmegaConf.load(os.environ['NVS_DATA_TEMPLATE'])
 cfg.precision = os.environ['PRECISION']
 for name, value in [('NVS_BRANCH', os.environ['NVS_BRANCH']), ('DISTRACTOR_AWARE_ATTN_ALIGN', os.environ['DISTRACTOR_AWARE_ATTN_ALIGN'])]:
     if value.lower() not in ('true', 'false'): raise ValueError(f'{name} must be true/false')
@@ -130,7 +136,8 @@ cfg.save_ema_epochs = [int(x) for x in os.environ['SAVE_EPOCHS'].split(',') if x
 cfg.eval_epochs = [int(x) for x in os.environ['EVAL_EPOCHS'].split(',') if x]
 if any(x < 1 or x > cfg.epochs for x in cfg.eval_epochs + list(cfg.save_ema_epochs)):
     raise ValueError('Save/eval epochs must be within 1..EPOCHS')
-cfg.data.negative_manifest = str(Path(os.environ['NEGATIVE_MANIFEST']).resolve())
+if os.environ['NEGATIVE_MANIFEST']:
+    cfg.data.negative_manifest = str(Path(os.environ['NEGATIVE_MANIFEST']).resolve())
 if not Path(cfg.data.negative_manifest).is_file(): raise FileNotFoundError(cfg.data.negative_manifest)
 cfg.checkpoint = str(Path(os.environ['NVS_INIT_CHECKPOINT']).resolve())
 if not Path(cfg.checkpoint).is_file(): raise FileNotFoundError(cfg.checkpoint)
@@ -139,6 +146,7 @@ cfg.wandb.project = os.environ['WANDB_PROJECT']
 cfg.wandb.name = Path(os.environ['NVS_LAUNCH_CONFIG']).parent.name
 OmegaConf.save(cfg, os.environ['NVS_LAUNCH_CONFIG'])
 print(f'Prepared config: {os.environ["NVS_LAUNCH_CONFIG"]}')
+print(f'Data config: {os.environ["NVS_DATA_TEMPLATE"]}')
 print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment; camera tokens are clean')
 PY
 if [[ "$PREPARE_ONLY" == true ]]; then exit 0; fi
