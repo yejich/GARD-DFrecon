@@ -139,39 +139,50 @@ NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
 | `DISTRACTOR_AWARE_ATTN_ALIGN` | `true` / `false` | distractor-aware attention alignment 사용 여부 |
 | `ATTENTION_ALIGNMENT` | `true` / `false` | attention alignment loss 전체 사용 여부 |
 
-기본 실행:
+모델 구조 5가지 실행:
 
 ```bash
+# NVS branch ON
+# noise+lq -> HQ flow
 CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
   NVS_BRANCH=true FLOWMAP_FROM=noise_lq \
   DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
   NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
   bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
-```
 
-주요 ablation:
-
-```bash
-# pure noise -> HQ flow
+# NVS branch ON
+# noise -> HQ flow
 CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
   NVS_BRANCH=true FLOWMAP_FROM=noise \
   DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
   NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
   bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 
-# NVS branch OFF: source restoration only
+# NVS branch OFF
+# noise+lq -> HQ flow
+CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
+  NVS_BRANCH=false FLOWMAP_FROM=noise_lq \
+  DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
+  NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
+  bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+
+# NVS branch OFF
+# noise -> HQ flow
 CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
   NVS_BRANCH=false FLOWMAP_FROM=noise \
   DISTRACTOR_AWARE_ATTN_ALIGN=false ATTENTION_ALIGNMENT=true \
   NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
   bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 
-# distractor-aware attention alignment ON
+# NVS branch OFF
+# noise+lq -> HQ flow
+# distractor-aware attention alignment: true
 CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 \
-  NVS_BRANCH=true FLOWMAP_FROM=noise \
+  NVS_BRANCH=false FLOWMAP_FROM=noise_lq \
   DISTRACTOR_AWARE_ATTN_ALIGN=true ATTENTION_ALIGNMENT=true \
   NVS_CONFIG=run_configs/handoff/local_nvs.yaml \
   bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+
 ```
 
-`FLOWMAP_FROM=noise`는 flow state만 pure noise에서 시작하며 source LQ condition은 계속 제공합니다. 초기 checkpoint 경로가 다르면 `INIT_CHECKPOINT=/path/to/gard_denoiser.pt`를 지정하고, 재시작 시에는 `--resume /path/to/latest.pt`를 추가합니다.
+초기 checkpoint 경로가 다르면 `INIT_CHECKPOINT=/path/to/gard_denoiser.pt`를 지정하고, 재시작 시에는 `--resume /path/to/latest.pt`를 추가합니다.
