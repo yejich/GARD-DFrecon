@@ -17,6 +17,12 @@ bash run_scripts/JIHYE_261020/20261013_validate.bash --create-eval
 
 DATA_ROOT=/data/gard \
 bash run_scripts/JIHYE_261020/20261013_validate.bash --all-files
+
+# 수신한 데이터 경로를 local_nvs.yaml에 반영
+python scripts/train/nvs/prepare_handoff_config.py \
+  --data-root /data/gard \
+  --output run_configs/handoff/local_nvs.yaml \
+  --init-checkpoint ckpts/gard_denoiser.pt
 ```
 
 ## 이번에 실행할 5개 실험
@@ -87,7 +93,7 @@ bash run_scripts/JIHYE_261020/train_nvs.bash --prepare-only
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 DATA_ROOT=/data/gard \
-bash run_scripts/JIHYE_261020/20261013_train.bash \
+bash run_scripts/JIHYE_261020/train_nvs.bash \
   --resume /absolute/path/to/run/latest.pt
 ```
 
