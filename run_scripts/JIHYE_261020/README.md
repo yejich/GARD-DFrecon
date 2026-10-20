@@ -36,7 +36,6 @@ python scripts/train/nvs/prepare_handoff_config.py \
 - `ATTENTION_ALIGNMENT=true`
 - `NVS_CONFIG=run_configs/handoff/local_nvs.yaml`
 
-`ATTENTION_ALIGNMENT=true`는 다섯 실험 모두 공통입니다.
 
 ```bash
 # NVS branch ON / noise+lq -> HQ flow
