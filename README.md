@@ -98,7 +98,7 @@ CUDA_VISIBLE_DEVICES=0,1 bash run_scripts/JIHYE/train_GARD_omega_hypersim_comple
 
 ---
 
-## NVS 실험 안내
+## NVS 실험안내 (2026-10-20)
 
 JIHYE님에게 전달할 최신 synthetic dataset 다운로드 및 NVS 실험 명령은 아래 문서에서 관리합니다.
 
