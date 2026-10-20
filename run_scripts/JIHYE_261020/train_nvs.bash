@@ -11,5 +11,6 @@ export FLOWMAP_FROM="${FLOWMAP_FROM:-noise_lq}"
 export DISTRACTOR_AWARE_ATTN_ALIGN="${DISTRACTOR_AWARE_ATTN_ALIGN:-false}"
 export ATTENTION_ALIGNMENT="${ATTENTION_ALIGNMENT:-true}"
 export NVS_CONFIG="${NVS_CONFIG:-$ROOT/run_configs/handoff/local_nvs.yaml}"
+export WANDB_ENABLED="${WANDB_ENABLED:-false}"
 
 exec bash "$ROOT/run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash" "$@"

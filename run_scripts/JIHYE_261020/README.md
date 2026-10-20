@@ -35,6 +35,7 @@ python scripts/train/nvs/prepare_handoff_config.py \
 - `GLOBAL_BATCH_SIZE=16`
 - `ATTENTION_ALIGNMENT=true`
 - `NVS_CONFIG=run_configs/handoff/local_nvs.yaml`
+- `WANDB_ENABLED=false` (로컬 로그만 사용)
 
 
 ```bash
@@ -96,4 +97,4 @@ bash run_scripts/JIHYE_261020/train_nvs.bash \
   --resume /absolute/path/to/run/latest.pt
 ```
 
-학습 launcher는 기본 설정상 W&B 인증이 필요합니다. `WANDB_ENV_FILE` 또는 `WANDB_API_KEY`가 준비되어 있어야 합니다. `local_nvs.yaml`은 먼저 `scripts/train/nvs/prepare_handoff_config.py`로 생성해야 합니다.
+이 폴더의 `train_nvs.bash`는 W&B를 기본적으로 끕니다. 실행 결과는 `train.log`, `losses.jsonl`, `status.json`, checkpoint에 저장됩니다. W&B를 사용하려면 실행 시 `WANDB_ENABLED=true`와 인증 정보를 추가하세요. `local_nvs.yaml`은 먼저 `scripts/train/nvs/prepare_handoff_config.py`로 생성해야 합니다.

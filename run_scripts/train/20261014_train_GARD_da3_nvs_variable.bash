@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # V=4 (N=2~3, M=4-N): group2 MSE + attention alignment; mask-aware OFF.
-# CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
+# CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 PER_GPU_BATCH_SIZE=1 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 # Options: NVS_BRANCH=true|false, FLOWMAP_FROM=noise|noise_lq,
 #          DISTRACTOR_AWARE_ATTN_ALIGN=true|false, ATTENTION_ALIGNMENT=true|false
+#          DISTRACTOR_LOSS=none|push_only|infoNCE
 # NVS_CONFIG를 지정하면 prepare_handoff_config.py로 생성한 config를 기반으로
 # ablation/batch 옵션을 적용합니다.
 # CPU 설정 준비만: 위 명령 끝에 --prepare-only 추가
@@ -15,6 +16,10 @@ BASE_EXP_NAME="${EXP_NAME:-nvs_v4_n2-3}"
 ATTENTION_ALIGNMENT="${ATTENTION_ALIGNMENT:-true}"
 MASK_AWARE_ATTENTION="${MASK_AWARE_ATTENTION:-false}"
 DISTRACTOR_AWARE_ATTN_ALIGN="${DISTRACTOR_AWARE_ATTN_ALIGN:-false}"
+DISTRACTOR_LOSS="${DISTRACTOR_LOSS:-none}"
+DISTRACTOR_LOSS_LAMBDA="${DISTRACTOR_LOSS_LAMBDA:-0.01}"
+DISTRACTOR_LOSS_MARGIN="${DISTRACTOR_LOSS_MARGIN:-0.1}"
+DISTRACTOR_LOSS_TEMPERATURE="${DISTRACTOR_LOSS_TEMPERATURE:-0.07}"
 FLOWMAP_FROM="${FLOWMAP_FROM:-noise_lq}"
 NVS_BRANCH="${NVS_BRANCH:-true}"
 PRECISION="${PRECISION:-fp32}"
@@ -23,7 +28,8 @@ NEGATIVE_MANIFEST="${NEGATIVE_MANIFEST:-}"
 NVS_CONFIG="${NVS_CONFIG:-run_configs/train/train_GARD_da3_nvs_v4_n2_3.yaml}"
 INIT_CHECKPOINT="${INIT_CHECKPOINT:-ckpts/gard_denoiser.pt}"
 EPOCHS="${EPOCHS:-30}"
-GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"  # GPU당 1그룹, accumulation 자동 계산
+GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"
+PER_GPU_BATCH_SIZE="${PER_GPU_BATCH_SIZE:-1}"
 ORIGINAL_GROUPS_PER_EPOCH="${ORIGINAL_GROUPS_PER_EPOCH:-10000}"
 NUM_WORKERS="${NUM_WORKERS:-2}"
 LEARNING_RATE="${LEARNING_RATE:-0.0002}"
@@ -37,6 +43,7 @@ EVAL_PLAN="${EVAL_PLAN:-result_eval/20261008_nvs_epoch003_v4_m1/eval_plan.json}"
 WANDB_PROJECT="${WANDB_PROJECT:-GARD-DFrecon}"
 WANDB_ENTITY="${WANDB_ENTITY:-yejichoi_kaist-kaist}"
 WANDB_ENV_FILE="${WANDB_ENV_FILE:-/home/cvlab20/.config/wandb/gard_yejichoi.env}"
+WANDB_ENABLED="${WANDB_ENABLED:-true}"
 PREPARE_ONLY=false
 RESUME_CHECKPOINT=""
 TRAIN_ARGS=()
@@ -63,14 +70,19 @@ export CUDA_DEVICE_ORDER=PCI_BUS_ID
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1,2,3}"
 IFS=',' read -r -a GPU_DEVICES <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS=${#GPU_DEVICES[@]}
-if (( NUM_GPUS < 1 || GLOBAL_BATCH_SIZE < NUM_GPUS || GLOBAL_BATCH_SIZE % NUM_GPUS != 0 )); then
-  echo 'GLOBAL_BATCH_SIZE must be a positive multiple of NUM_GPUS.' >&2; exit 1
+if (( NUM_GPUS < 1 || PER_GPU_BATCH_SIZE < 1 || GLOBAL_BATCH_SIZE < NUM_GPUS * PER_GPU_BATCH_SIZE || GLOBAL_BATCH_SIZE % (NUM_GPUS * PER_GPU_BATCH_SIZE) != 0 )); then
+  echo 'GLOBAL_BATCH_SIZE must be a positive multiple of NUM_GPUS * PER_GPU_BATCH_SIZE.' >&2; exit 1
 fi
-export GARD_GRAD_ACCUM_STEPS="${GARD_GRAD_ACCUM_STEPS:-$((GLOBAL_BATCH_SIZE / NUM_GPUS))}"
-if (( GARD_GRAD_ACCUM_STEPS * NUM_GPUS != GLOBAL_BATCH_SIZE )); then
-  echo 'GARD_GRAD_ACCUM_STEPS * NUM_GPUS must equal GLOBAL_BATCH_SIZE.' >&2; exit 1
+export GARD_GRAD_ACCUM_STEPS="${GARD_GRAD_ACCUM_STEPS:-$((GLOBAL_BATCH_SIZE / (NUM_GPUS * PER_GPU_BATCH_SIZE)))}"
+if (( GARD_GRAD_ACCUM_STEPS * NUM_GPUS * PER_GPU_BATCH_SIZE != GLOBAL_BATCH_SIZE )); then
+  echo 'GARD_GRAD_ACCUM_STEPS * NUM_GPUS * PER_GPU_BATCH_SIZE must equal GLOBAL_BATCH_SIZE.' >&2; exit 1
 fi
-export HF_HUB_CACHE="${HF_HUB_CACHE:-/mnt/nvme1n1/hyuna/hf_cache/hub}"
+export HF_HOME="${HF_HOME:-$ROOT/.cache/huggingface}"
+export HF_HUB_CACHE="${HF_HUB_CACHE:-$HF_HOME/hub}"
+export GARD_EVAL_ROOT="${GARD_EVAL_ROOT:-$ROOT/datasets/eval}"
+export HYPERSIM_CAMERA_ROOT="${HYPERSIM_CAMERA_ROOT:-$GARD_EVAL_ROOT/hypersim}"
+export HYPERSIM_CAMERA_PARAMETERS="${HYPERSIM_CAMERA_PARAMETERS:-$GARD_EVAL_ROOT/metadata_camera_parameters.csv}"
+export HYPERSIM_GEOMETRY_ROOT="${HYPERSIM_GEOMETRY_ROOT:-$HYPERSIM_CAMERA_ROOT}"
 export HF_HUB_OFFLINE=1 OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=1
 export PYTHONPATH="$ROOT:$ROOT/src:$ROOT/RAE/src:$ROOT/Depth-Anything-3/src${PYTHONPATH:+:$PYTHONPATH}"
 export DA3_RUN_ID="${DA3_RUN_ID:-$(date +%Y%m%d_%H%M%S_%N)}"
@@ -89,10 +101,10 @@ else
 fi
 mkdir -p "$RUN_DIR"
 RUN_DIR="$(realpath "$RUN_DIR")"
-EXPERIMENT_NAME="$("$ROOT/.venv/bin/python" - "$GLOBAL_BATCH_SIZE" "$GARD_GRAD_ACCUM_STEPS" "$LEARNING_RATE" "$PRECISION" "$ATTENTION_ALIGNMENT" <<'PY'
+EXPERIMENT_NAME="$("$ROOT/.venv/bin/python" - "$GLOBAL_BATCH_SIZE" "$PER_GPU_BATCH_SIZE" "$GARD_GRAD_ACCUM_STEPS" "$LEARNING_RATE" "$PRECISION" "$ATTENTION_ALIGNMENT" <<'PY'
 import sys
-batch, accumulation, lr = int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3])
-print(f'TRAIN_{sys.argv[4]}_hypersim_pairs_da3-GIANT-L17_bs{batch}-maxview4-accum{accumulation}_lr-{lr:.0e}_attnalign-{"on" if sys.argv[5]=="true" else "off"}_maskaware-off')
+batch, per_gpu, accumulation, lr = int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), float(sys.argv[4])
+print(f'TRAIN_{sys.argv[5]}_hypersim_pairs_da3-GIANT-L17_bs{batch}-pgbs{per_gpu}-maxview4-accum{accumulation}_lr-{lr:.0e}_attnalign-{"on" if sys.argv[6]=="true" else "off"}_maskaware-off')
 PY
 )"
 EXPERIMENT_DIR="${EXPERIMENT_DIR:-$RUN_DIR/training/hypersim_pairs/$EXPERIMENT_NAME}"
@@ -104,9 +116,9 @@ export NVS_LAUNCH_CONFIG="$CONFIG" NVS_INIT_CHECKPOINT="$INIT_CHECKPOINT"
 NVS_CONFIG="$(realpath -e "$NVS_CONFIG")"
 export NVS_DATA_TEMPLATE="$NVS_CONFIG"
 export PRECISION
-export EPOCHS ORIGINAL_GROUPS_PER_EPOCH NUM_WORKERS LEARNING_RATE NOVEL_WEIGHT ATTENTION_ALIGNMENT MASK_AWARE_ATTENTION
-export LOG_EVERY_OPTIMIZER_STEPS CHECKPOINT_INTERVAL SAVE_EPOCHS EVAL_EPOCHS NEGATIVE_MANIFEST WANDB_PROJECT WANDB_ENTITY
-export DISTRACTOR_AWARE_ATTN_ALIGN FLOWMAP_FROM NVS_BRANCH
+export EPOCHS ORIGINAL_GROUPS_PER_EPOCH NUM_WORKERS LEARNING_RATE NOVEL_WEIGHT ATTENTION_ALIGNMENT MASK_AWARE_ATTENTION PER_GPU_BATCH_SIZE
+export LOG_EVERY_OPTIMIZER_STEPS CHECKPOINT_INTERVAL SAVE_EPOCHS EVAL_EPOCHS NEGATIVE_MANIFEST WANDB_PROJECT WANDB_ENTITY WANDB_ENABLED
+export DISTRACTOR_AWARE_ATTN_ALIGN DISTRACTOR_LOSS DISTRACTOR_LOSS_LAMBDA DISTRACTOR_LOSS_MARGIN DISTRACTOR_LOSS_TEMPERATURE FLOWMAP_FROM NVS_BRANCH
 "$ROOT/.venv/bin/python" - <<'PY'
 import math, os
 from pathlib import Path
@@ -124,8 +136,18 @@ for key, env in [('attention_alignment.use','ATTENTION_ALIGNMENT'), ('mask_aware
     OmegaConf.update(cfg,key,value == 'true')
 if cfg.mask_aware_attention: raise ValueError('This NVS experiment requires mask-aware attention OFF')
 cfg.attention_alignment.distractor_aware.use = os.environ['DISTRACTOR_AWARE_ATTN_ALIGN'].lower() == 'true'
+loss_mode = os.environ['DISTRACTOR_LOSS']
+if loss_mode.lower() == 'infonce': loss_mode = 'infoNCE'
+if loss_mode not in ('none', 'push_only', 'infoNCE'): raise ValueError('DISTRACTOR_LOSS must be none, push_only, or infoNCE')
+cfg.distractor_loss = dict(mode=loss_mode,
+                           lambda_coeff=float(os.environ['DISTRACTOR_LOSS_LAMBDA']),
+                           margin=float(os.environ['DISTRACTOR_LOSS_MARGIN']),
+                           temperature=float(os.environ['DISTRACTOR_LOSS_TEMPERATURE']))
+if cfg.distractor_loss.lambda_coeff < 0 or not math.isfinite(cfg.distractor_loss.lambda_coeff): raise ValueError('Invalid DISTRACTOR_LOSS_LAMBDA')
+if not 0 <= cfg.distractor_loss.margin < 1 or not math.isfinite(cfg.distractor_loss.margin): raise ValueError('DISTRACTOR_LOSS_MARGIN must be in [0,1)')
+if cfg.distractor_loss.temperature <= 0 or not math.isfinite(cfg.distractor_loss.temperature): raise ValueError('DISTRACTOR_LOSS_TEMPERATURE must be positive')
 if cfg.precision not in ('fp32', 'bf16'): raise ValueError('PRECISION must be fp32 or bf16')
-for key, env in [('epochs','EPOCHS'), ('workers','NUM_WORKERS'), ('accumulation','GARD_GRAD_ACCUM_STEPS'), ('log_interval','LOG_EVERY_OPTIMIZER_STEPS'), ('checkpoint_interval','CHECKPOINT_INTERVAL')]:
+for key, env in [('epochs','EPOCHS'), ('workers','NUM_WORKERS'), ('accumulation','GARD_GRAD_ACCUM_STEPS'), ('per_gpu_batch_size','PER_GPU_BATCH_SIZE'), ('log_interval','LOG_EVERY_OPTIMIZER_STEPS'), ('checkpoint_interval','CHECKPOINT_INTERVAL')]:
     cfg[key] = int(os.environ[env])
     if cfg[key] < 1: raise ValueError(f'{key} must be positive')
 for key, env in [('lr','LEARNING_RATE'), ('novel_weight','NOVEL_WEIGHT')]:
@@ -143,19 +165,22 @@ cfg.checkpoint = str(Path(os.environ['NVS_INIT_CHECKPOINT']).resolve())
 if not Path(cfg.checkpoint).is_file(): raise FileNotFoundError(cfg.checkpoint)
 cfg.wandb.entity = os.environ['WANDB_ENTITY']
 cfg.wandb.project = os.environ['WANDB_PROJECT']
+if os.environ['WANDB_ENABLED'].lower() not in ('true', 'false'):
+    raise ValueError('WANDB_ENABLED must be true or false')
+cfg.wandb.enabled = os.environ['WANDB_ENABLED'].lower() == 'true'
 cfg.wandb.name = Path(os.environ['NVS_LAUNCH_CONFIG']).parent.name
 OmegaConf.save(cfg, os.environ['NVS_LAUNCH_CONFIG'])
 print(f'Prepared config: {os.environ["NVS_LAUNCH_CONFIG"]}')
 print(f'Data config: {os.environ["NVS_DATA_TEMPLATE"]}')
-print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment; camera tokens are clean')
+print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, per_gpu_batch_size={cfg.per_gpu_batch_size}, accumulation={cfg.accumulation}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}, distractor_loss={cfg.distractor_loss.mode}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment + {cfg.distractor_loss.lambda_coeff}*{cfg.distractor_loss.mode}; camera tokens are clean')
 PY
 if [[ "$PREPARE_ONLY" == true ]]; then exit 0; fi
-if [[ -f "$WANDB_ENV_FILE" ]]; then
+if [[ "$WANDB_ENABLED" == true && -f "$WANDB_ENV_FILE" ]]; then
   set -a
   source "$WANDB_ENV_FILE"
   set +a
 fi
-if [[ -z "${WANDB_API_KEY:-}" ]]; then echo 'W&B API key missing.' >&2; exit 1; fi
+if [[ "$WANDB_ENABLED" == true && -z "${WANDB_API_KEY:-}" ]]; then echo 'W&B API key missing. Set WANDB_ENABLED=false to disable W&B.' >&2; exit 1; fi
 cp mvr/nvs_training.py "$RUN_DIR/nvs_training_snapshot.py"
 cp scripts/train/nvs/train.py "$RUN_DIR/train_snapshot.py"
 printf 'Run directory: %s\nGPUs: %s\n' "$RUN_DIR" "$CUDA_VISIBLE_DEVICES"
