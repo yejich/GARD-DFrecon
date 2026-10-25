@@ -346,12 +346,15 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
     if not nvs_branch:
         clean_teacher=clean_teacher[:,:v]
         if alignment_target is not None:
-            tokens=clean_teacher.shape[2]
-            alignment_target=alignment_target[:,:v*tokens,:v*tokens]
+            # Geometry targets contain patch tokens only, whereas DA3 feature
+            # tensors include one CLS token per view.
+            patch_tokens=clean_teacher.shape[2]-1
+            alignment_target=alignment_target[:,:v*patch_tokens,:v*patch_tokens]
         if alignment_aux is not None:
-            alignment_aux=(alignment_aux[0][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]],
-                           alignment_aux[1][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]],
-                           alignment_aux[2][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]])
+            patch_tokens=clean_teacher.shape[2]-1
+            alignment_aux=(alignment_aux[0][:,:v*patch_tokens,:v*patch_tokens],
+                           alignment_aux[1][:,:v*patch_tokens,:v*patch_tokens],
+                           alignment_aux[2][:,:v*patch_tokens,:v*patch_tokens])
     batch=prepare_nvs_flow(source_lq,clean_teacher,time,noise=noise,noise_lvl=noise_lvl,
                            # flowmap_from selects the interpolation start;
                            # LQ remains an external model condition in both modes.

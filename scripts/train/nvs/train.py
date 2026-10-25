@@ -79,6 +79,10 @@ def main():
   # The destination head is only used by the InfoNCE ablation. Freeze it in
   # push_only/none so DDP does not wait for a gradient that cannot exist.
   model.destination_projector.requires_grad_(False)
+ if not cfg.nvs_branch:
+  # The camera embedder is only used for novel-view ray conditioning. In the
+  # restoration-only branch it must be excluded from DDP reductions.
+  model.nvs_camera_embedder.requires_grad_(False)
  model=model.to(device).train();ema=copy.deepcopy(model).eval().requires_grad_(False)
  if args.resume:ema.load_state_dict(ckpt['ema'],strict=True)
  optimizer=torch.optim.AdamW(model.parameters(),lr=cfg.lr,betas=(.9,.95),weight_decay=0,foreach=False)
