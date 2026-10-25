@@ -571,7 +571,7 @@ class GARD(nn.Module):
 
     def forward(self, x, t, model_img_size, analysis=None, return_aux=False,
                 lq_latent=None, c_feat=None, condition_mask=None,
-                encoder_token_condition=None):
+                encoder_token_condition=None, return_features=False):
         if return_aux and self.mask_head is None:
             raise ValueError('return_aux requires mask_head_enabled=True')
         
@@ -654,6 +654,7 @@ class GARD(nn.Module):
         
         # One auxiliary head reads one selected block; all encoder blocks still run.
         mask_logits = None
+        encoder_features = None
         if return_aux and self.c_feat_enabled:
             mask_logits = self.mask_head(condition_feature[:, :, self.num_cls_tkn:]).squeeze(-1)
         # ddt encoder forward apss
@@ -668,6 +669,8 @@ class GARD(nn.Module):
             if return_aux and self.mask_head_source == "encoder" and i + 1 == self.mask_head_layer:
                 # No detach: BCE trains the selected block and its predecessors.
                 mask_logits = self.mask_head(s[:, :, self.num_cls_tkn:]).squeeze(-1)
+            if return_features and i + 1 == self.num_encoder_blocks:
+                encoder_features = s[:, :, self.num_cls_tkn:]
 
         # reshape to (b*v n d)
         s = rearrange(s, 'b v n d -> (b v) n d')    # 16 973 1536
@@ -729,8 +732,13 @@ class GARD(nn.Module):
         if self.use_global_residual:
             x = x + global_residual
 
-        if return_aux:
-            return {'pred': x, 'mask_logits': mask_logits}
+        if return_aux or return_features:
+            result = {'pred': x}
+            if return_aux:
+                result['mask_logits'] = mask_logits
+            if return_features:
+                result['features'] = encoder_features
+            return result
         return x
 
 

@@ -42,3 +42,22 @@ def align_target_camera(gt_c2w,predicted_source_w2c):
  result=gt_c2w[v:].copy();result[:,:3,:3]=rotation@result[:,:3,:3];result[:,:3,3]=scale*(result[:,:3,3]@rotation.T)+translation
  residual=np.linalg.norm(scale*(gt[:,:3,3]@rotation.T)+translation-pc[:,:3,3],axis=-1).mean()
  return result,scale,float(residual)
+
+def align_target_camera_single(gt_c2w,predicted_source_w2c,scale=1.0):
+ """Align target cameras when only one source view is available.
+
+ A single source camera has no metric baseline, so its translation scale is
+ intrinsically ambiguous.  Use the source DA3 camera as the reference frame,
+ preserve the relative target pose, and apply a fixed normalized scale.
+ This uses source pose only for coordinate calibration; no source camera ray is
+ passed to GARD.
+ """
+ gt=np.asarray(gt_c2w,dtype=np.float64); pred=np.asarray(predicted_source_w2c,dtype=np.float64)
+ if pred.shape[-2:]==(3,4):
+  bottom=np.zeros((len(pred),1,4));bottom[:,:,3]=1;pred=np.concatenate([pred,bottom],1)
+ if len(gt)<2 or len(pred)<1: raise ValueError('Single-source alignment needs one source and at least one target')
+ source_pred=np.linalg.inv(pred[0]); source_gt=gt[0]
+ relative=np.linalg.inv(source_gt)@gt[1:]
+ result=relative.copy(); result[:,:3,:3]=source_pred[:3,:3]@relative[:,:3,:3]
+ result[:,:3,3]=source_pred[:3,3]+float(scale)*(source_pred[:3,:3]@relative[:,:3,3].T).T
+ return result,float(scale),0.0

@@ -3,11 +3,17 @@ import torch
 import torch.nn.functional as F
 
 
-def token_groups(pixel_masks, distractor_views, reference_indices, patch_size=14):
-    """Follow DA3's per-sample reference-first permutation; CLS is unmasked."""
+def token_groups(pixel_masks, distractor_views, reference_indices, patch_size=14,
+                 occupancy_threshold=0.0):
+    """Build clean/distractor token groups in DA3 reference-first order.
+
+    In distractor views, any positive pixel occupancy marks the whole patch as
+    distractor. This deliberately assigns boundary/overlap patches to the
+    distractor group. Clean views remain clean, and CLS is always clean.
+    """
     b, v, h, w = pixel_masks.shape
     mask = F.avg_pool2d(pixel_masks.float().reshape(b*v,1,h,w), patch_size, patch_size)
-    mask = (mask.flatten(1) >= .5).reshape(b,v,-1)
+    mask = (mask.flatten(1) > occupancy_threshold).reshape(b,v,-1)
     mask &= distractor_views[...,None]
     mask = torch.cat([torch.zeros(b,v,1,dtype=torch.bool,device=mask.device), mask],dim=-1)
     if reference_indices is None:

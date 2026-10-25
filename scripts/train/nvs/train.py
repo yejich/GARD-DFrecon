@@ -13,9 +13,10 @@ from types import SimpleNamespace
 from mvr.nvs_training import NVSGARD,NVSLossTracker,nvs_training_step,target_plucker_rays
 from mvr.nvs_attention import geometry_target,clear_attention
 from mvr.grouped_mse import token_groups,grouped_mse
-from mvr.nvs_camera import HypersimCameraReferences,align_target_camera
+from mvr.nvs_camera import HypersimCameraReferences,align_target_camera,align_target_camera_single
 from mvr.dataset.hypersim_mixed import MixedHypersimPairs
 from mvr.dataset.hypersim_nvs import MixedHypersimNVS,nvs_collate_fn,mixed_nvs_sampler
+from mvr.dataset.phase_c_nvs import PhaseCNVS,PhaseCUpdateSampler,phase_c_collate
 from depth_anything_3.api import DepthAnything3
 from stage2.transport import create_transport
 
@@ -51,13 +52,21 @@ def main():
   OmegaConf.save(cfg,args.out/'config.yaml')
   save_json(args.out/'status.json',dict(status='initializing',world_size=world,wandb_enabled=False))
  # Preserve original+negative scene split and exactly-once negative variants.
- ds=MixedHypersimPairs(cfg.data.manifest,cfg.data.negative_manifest,original_root=cfg.data.root,negative_root=cfg.data.negative_root,scene_split_policy=cfg.data.scene_split,process_res=cfg.resolution)
+ phase_c=bool(cfg.data.get('name','')=='phase_c')
+ ds=PhaseCNVS(cfg.data.manifest,resolution=cfg.resolution,patch_size=14,seed=cfg.seed) if phase_c else MixedHypersimPairs(cfg.data.manifest,cfg.data.negative_manifest,original_root=cfg.data.root,negative_root=cfg.data.negative_root,scene_split_policy=cfg.data.scene_split,process_res=cfg.resolution)
  nvs_cfg=cfg.get('nvs',{})
  total_views=int(nvs_cfg.get('total_views',4));min_source=int(nvs_cfg.get('min_source_views',3));max_source=int(nvs_cfg.get('max_source_views',3))
- sampler=mixed_nvs_sampler(ds,int(cfg.get('per_gpu_batch_size',1)),rank,world,total_views=total_views,min_source_views=min_source,max_source_views=max_source,accumulation=cfg.accumulation,seed=cfg.seed,original_samples=cfg.data.original_samples)
- loader=DataLoader(MixedHypersimNVS(ds,total_views),batch_sampler=sampler,num_workers=cfg.workers,collate_fn=nvs_collate_fn,pin_memory=True)
- cameras=HypersimCameraReferences(cfg.camera.root,cfg.camera.parameters)
- if rank==0:save_json(args.out/'data_audit.json',dict(**sampler.summary,source_views=list(range(min_source,max_source+1)),novel_views=[total_views-n for n in range(min_source,max_source+1)],held_out=ds.manifest['mixed_sampling']['held_out_scenes'],original_eligible_anchors=sum(map(len,sampler.original_pools[max_source].values()))))
+ if phase_c:
+  sampler=PhaseCUpdateSampler(ds,rank,world,int(cfg.get('per_gpu_batch_size',1)),cfg.accumulation,int(cfg.steps_per_epoch),cfg.seed)
+  loader=DataLoader(ds,batch_sampler=sampler,num_workers=cfg.workers,collate_fn=phase_c_collate,pin_memory=True)
+  cameras=None
+ else:
+  sampler=mixed_nvs_sampler(ds,int(cfg.get('per_gpu_batch_size',1)),rank,world,total_views=total_views,min_source_views=min_source,max_source_views=max_source,accumulation=cfg.accumulation,seed=cfg.seed,original_samples=cfg.data.original_samples)
+  loader=DataLoader(MixedHypersimNVS(ds,total_views),batch_sampler=sampler,num_workers=cfg.workers,collate_fn=nvs_collate_fn,pin_memory=True)
+  cameras=HypersimCameraReferences(cfg.camera.root,cfg.camera.parameters)
+ if rank==0:
+  if phase_c: save_json(args.out/'data_audit.json',dict(phase_c=True,groups=len(ds.groups),dataset_groups={k:len(v) for k,v in ds.by_dataset.items()},source_views=[1,2,3],novel_views=[3,2,1]))
+  else: save_json(args.out/'data_audit.json',dict(**sampler.summary,source_views=list(range(min_source,max_source+1)),novel_views=[total_views-n for n in range(min_source,max_source+1)],held_out=ds.manifest['mixed_sampling']['held_out_scenes'],original_eligible_anchors=sum(map(len,sampler.original_pools[max_source].values()))))
  model=NVSGARD(**OmegaConf.to_container(cfg.model,resolve=True));model._nonreentrant_checkpoint=True
  ckpt=torch.load(args.resume or cfg.checkpoint,map_location='cpu',weights_only=False,mmap=True);weights=ckpt.get('model') if args.resume else ckpt.get('ema',ckpt.get('model',ckpt))
  # New NVS/cross-view loss modules may be absent when initializing old GARD.
@@ -84,7 +93,7 @@ def main():
  mean=torch.tensor([.485,.456,.406],device=device)[None,None,:,None,None];std=torch.tensor([.229,.224,.225],device=device)[None,None,:,None,None]
  transport=create_transport(path_type='Linear',prediction='velocity',loss_weight=None,time_dist_type='logit-normal_0_1',time_dist_shift=math.sqrt(1492992/4096))
  featcfg=SimpleNamespace(extract_feat_layers=[17],concat_feat=False,break_and_return_feat=True)
- meter=NVSLossTracker();source_counts={'original':0,'negative':0};view_counts={str(n):0 for n in range(min_source,max_source+1)};micro=0;started=time.time()
+ meter=NVSLossTracker();source_counts=({k:0 for k in ds.by_dataset} if phase_c else {'original':0,'negative':0});view_counts={str(n):0 for n in range(min_source,max_source+1)};micro=0;started=time.time()
  def extract(batch):
   v=batch['lq_views'].to(device,non_blocking=True);hqs=torch.cat([batch['hq_views'],batch['nvs_hq_views']],1).to(device,non_blocking=True)
   source_views=v.shape[1]
@@ -103,9 +112,19 @@ def main():
     alignment_aux=(alignment_target,neg_l2,visibility)
    else:
     alignment_target=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment)
-  for i,records in enumerate(batch['camera_records']):
+  for i,records in enumerate(batch.get('camera_records',[])):
    gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=align_target_camera(gt,pose[i]);scales.append(scale);residuals.append(residual)
    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
+  if phase_c:
+   for i in range(v.shape[0]):
+    gt=batch['camera_c2w'][i].numpy()
+    if source_views==1:
+     target,scale,residual=align_target_camera_single(gt,pose[i],scale=1.0)
+    else:
+     target,scale,residual=align_target_camera(gt,pose[i])
+    scales.append(scale);residuals.append(residual)
+    k=batch['camera_k'][i,source_views:].to(device=device,dtype=torch.float32)[None]
+    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],k,v.shape[-2:]))
   return lq,teacher,torch.cat(rays,0),v.shape[-2:],scales,residuals,alignment_target,alignment_aux
  def checkpoint(epoch,next_batch):
   state=dict(torch=torch.get_rng_state(),cuda=torch.cuda.get_rng_state(),python=random.getstate(),numpy=np.random.get_state());states=[None]*world
@@ -127,7 +146,7 @@ def main():
   peaks={}
   optimizer.zero_grad(set_to_none=True);torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats(device)
   with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss)['loss']
+   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,full_view_loss=bool(cfg.get('full_view_loss',False)))['loss']
   loss.backward();clear_attention(denoiser,cfg.attention_alignment);torch.cuda.synchronize()
   peaks['V4_peak_allocated_GiB']=torch.cuda.max_memory_allocated(device)/1024**3
   peaks['V4_peak_reserved_GiB']=torch.cuda.max_memory_reserved(device)/1024**3
@@ -148,7 +167,7 @@ def main():
    sync=(micro+1)%cfg.accumulation==0
    with (denoiser.no_sync() if world>1 and not sync else contextlib.nullcontext()):
     with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,loss_tracker=meter)
+     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,full_view_loss=bool(cfg.get('full_view_loss',False)),loss_tracker=meter)
      if not torch.isfinite(losses['loss']):raise RuntimeError('Nonfinite training loss')
      (losses['loss']/cfg.accumulation).backward()
      clear_attention(denoiser,cfg.attention_alignment)

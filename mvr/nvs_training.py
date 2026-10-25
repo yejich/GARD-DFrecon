@@ -28,10 +28,15 @@ class NVSGARD(GARD):
         self.nvs_camera_embedder = nn.Linear(7, self.encoder_hidden_size)
         nn.init.zeros_(self.nvs_camera_embedder.weight)
         nn.init.zeros_(self.nvs_camera_embedder.bias)
+        # Maps GARD encoder features to the DA3 feature space used by the
+        # clean destination tokens in the InfoNCE ablation.
+        self.destination_projector = nn.Linear(self.encoder_hidden_size, self.in_channels, bias=False)
+        if self.encoder_hidden_size == self.in_channels:
+            nn.init.eye_(self.destination_projector.weight)
 
     def forward(self, x, t, model_img_size, analysis=None, return_aux=False,
                 lq_latent=None, c_feat=None, condition_mask=None,
-                nvs_rays=None, nvs_view_mask=None):
+                nvs_rays=None, nvs_view_mask=None, return_features=False):
         condition = None
         if nvs_rays is not None:
             b,v,n,_=x.shape
@@ -48,7 +53,9 @@ class NVSGARD(GARD):
         elif nvs_view_mask is not None:
             raise ValueError('Novel view mask requires target rays')
         return super().forward(x,t,model_img_size,analysis,return_aux,
-                               lq_latent,c_feat,condition_mask,encoder_token_condition=condition)
+                               lq_latent,c_feat,condition_mask,
+                               encoder_token_condition=condition,
+                               return_features=return_features)
 
 
 @dataclass
@@ -60,7 +67,8 @@ class NVSFlowBatch:
     time: torch.Tensor
 
 
-def prepare_nvs_flow(source_lq, clean_teacher, time, *, noise=None, noise_lvl=.3, double_condition=True):
+def prepare_nvs_flow(source_lq, clean_teacher, time, *, noise=None, noise_lvl=.3,
+                     double_condition=True, flowmap_from='noise_lq'):
     """t=0 clean teacher; t=1 restoration start / pure-noise novel grids.
 
     Shapes: source_lq [B,V,T,C], clean_teacher [B,V+M,T,C]. CLS included.
@@ -69,13 +77,19 @@ def prepare_nvs_flow(source_lq, clean_teacher, time, *, noise=None, noise_lvl=.3
     if source_lq.ndim!=4 or clean_teacher.ndim!=4 or source_lq.shape[0]!=clean_teacher.shape[0] or source_lq.shape[2:]!=clean_teacher.shape[2:]:
         raise ValueError('Source/teacher feature dimensions must match')
     b,v=source_lq.shape[:2];total=clean_teacher.shape[1]
-    if total<=v or time.shape!=(b,) or not torch.isfinite(time).all() or not ((time>=0)&(time<=1)).all():
-        raise ValueError('Need at least one novel grid and t in [0,1] per sample')
+    if total<v or time.shape!=(b,) or not torch.isfinite(time).all() or not ((time>=0)&(time<=1)).all():
+        raise ValueError('Invalid source/teacher layout or t outside [0,1]')
     if noise_lvl<0:raise ValueError('noise_lvl must be nonnegative')
+    if flowmap_from not in ('noise', 'noise_lq'):
+        raise ValueError("flowmap_from must be 'noise' or 'noise_lq'")
     if noise is None:noise=torch.randn_like(clean_teacher)
     if noise.shape!=clean_teacher.shape:raise ValueError('Noise must match teacher')
     condition=torch.zeros_like(clean_teacher);condition[:,:v]=source_lq.detach()
-    start=noise.clone();start[:,:v]=noise_lvl*noise[:,:v]+condition[:,:v]
+    start=noise.clone()
+    if flowmap_from == 'noise_lq':
+        start[:,:v]=noise_lvl*noise[:,:v]+condition[:,:v]
+    else:
+        start[:,:v]=noise[:,:v]
     teacher=clean_teacher.detach();t=time[:,None,None,None]
     state=(1-t)*teacher+t*start
     if double_condition:state=state+condition
@@ -83,10 +97,14 @@ def prepare_nvs_flow(source_lq, clean_teacher, time, *, noise=None, noise_lvl=.3
     return NVSFlowBatch(state,start-teacher,condition,novel,time)
 
 
-def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=None,group_mse_cfg=None):
-    """N: legacy clean/distractor group2 MSE; M: all-clean 1+P MSE.
+def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=None,group_mse_cfg=None,
+                    full_view_loss=False):
+    """Compute source restoration and novel-view flow losses.
 
-    Camera tokens always belong to clean, with no independent camera term.
+    ``full_view_loss`` is the GLD-style Phase-C mode: source and novel views
+    are concatenated and receive the same per-view/token MSE.  Camera tokens
+    are included in the same average; there is no separate camera loss.
+    The legacy branch is retained for the existing restoration+NVS runs.
     """
     from mvr.grouped_mse import grouped_mse
     if not math.isfinite(float(novel_weight)) or novel_weight < 0:
@@ -104,14 +122,110 @@ def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=No
     if source_distractor_mask[:,:,0].any():raise ValueError('Camera tokens must be clean')
     cfg=group_mse_cfg or dict(mode='group2',lambda_clean=1.,lambda_distractor=1.)
     if cfg.get('mode','group2')!='group2':raise ValueError('NVS restoration requires group2')
+    if full_view_loss:
+        errors=(prediction.float()-batch.target_velocity.float()).square().mean(-1)
+        all_view_loss=errors.mean()
+        source_errors=errors[:,:n]
+        novel_errors=errors[:,n:] if n < total else errors.new_zeros((errors.shape[0],0,errors.shape[2]))
+        restoration=source_errors.mean()
+        novel=novel_errors.mean() if novel_errors.numel() else errors.new_zeros(())
+        zero=errors.new_zeros(())
+        return dict(loss=all_view_loss,restoration_loss=restoration,
+                    nvs_loss=novel,weighted_nvs_loss=novel,
+                    restoration_clean_loss=restoration,restoration_distractor_loss=zero,
+                    attention_alignment_loss=zero,weighted_attention_alignment_loss=zero,
+                    full_view_flow_loss=all_view_loss)
+
     restoration,parts=grouped_mse(prediction[:,:n],batch.target_velocity[:,:n],source_distractor_mask,
                                 source_distractor_mask.any(-1),cfg)
-    novel=(prediction[:,n:].float()-batch.target_velocity[:,n:].float()).square().mean()
+    novel=(prediction[:,n:].float()-batch.target_velocity[:,n:].float()).square().mean() if n < total else prediction.new_zeros(())
     weighted_novel=novel_weight*novel
     return dict(loss=restoration+weighted_novel,restoration_loss=restoration,
                 nvs_loss=novel,weighted_nvs_loss=weighted_novel,
                 restoration_clean_loss=parts['clean'],restoration_distractor_loss=parts['distractor'],
                 attention_alignment_loss=novel.new_zeros(()),weighted_attention_alignment_loss=novel.new_zeros(()))
+
+
+def distractor_suppression_loss(features, distractor_mask, margin=0.1):
+    """Suppress cross-view similarity from GT distractor query tokens.
+
+    ``features`` are encoder patch tokens [B,V,P,C]. A source distractor
+    query is compared against every patch in every other view. Only the most
+    similar cross-view feature is penalized when cosine similarity exceeds
+    ``margin``. The mask selects queries, not candidate keys.
+    """
+    if features.ndim != 4 or distractor_mask.ndim != 3:
+        raise ValueError('Expected features [B,V,P,C] and mask [B,N,1+P]')
+    b, v, p, _ = features.shape
+    n = distractor_mask.shape[1]
+    if distractor_mask.shape[0] != b or n > v or distractor_mask.shape[2] != p + 1:
+        raise ValueError('Feature/mask shapes are incompatible')
+    if not 0 <= float(margin) < 1:
+        raise ValueError('Feature suppression margin must be in [0,1)')
+    queries = distractor_mask[:, :, 1:].bool()
+    if not queries.any():
+        return features.new_zeros(())
+    normalized = F.normalize(features.float(), dim=-1)
+    losses=[]
+    for view in range(n):
+        other_views = [i for i in range(v) if i != view]
+        if not other_views:
+            continue
+        candidates = torch.cat([normalized[:, i] for i in other_views], dim=1)
+        similarity = torch.bmm(normalized[:, view], candidates.transpose(1, 2))
+        best = similarity.amax(-1)
+        selected = queries[:, view]
+        losses.append(F.relu(best - float(margin))[selected])
+    values=torch.cat([x for x in losses if x.numel()])
+    return values.mean() if values.numel() else features.new_zeros(())
+
+
+def distractor_destination_infonce_loss(features, clean_teacher, distractor_mask, temperature=0.07):
+    """Route distractor queries to their same-view, same-patch clean target.
+
+    The positive is the clean HQ token at the query's original location. The
+    negatives are distractor tokens from other source views, which directly
+    targets repeated semantic distractors without treating static clean scene
+    correspondences as false negatives.
+    """
+    if features.ndim != 4 or clean_teacher.ndim != 4 or distractor_mask.ndim != 3:
+        raise ValueError('Expected features [B,V,P,C], clean teacher [B,V+M,1+P,C], and mask [B,N,1+P]')
+    b, v, p, c = features.shape
+    n = distractor_mask.shape[1]
+    if n > v or clean_teacher.shape[1] < n or clean_teacher.shape[2] != p + 1:
+        raise ValueError('Feature, teacher, and mask shapes are incompatible')
+    if clean_teacher.shape[-1] != c:
+        raise ValueError('Projected query and clean teacher channels must match')
+    temperature = float(temperature)
+    if temperature <= 0 or not math.isfinite(temperature):
+        raise ValueError('InfoNCE temperature must be positive')
+    query_mask = distractor_mask[:, :, 1:].bool()
+    if not query_mask.any():
+        return features.new_zeros(())
+    q = F.normalize(features.float(), dim=-1)
+    keys = F.normalize(clean_teacher[:, :n, 1:].detach().float(), dim=-1)
+    values = []
+    for view in range(n):
+        selected = query_mask[:, view]
+        if not selected.any():
+            continue
+        negative_views = [i for i in range(n) if i != view]
+        if not negative_views:
+            continue
+        negative_mask = torch.cat([query_mask[:, i] for i in negative_views], dim=1)
+        negative_keys = torch.cat([keys[:, i] for i in negative_views], dim=1)
+        positive = keys[:, view]
+        negative_logits = torch.einsum('bpc,bkc->bpk', q[:, view], negative_keys)
+        negative_logits = negative_logits.masked_fill(~negative_mask[:, None, :], float('-inf'))
+        logits = torch.cat([
+            (q[:, view] * positive).sum(-1, keepdim=True),
+            negative_logits,
+        ], dim=-1) / temperature
+        valid = selected & (negative_mask.any(-1)[:, None])
+        if valid.any():
+            values.append((-logits.log_softmax(-1)[..., 0])[valid])
+    values = [x for x in values if x.numel()]
+    return torch.cat(values).mean() if values else features.new_zeros(())
 
 
 class NVSLossTracker:
@@ -123,7 +237,9 @@ class NVSLossTracker:
     """
     keys = ('loss', 'restoration_loss', 'nvs_loss', 'weighted_nvs_loss',
             'restoration_clean_loss', 'restoration_distractor_loss',
-            'attention_alignment_loss', 'weighted_attention_alignment_loss')
+            'attention_alignment_loss', 'weighted_attention_alignment_loss',
+            'distractor_suppression_loss', 'weighted_distractor_suppression_loss',
+            'distractor_infonce_loss', 'weighted_distractor_infonce_loss')
 
     def __init__(self):
         self.totals = None
@@ -133,7 +249,8 @@ class NVSLossTracker:
     def update(self, losses, batch_size):
         if not isinstance(batch_size, int) or batch_size < 1:
             raise ValueError('batch_size must be a positive integer')
-        values = torch.stack([losses[key].detach().to(torch.float64)
+        reference = losses['loss']
+        values = torch.stack([(losses[key] if key in losses else reference.new_zeros(())).detach().to(torch.float64)
                               for key in self.keys])
         if values.shape != (len(self.keys),):
             raise ValueError('Expected scalar mean losses')
@@ -218,24 +335,80 @@ def encode_nvs_training_features(encoder, source_images, clean_source_images, no
 
 
 def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_size,
-                      *, noise=None,noise_lvl=.3,novel_weight=1.,source_distractor_mask=None,group_mse_cfg=None,alignment_target=None,alignment_cfg=None,loss_tracker=None):
+                      *, noise=None, noise_lvl=.3, flowmap_from='noise_lq',
+                      nvs_branch=True, novel_weight=1., source_distractor_mask=None,
+                      group_mse_cfg=None, alignment_target=None, alignment_aux=None, alignment_cfg=None,
+                      distractor_suppression_cfg=None,
+                      full_view_loss=False,
+                      loss_tracker=None):
     """Single shared-model forward: N restoration and M NVS velocity losses."""
-    batch=prepare_nvs_flow(source_lq,clean_teacher,time,noise=noise,noise_lvl=noise_lvl)
-    b,v=source_lq.shape[:2];m=clean_teacher.shape[1]-v
-    if target_rays.shape!=(b,m,clean_teacher.shape[2]-1,6):raise ValueError('Target rays must match only M patch grids')
-    rays=torch.cat([target_rays.new_zeros(b,v,target_rays.shape[2],6),target_rays],dim=1)
+    b,v=source_lq.shape[:2]
+    if not nvs_branch:
+        clean_teacher=clean_teacher[:,:v]
+        if alignment_target is not None:
+            tokens=clean_teacher.shape[2]
+            alignment_target=alignment_target[:,:v*tokens,:v*tokens]
+        if alignment_aux is not None:
+            alignment_aux=(alignment_aux[0][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]],
+                           alignment_aux[1][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]],
+                           alignment_aux[2][:,:v*clean_teacher.shape[2],:v*clean_teacher.shape[2]])
+    batch=prepare_nvs_flow(source_lq,clean_teacher,time,noise=noise,noise_lvl=noise_lvl,
+                           # flowmap_from selects the interpolation start;
+                           # LQ remains an external model condition in both modes.
+                           double_condition=True,
+                           flowmap_from=flowmap_from)
+    m=clean_teacher.shape[1]-v
+    if nvs_branch and target_rays.shape!=(b,m,clean_teacher.shape[2]-1,6):raise ValueError('Target rays must match only M patch grids')
+    rays=torch.cat([target_rays.new_zeros(b,v,target_rays.shape[2],6),target_rays],dim=1) if nvs_branch else None
     analysis=None
     if alignment_cfg and alignment_cfg.get('use',False):
         from omegaconf import OmegaConf
-        if alignment_cfg.get('distractor_aware',{}).get('use',False):raise ValueError('Mask-aware alignment must be OFF')
         if alignment_target is None:raise ValueError('Missing clean geometry attention target')
         analysis=OmegaConf.create(dict(vis_attn_map=True,mvrm_attn_map=dict(extract_idx=[alignment_cfg['mvrm_layer_idx']])))
-    pred=model(batch.model_input,time,image_size,analysis=analysis,nvs_rays=rays,nvs_view_mask=batch.novel_view_mask)
-    losses = nvs_flow_losses(pred,batch,novel_weight=novel_weight,source_distractor_mask=source_distractor_mask,group_mse_cfg=group_mse_cfg)
+    model_kwargs = dict(analysis=analysis)
+    if nvs_branch:
+        model_kwargs.update(nvs_rays=rays, nvs_view_mask=batch.novel_view_mask)
+    distractor_cfg=distractor_suppression_cfg or {}
+    loss_mode=str(distractor_cfg.get('mode','none'))
+    if loss_mode.lower() == 'infonce': loss_mode='infoNCE'
+    if loss_mode not in ('none','push_only','infoNCE'):
+        raise ValueError('distractor loss mode must be none, push_only, or infoNCE')
+    use_distractor_loss=loss_mode != 'none'
+    pred_output=model(batch.model_input,time,image_size,
+                      return_features=use_distractor_loss, **model_kwargs)
+    if use_distractor_loss:
+        if not isinstance(pred_output, dict) or 'features' not in pred_output:
+            raise RuntimeError('Distractor feature loss requires encoder features from GARD')
+        features=pred_output['features']
+        pred=pred_output['pred']
+    else:
+        features=None
+        pred=pred_output
+    losses = nvs_flow_losses(pred,batch,novel_weight=novel_weight,source_distractor_mask=source_distractor_mask,group_mse_cfg=group_mse_cfg,full_view_loss=full_view_loss)
+    suppression=losses['loss'].new_zeros(())
+    infonce=losses['loss'].new_zeros(())
+    if loss_mode == 'push_only':
+        suppression=distractor_suppression_loss(
+            features, source_distractor_mask,
+            margin=float(distractor_cfg.get('margin',0.1)))
+    elif loss_mode == 'infoNCE':
+        projected = model.destination_projector(features) if hasattr(model, 'destination_projector') else features
+        infonce=distractor_destination_infonce_loss(
+            projected, clean_teacher, source_distractor_mask,
+            temperature=float(distractor_cfg.get('temperature',0.07)))
+    losses['distractor_suppression_loss']=suppression
+    losses['weighted_distractor_suppression_loss']=float(distractor_cfg.get('lambda_coeff',0.01))*suppression
+    losses['distractor_infonce_loss']=infonce
+    losses['weighted_distractor_infonce_loss']=float(distractor_cfg.get('lambda_coeff',0.01))*infonce
+    losses['loss']=losses['loss']+losses['weighted_distractor_suppression_loss']+losses['weighted_distractor_infonce_loss']
     alignment=losses['loss'].new_zeros(())
     if analysis is not None:
         from mvr.nvs_attention import attention_loss
-        alignment=attention_loss(model,alignment_target,alignment_cfg,v+m,clean_teacher.shape[2])
+        alignment=attention_loss(model,alignment_target,alignment_cfg,v+m,clean_teacher.shape[2],
+                                 distractor_mask=torch.cat([source_distractor_mask,
+                                                             torch.zeros(source_distractor_mask.shape[0], m, source_distractor_mask.shape[2], device=source_distractor_mask.device, dtype=torch.bool)], dim=1)
+                                 if alignment_cfg.get('distractor_aware',{}).get('use',False) else None,
+                                 alignment_aux=alignment_aux)
     losses['attention_alignment_loss']=alignment
     losses['weighted_attention_alignment_loss']=float((alignment_cfg or {}).get('lambda_coeff',1.))*alignment
     losses['loss']=losses['loss']+losses['weighted_attention_alignment_loss']

@@ -1,9 +1,10 @@
 """Legacy DA3 point-cloud attention alignment over all N+M views."""
 import torch
 from depth_anything_3.utils.geometry import unproject_depth, affine_inverse, as_homogeneous
+from mvr.distractor_attention import distractor_aware_target, distractor_aware_attn_loss
 
 @torch.no_grad()
-def geometry_target(depth, extrinsics, intrinsics, cfg, patch_size=14):
+def geometry_target(depth, extrinsics, intrinsics, cfg, patch_size=14, return_aux=False):
     if not cfg.get('da3_point_cloud', {}).get('use', False):
         raise ValueError('NVS alignment requires clean DA3 point-cloud targets')
     pc=cfg['da3_point_cloud']
@@ -20,6 +21,7 @@ def geometry_target(depth, extrinsics, intrinsics, cfg, patch_size=14):
     elif temperature>0:target=(distances/temperature).softmax(-1)
     else:raise ValueError('Invalid geometry temperature')
     visibility=pc.get('visibility_mask','none')
+    valid=torch.ones_like(target,dtype=torch.bool)
     if visibility=='cycle_consistency':
         valid=torch.zeros_like(target,dtype=torch.bool)
         reference=torch.arange(n,device=depth.device)[None].expand(b,-1)
@@ -35,9 +37,11 @@ def geometry_target(depth, extrinsics, intrinsics, cfg, patch_size=14):
         target=target*valid
         target=target/target.sum(-1,keepdim=True).clamp_min(1e-8)
     elif visibility!='none':raise ValueError('Unsupported NVS visibility mode')
+    if return_aux:
+        return target.detach(), distances.detach(), valid.detach()
     return target.detach()
 
-def attention_loss(model, target, cfg, views, tokens):
+def attention_loss(model, target, cfg, views, tokens, *, distractor_mask=None, alignment_aux=None):
     layer=int(cfg['mvrm_layer_idx']);module=model.module if hasattr(model,'module') else model
     index,kind,attention=module.blocks[layer].attn.attn_map
     if index!=layer or kind!='global':raise ValueError('Expected configured global attention layer')
@@ -47,6 +51,15 @@ def attention_loss(model, target, cfg, views, tokens):
     spatial=torch.arange(views*tokens,device=prediction.device)%tokens!=0
     prediction=prediction[:,spatial][:,:,spatial].float()
     if prediction.shape!=target.shape:raise ValueError('Attention/geometry target shapes differ')
+    if distractor_mask is not None:
+        if alignment_aux is None:
+            raise ValueError('Distractor-aware attention requires geometry target auxiliaries')
+        _, neg_l2, visibility = alignment_aux
+        target, valid = distractor_aware_target(
+            neg_l2, target, visibility, distractor_mask[:, :, 1:],
+            cfg['da3_point_cloud']['vis_pc_temperature'], cfg['distractor_aware'])
+        return distractor_aware_attn_loss(prediction, target, valid,
+                                          distractor_mask[:, :, 1:], cfg['distractor_aware'])
     per_row=-(target*(prediction+1e-8).log()).sum(-1)
     valid=target.sum(-1)>0
     return per_row[valid].mean()
