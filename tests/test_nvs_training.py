@@ -4,11 +4,34 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 import torch
-from mvr.nvs_training import NVSGARD,prepare_nvs_flow,nvs_flow_losses,target_plucker_rays,NVSLossTracker
+from mvr.nvs_training import NVSGARD,prepare_nvs_flow,nvs_flow_losses,target_plucker_rays,NVSLossTracker,distractor_suppression_loss,geometry_correspondence_supcon_loss
 from gard.GARD import GARD
 
 def options():return dict(in_channels=16,hidden_size=[32,32],depth=[2,2],num_heads=[2,2],mlp_ratio=2.,use_pos_embed=False)
 class NVSTests(unittest.TestCase):
+ def test_geometry_correspondence_supcon_backward(self):
+  source=torch.randn(1,2,3,4);teacher=torch.randn(1,2,3,4)
+  batch=prepare_nvs_flow(source,teacher,torch.tensor([.5]),noise=torch.zeros_like(teacher))
+  prediction=torch.randn_like(batch.target_velocity,requires_grad=True)
+  mask=torch.zeros(1,2,3,dtype=torch.bool);mask[0,0,1]=True;mask[0,1,2]=True
+  geo_target=torch.eye(4).unsqueeze(0)
+  visibility=torch.ones(1,4,4,dtype=torch.bool)
+  loss=geometry_correspondence_supcon_loss(prediction,batch,source,teacher,mask,(geo_target,None,visibility))
+  self.assertTrue(torch.isfinite(loss))
+  loss.backward()
+  self.assertTrue(torch.isfinite(prediction.grad).all())
+
+ def test_distractor_suppression_targets_repeated_distractor_similarity(self):
+  features=torch.zeros(1,3,2,4)
+  features[0,0,0]=torch.tensor([1.,0.,0.,0.])
+  features[0,1,0]=torch.tensor([1.,0.,0.,0.])
+  features[0,2,0]=torch.tensor([1.,0.,0.,0.])
+  features.requires_grad_()
+  mask=torch.zeros(1,2,3,dtype=torch.bool);mask[0,0,1]=True;mask[0,1,1]=True
+  loss=distractor_suppression_loss(features,mask,margin=.1)
+  self.assertAlmostEqual(loss.item(),.9,places=5)
+  loss.backward()
+  self.assertTrue(torch.isfinite(features.grad).all())
  def test_variable_source_multiple_novel_backward_and_pose_slicing(self):
   from mvr.nvs_training import nvs_training_step
   from mvr.nvs_camera import align_target_camera
@@ -80,8 +103,8 @@ class NVSTests(unittest.TestCase):
    self.assertEqual(json.loads(path.read_text())['step'],7);wandb.log.assert_called_once_with(p,step=7);logger.info.assert_called_once()
   self.assertIsNone(tracker.totals)
  def test_ddp_reduces_sums_and_counts_before_average(self):
-  tracker=NVSLossTracker();tracker.update(dict(zip(tracker.keys,[torch.tensor(x) for x in [3.,1.,4.,2.,1.,4.,0.,0.]])),1)
-  def add_remote(totals):totals.add_(torch.tensor([30.,6.,48.,24.,6.,48.,0.,0.,3.],dtype=torch.float64))
+  tracker=NVSLossTracker();tracker.update(dict(zip(tracker.keys,[torch.tensor(x) for x in [3.,1.,4.,2.,1.,4.,0.,0.,0.,0.]])),1)
+  def add_remote(totals):totals.add_(torch.tensor([30.,6.,48.,24.,6.,48.,0.,0.,0.,0.,0.,0.,0.,0.,3.],dtype=torch.float64))
   with patch('torch.distributed.is_initialized',return_value=True),patch('torch.distributed.all_reduce',side_effect=add_remote):
    p=tracker.compute(prefix='eval')
   self.assertEqual(p['eval/loss'],8.25);self.assertEqual(p['eval/restoration_loss'],1.75);self.assertEqual(p['eval/nvs_loss'],13);self.assertEqual(p['eval/samples'],4)

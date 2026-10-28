@@ -127,25 +127,31 @@ class MixedHypersimPairs(Dataset):
 class MixedPairBatchSampler(Sampler):
     """Global shuffled epoch, sharded across ranks with common N per microbatch.
 
-    Full accumulation windows are padded with ORIGINAL samples only. Negative
-    variants are never dropped or repeated for DDP alignment.
+    In mixed mode, full accumulation windows are padded with ORIGINAL samples
+    only. In negative-only mode, padding repeats negative variants instead.
     """
     def __init__(self, dataset, batch_size, rank, world_size, accumulation=4, seed=42,
-                 min_views=1, max_views=4, original_samples=10000):
-        if min(batch_size, world_size, accumulation, original_samples) < 1:
-            raise ValueError('Batch/world/accumulation/original_samples must be positive')
+                 min_views=1, max_views=4, original_samples=10000,
+                 sampling_mode='mixed'):
+        if sampling_mode not in ('mixed', 'negative_only'):
+            raise ValueError("sampling_mode must be 'mixed' or 'negative_only'")
+        if min(batch_size, world_size, accumulation) < 1:
+            raise ValueError('Batch/world/accumulation must be positive')
+        if sampling_mode == 'mixed' and original_samples < 1:
+            raise ValueError('original_samples must be positive in mixed mode')
         if not 0 <= rank < world_size or not 1 <= min_views <= max_views <= 4:
             raise ValueError('Invalid rank or view range')
         self.dataset, self.batch_size, self.rank, self.world_size = dataset, batch_size, rank, world_size
         self.accumulation, self.seed, self.epoch = accumulation, seed, 0
         self.min_views, self.max_views = min_views, max_views
+        self.sampling_mode = sampling_mode
         self.original_pools, self.negative_anchors = {}, {}
         for n in range(min_views, max_views+1):
             pool = defaultdict(list)
             for i, r in enumerate(dataset.datasets[0].records):
                 if len(r['candidates']) >= n-1:
                     pool[r['scene']].append(i)
-            if not pool:
+            if sampling_mode == 'mixed' and not pool:
                 raise ValueError(f'Original data has no eligible {n}-view anchors')
             self.original_pools[n] = dict(sorted(pool.items()))
             eligible = [[i for i in g['indices'] if len(dataset.datasets[1].records[i]['candidates']) >= n-1]
@@ -154,13 +160,19 @@ class MixedPairBatchSampler(Sampler):
                 raise ValueError(f'A negative variant cannot support {n} views; lower max_num_input_view')
             self.negative_anchors[n] = eligible
         variants = len(dataset.negative_groups)
+        if not variants:
+            raise ValueError('Negative-only sampling requires at least one negative variant')
         window = world_size * batch_size * accumulation
-        self.total_samples = math.ceil((original_samples+variants)/window)*window
-        self.original_samples = self.total_samples-variants
+        requested_original = original_samples if sampling_mode == 'mixed' else 0
+        self.total_samples = math.ceil((requested_original+variants)/window)*window
+        self.original_samples = self.total_samples-variants if sampling_mode == 'mixed' else 0
+        self.negative_padding = self.total_samples-variants-self.original_samples
         self.batches = self.total_samples // (world_size*batch_size)
         self.summary = dict(negative_static_groups=variants//2, negative_variants=variants,
-                            original_requested=original_samples, original_samples=self.original_samples,
-                            original_padding=self.original_samples-original_samples,
+                            sampling_mode=sampling_mode,
+                            original_requested=requested_original, original_samples=self.original_samples,
+                            negative_padding=self.negative_padding,
+                            original_padding=self.original_samples-requested_original,
                             total_samples=self.total_samples, microbatches_per_rank=self.batches,
                             optimizer_steps=self.batches//accumulation)
         dataset.epoch_samples = self.total_samples
@@ -176,7 +188,12 @@ class MixedPairBatchSampler(Sampler):
 
     def __iter__(self):
         rng = random.Random(self.seed + self.epoch * 1000003)
-        slots = list(range(len(self.dataset.negative_groups))) + [-1]*self.original_samples
+        if self.sampling_mode == 'negative_only':
+            variants = len(self.dataset.negative_groups)
+            slots = list(range(variants))
+            slots += [i % variants for i in range(self.negative_padding)]
+        else:
+            slots = list(range(len(self.dataset.negative_groups))) + [-1]*self.original_samples
         rng.shuffle(slots)
         width = self.world_size*self.batch_size
         for start in range(0, len(slots), width):

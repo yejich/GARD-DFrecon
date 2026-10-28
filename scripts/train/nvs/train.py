@@ -61,7 +61,7 @@ def main():
   loader=DataLoader(ds,batch_sampler=sampler,num_workers=cfg.workers,collate_fn=phase_c_collate,pin_memory=True)
   cameras=None
  else:
-  sampler=mixed_nvs_sampler(ds,int(cfg.get('per_gpu_batch_size',1)),rank,world,total_views=total_views,min_source_views=min_source,max_source_views=max_source,accumulation=cfg.accumulation,seed=cfg.seed,original_samples=cfg.data.original_samples)
+  sampler=mixed_nvs_sampler(ds,int(cfg.get('per_gpu_batch_size',1)),rank,world,total_views=total_views,min_source_views=min_source,max_source_views=max_source,accumulation=cfg.accumulation,seed=cfg.seed,original_samples=cfg.data.original_samples,sampling_mode=cfg.data.get('sampling_mode','mixed'))
   loader=DataLoader(MixedHypersimNVS(ds,total_views),batch_sampler=sampler,num_workers=cfg.workers,collate_fn=nvs_collate_fn,pin_memory=True)
   cameras=HypersimCameraReferences(cfg.camera.root,cfg.camera.parameters)
  if rank==0:
@@ -110,8 +110,10 @@ def main():
   if hq_prediction.ref_b_idx is not None and not torch.all(hq_prediction.ref_b_idx==0):raise RuntimeError('Teacher reference changed')
   teacher=hq_prediction.aux['feat_layer_17'].float().clone();rays=[];scales=[];residuals=[]
   alignment_target=None;alignment_aux=None
-  if cfg.attention_alignment.use:
-   if cfg.attention_alignment.distractor_aware.use:
+  geometry_contrastive=cfg.get('geometry_contrastive_loss',{})
+  need_geometry_aux=bool(geometry_contrastive.get('use',False))
+  if cfg.attention_alignment.use or need_geometry_aux:
+   if cfg.attention_alignment.distractor_aware.use or need_geometry_aux:
     alignment_target,neg_l2,visibility=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment,return_aux=True)
     alignment_aux=(alignment_target,neg_l2,visibility)
    else:
@@ -150,7 +152,7 @@ def main():
   peaks={}
   optimizer.zero_grad(set_to_none=True);torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats(device)
   with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,full_view_loss=bool(cfg.get('full_view_loss',False)))['loss']
+   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)))['loss']
   loss.backward();clear_attention(denoiser,cfg.attention_alignment);torch.cuda.synchronize()
   peaks['V4_peak_allocated_GiB']=torch.cuda.max_memory_allocated(device)/1024**3
   peaks['V4_peak_reserved_GiB']=torch.cuda.max_memory_reserved(device)/1024**3
@@ -171,7 +173,7 @@ def main():
    sync=(micro+1)%cfg.accumulation==0
    with (denoiser.no_sync() if world>1 and not sync else contextlib.nullcontext()):
     with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,full_view_loss=bool(cfg.get('full_view_loss',False)),loss_tracker=meter)
+     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),loss_tracker=meter)
      if not torch.isfinite(losses['loss']):raise RuntimeError('Nonfinite training loss')
      (losses['loss']/cfg.accumulation).backward()
      clear_attention(denoiser,cfg.attention_alignment)

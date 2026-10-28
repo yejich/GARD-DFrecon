@@ -66,10 +66,11 @@ def mixed_nvs_sampler(pairs,batch_size,rank,world_size,*,total_views=4,min_sourc
  if total_views!=4 or not 2<=min_source_views<=max_source_views<total_views:
   raise ValueError('Require V=4 and 2 <= min_source_views <= max_source_views <= 3')
  sampler=MixedPairBatchSampler(pairs,batch_size,rank,world_size,min_views=min_source_views,max_views=max_source_views,**kwargs)
- for n,pool in sampler.original_pools.items():
-  eligible={scene:[i for i in ids if len(pairs.datasets[0].records[i]['candidates'])>=total_views-1] for scene,ids in pool.items()}
-  sampler.original_pools[n]={scene:ids for scene,ids in eligible.items() if ids}
-  if not sampler.original_pools[n]:raise ValueError(f'No original anchors support V={total_views} for N={n}')
+ if sampler.sampling_mode == 'mixed':
+  for n,pool in sampler.original_pools.items():
+   eligible={scene:[i for i in ids if len(pairs.datasets[0].records[i]['candidates'])>=total_views-1] for scene,ids in pool.items()}
+   sampler.original_pools[n]={scene:ids for scene,ids in eligible.items() if ids}
+   if not sampler.original_pools[n]:raise ValueError(f'No original anchors support V={total_views} for N={n}')
  if any(len(set(group['indices']))<total_views for group in pairs.negative_groups):
   raise ValueError('Every negative variant must provide four distinct views')
  sampler.summary.update(total_views=total_views,min_source_views=min_source_views,max_source_views=max_source_views,

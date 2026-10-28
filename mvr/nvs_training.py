@@ -228,6 +228,128 @@ def distractor_destination_infonce_loss(features, clean_teacher, distractor_mask
     return torch.cat(values).mean() if values else features.new_zeros(())
 
 
+def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
+                                        clean_teacher, distractor_mask,
+                                        geometry_aux, *, temperature=0.07,
+                                        max_negative_tokens=None,
+                                        time_weight='one_minus_t'):
+    """Geometry-positive / mask-defined-global-negative SupCon loss.
+
+    The anchor is the predicted clean latent x0-hat of a source distractor
+    token.  Its positives are the same-location clean teacher token and all
+    valid geometry-corresponding clean teacher tokens in other source views.
+    Its negatives are distractor input tokens from all source views, capped
+    per anchor.  Geometry visibility only gates cross-view positives; an
+    invalid reprojection is never treated as a negative.
+
+    ``geometry_aux`` is the ``(target, distances, visibility)`` tuple returned
+    by ``geometry_target``.  All teacher/input keys are detached.  Positive
+    terms are averaged per positive, so anchors with different numbers of
+    visible views have the same loss scale.
+    """
+    if prediction.ndim != 4 or batch.model_input.ndim != 4:
+        raise ValueError('Expected prediction and model_input [B,V,T,C]')
+    if source_lq.ndim != 4 or clean_teacher.ndim != 4 or distractor_mask.ndim != 3:
+        raise ValueError('Expected source_lq/teacher [B,V,T,C] and mask [B,N,T]')
+    if geometry_aux is None or len(geometry_aux) != 3:
+        raise ValueError('Geometry correspondence SupCon requires geometry_aux')
+    temperature = float(temperature)
+    if not math.isfinite(temperature) or temperature <= 0:
+        raise ValueError('SupCon temperature must be positive')
+    if max_negative_tokens is not None:
+        max_negative_tokens = int(max_negative_tokens)
+    if max_negative_tokens is not None and max_negative_tokens < 1:
+        raise ValueError('max_negative_tokens must be positive')
+    b, total, tokens, channels = prediction.shape
+    n = source_lq.shape[1]
+    if total < n or clean_teacher.shape[1] < n:
+        raise ValueError('Prediction/teacher view count is smaller than source view count')
+    if source_lq.shape[2:] != (tokens, channels) or clean_teacher.shape[2:] != (tokens, channels):
+        raise ValueError('SupCon feature shapes must match prediction [B,V,T,C]')
+    if distractor_mask.shape != (b, n, tokens) or distractor_mask[:, :, 0].any():
+        raise ValueError('Expected distractor mask [B,N,T] with clean CLS tokens')
+
+    # x_t contains the additive source condition in the current flow recipe;
+    # subtract it before recovering the clean endpoint x0 from velocity.
+    time = batch.time.to(device=prediction.device, dtype=prediction.dtype)
+    x0_hat = batch.model_input - batch.source_condition - time[:, None, None, None] * prediction
+    anchor = F.normalize(x0_hat[:, :n, 1:].float(), dim=-1)
+    clean_keys = F.normalize(clean_teacher[:, :n, 1:].detach().float(), dim=-1)
+    distractor_keys = F.normalize(source_lq[:, :n, 1:].detach().float(), dim=-1)
+    query_mask = distractor_mask[:, :, 1:].bool()
+    if not query_mask.any():
+        return prediction.new_zeros(())
+
+    geo_target, _, visibility = geometry_aux
+    patch_count = tokens - 1
+    if geo_target.shape[1] < n * patch_count or geo_target.shape[2] < n * patch_count:
+        raise ValueError('Geometry target is smaller than source patch-token layout')
+    geo_target = geo_target[:, :n * patch_count, :n * patch_count]
+    visibility = visibility[:, :n * patch_count, :n * patch_count].bool()
+
+    losses=[]
+    weights=[]
+    for bi in range(b):
+        negative_positions = query_mask[bi].nonzero(as_tuple=False)
+        if negative_positions.numel() == 0:
+            continue
+        # One global negative pool per sample: all distractor input tokens in
+        # all source views. Keep the anchor's own input token whenever capped.
+        flat_negative = (negative_positions[:, 0] * patch_count + negative_positions[:, 1])
+        for view, patch in negative_positions.tolist():
+            row = view * patch_count + patch
+            positive_keys=[clean_keys[bi, view, patch]]  # self-positive
+
+            # Geometry correspondence is selected independently per target
+            # view. Visibility gates the candidate; mask=0 makes it positive.
+            for target_view in range(n):
+                if target_view == view:
+                    continue
+                cols = slice(target_view * patch_count, (target_view + 1) * patch_count)
+                row_weights = geo_target[bi, row, cols]
+                row_valid = visibility[bi, row, cols]
+                if not row_valid.any():
+                    continue
+                masked_weights = row_weights.masked_fill(~row_valid, float('-inf'))
+                target_patch = int(masked_weights.argmax().item())
+                if not bool(distractor_mask[bi, target_view, target_patch + 1]):
+                    positive_keys.append(clean_keys[bi, target_view, target_patch])
+
+            # Cap negatives without instance matching. Keep self-negative and
+            # sample the rest uniformly; within the sampled set, InfoNCE's
+            # exponential weighting automatically emphasizes hard negatives.
+            keep = flat_negative == row
+            remaining = (~keep).nonzero(as_tuple=False).flatten()
+            slots = None if max_negative_tokens is None else max_negative_tokens - 1
+            if slots is not None and slots > 0 and remaining.numel() > slots:
+                remaining = remaining[torch.randperm(remaining.numel(), device=remaining.device)[:slots]]
+            selected_indices = torch.cat([keep.nonzero(as_tuple=False).flatten(), remaining])
+            if max_negative_tokens is not None:
+                selected_indices = selected_indices[:max_negative_tokens]
+            negative_keys = distractor_keys[bi].reshape(-1, channels)[flat_negative[selected_indices]]
+
+            pos = torch.stack(positive_keys, dim=0)
+            logits = torch.cat([
+                anchor[bi, view, patch][None] @ pos.transpose(0, 1),
+                anchor[bi, view, patch][None] @ negative_keys.transpose(0, 1),
+            ], dim=1).squeeze(0) / temperature
+            log_prob = logits - torch.logsumexp(logits, dim=0)
+            # Average over positives, not sum them, so visibility does not
+            # change the scale of an anchor's loss.
+            losses.append(-log_prob[:pos.shape[0]].mean())
+            if time_weight == 'one_minus_t':
+                weights.append((1. - time[bi]).float().clamp_min(0.))
+            elif time_weight in ('none', None):
+                weights.append(losses[-1].new_ones(()))
+            else:
+                raise ValueError(f'Unsupported SupCon time_weight={time_weight!r}')
+    if not losses:
+        return prediction.new_zeros(())
+    values = torch.stack(losses)
+    weights = torch.stack(weights).to(values.device, values.dtype)
+    return (values * weights).sum() / weights.sum().clamp_min(1e-8)
+
+
 class NVSLossTracker:
     """Detached, sample-weighted logging across microbatches and DDP ranks.
 
@@ -239,7 +361,8 @@ class NVSLossTracker:
             'restoration_clean_loss', 'restoration_distractor_loss',
             'attention_alignment_loss', 'weighted_attention_alignment_loss',
             'distractor_suppression_loss', 'weighted_distractor_suppression_loss',
-            'distractor_infonce_loss', 'weighted_distractor_infonce_loss')
+            'distractor_infonce_loss', 'weighted_distractor_infonce_loss',
+            'geometry_contrastive_loss', 'weighted_geometry_contrastive_loss')
 
     def __init__(self):
         self.totals = None
@@ -339,6 +462,7 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
                       nvs_branch=True, novel_weight=1., source_distractor_mask=None,
                       group_mse_cfg=None, alignment_target=None, alignment_aux=None, alignment_cfg=None,
                       distractor_suppression_cfg=None,
+                      geometry_contrastive_cfg=None,
                       full_view_loss=False,
                       loss_tracker=None):
     """Single shared-model forward: N restoration and M NVS velocity losses."""
@@ -364,18 +488,29 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
     if nvs_branch and target_rays.shape!=(b,m,clean_teacher.shape[2]-1,6):raise ValueError('Target rays must match only M patch grids')
     rays=torch.cat([target_rays.new_zeros(b,v,target_rays.shape[2],6),target_rays],dim=1) if nvs_branch else None
     analysis=None
+    hard_self_view = bool((alignment_cfg or {}).get('hard_self_view_for_distractor', False))
     if alignment_cfg and alignment_cfg.get('use',False):
         from omegaconf import OmegaConf
         if alignment_target is None:raise ValueError('Missing clean geometry attention target')
-        analysis=OmegaConf.create(dict(vis_attn_map=True,mvrm_attn_map=dict(extract_idx=[alignment_cfg['mvrm_layer_idx']])))
+        analysis=OmegaConf.create(dict(vis_attn_map=True,mvrm_attn_map=dict(extract_idx=[alignment_cfg['mvrm_layer_idx']])), flags={'allow_objects': True})
+        if hard_self_view:
+            from mvr.distractor_attention import build_hard_self_view_mask
+            full_distractor_mask = torch.cat([
+                source_distractor_mask,
+                torch.zeros((b, m, source_distractor_mask.shape[2]), device=source_distractor_mask.device, dtype=torch.bool)
+            ], dim=1) if m else source_distractor_mask
+            analysis.mvrm_hard_attn_layer = int(alignment_cfg['mvrm_layer_idx'])
+            analysis.mvrm_hard_attn_mask = build_hard_self_view_mask(full_distractor_mask)
     model_kwargs = dict(analysis=analysis)
     if nvs_branch:
         model_kwargs.update(nvs_rays=rays, nvs_view_mask=batch.novel_view_mask)
     distractor_cfg=distractor_suppression_cfg or {}
+    geometry_cfg=geometry_contrastive_cfg or {}
     loss_mode=str(distractor_cfg.get('mode','none'))
     if loss_mode.lower() == 'infonce': loss_mode='infoNCE'
     if loss_mode not in ('none','push_only','infoNCE'):
         raise ValueError('distractor loss mode must be none, push_only, or infoNCE')
+    use_geometry_contrastive=bool(geometry_cfg.get('use',False))
     use_distractor_loss=loss_mode != 'none'
     pred_output=model(batch.model_input,time,image_size,
                       return_features=use_distractor_loss, **model_kwargs)
@@ -390,6 +525,7 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
     losses = nvs_flow_losses(pred,batch,novel_weight=novel_weight,source_distractor_mask=source_distractor_mask,group_mse_cfg=group_mse_cfg,full_view_loss=full_view_loss)
     suppression=losses['loss'].new_zeros(())
     infonce=losses['loss'].new_zeros(())
+    geometry_contrastive=losses['loss'].new_zeros(())
     if loss_mode == 'push_only':
         suppression=distractor_suppression_loss(
             features, source_distractor_mask,
@@ -404,13 +540,23 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
     losses['distractor_infonce_loss']=infonce
     losses['weighted_distractor_infonce_loss']=float(distractor_cfg.get('lambda_coeff',0.01))*infonce
     losses['loss']=losses['loss']+losses['weighted_distractor_suppression_loss']+losses['weighted_distractor_infonce_loss']
+    if use_geometry_contrastive:
+        geometry_contrastive=geometry_correspondence_supcon_loss(
+            pred, batch, source_lq, clean_teacher, source_distractor_mask,
+            alignment_aux,
+            temperature=float(geometry_cfg.get('temperature',0.07)),
+            max_negative_tokens=geometry_cfg.get('max_negative_tokens',64),
+            time_weight=geometry_cfg.get('time_weight','one_minus_t'))
+    losses['geometry_contrastive_loss']=geometry_contrastive
+    losses['weighted_geometry_contrastive_loss']=float(geometry_cfg.get('lambda_coeff',0.05))*geometry_contrastive
+    losses['loss']=losses['loss']+losses['weighted_geometry_contrastive_loss']
     alignment=losses['loss'].new_zeros(())
     if analysis is not None:
         from mvr.nvs_attention import attention_loss
         alignment=attention_loss(model,alignment_target,alignment_cfg,v+m,clean_teacher.shape[2],
                                  distractor_mask=torch.cat([source_distractor_mask,
                                                              torch.zeros(source_distractor_mask.shape[0], m, source_distractor_mask.shape[2], device=source_distractor_mask.device, dtype=torch.bool)], dim=1)
-                                 if alignment_cfg.get('distractor_aware',{}).get('use',False) else None,
+                                 if (alignment_cfg.get('distractor_aware',{}).get('use',False) or hard_self_view) else None,
                                  alignment_aux=alignment_aux)
     losses['attention_alignment_loss']=alignment
     losses['weighted_attention_alignment_loss']=float((alignment_cfg or {}).get('lambda_coeff',1.))*alignment

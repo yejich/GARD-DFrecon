@@ -1,0 +1,83 @@
+seed: 42
+precision: fp32
+encoder: depth-anything/DA3-GIANT-1.1
+checkpoint: ckpts/gard_denoiser.pt
+resolution: 504
+workers: 2
+per_gpu_batch_size: 1
+accumulation: 2
+epochs: 30
+lr: 0.0002
+warmup_epochs: 15
+ema_decay: 0.9995
+novel_weight: 1.0
+log_interval: 4
+checkpoint_interval: 200
+save_ema_epochs: [1, 3, 10, 20, 30]
+eval_epochs: [1, 3, 10, 20, 30]
+model:
+  in_channels: 1536
+  hidden_size: [1536, 3072]
+  depth: [8, 6]
+  num_heads: [16, 16]
+  mlp_ratio: 4.0
+  use_qknorm: true
+  use_swiglu: true
+  use_rope: true
+  use_rmsnorm: true
+  wo_shift: false
+  use_pos_embed: false
+  use_global_residual: false
+  mask_head_enabled: false
+data:
+  # Original clean Hypersim groups plus generated negative groups.
+  sampling_mode: mixed
+  manifest: manifests/hypersim_hf_a935b4e251fa.json
+  negative_manifest: manifests/hypersim_negative_mixed_snapshot.json
+  root: datasets/hypersim_pairs
+  negative_root: datasets/hypersim_negative
+  original_samples: 10000
+wandb:
+  enabled: false
+  entity: yejichoi_kaist-kaist
+  project: GARD-DFrecon
+group_mse:
+  mode: group2
+  lambda_clean: 1.0
+  lambda_distractor: 1.0
+distractor_loss:
+  mode: none
+  lambda_coeff: 0.0
+geometry_contrastive_loss:
+  use: true
+  lambda_coeff: 0.05
+  temperature: 0.07
+  max_negative_tokens: 64
+  time_weight: one_minus_t
+mask_aware_attention: false
+attention_alignment:
+  use: true
+  lambda_coeff: 1.0
+  mvrm_layer_idx: 9
+  # Soft self-view behavior: self-view distractor keys remain in attention.
+  hard_self_view_for_distractor: false
+  distractor_aware:
+    use: true
+    cross_view_only_for_distractor: true
+    max_correspondence_distance: 0.03
+    balance_query_groups: true
+    lambda_distractor: 1.0
+    lambda_clean: 1.0
+  da3_point_cloud:
+    use: true
+    vis_pc_temperature: 0.01
+    visibility_mask: cycle_consistency
+    vis_pc_cycle_threshold: 1.5
+    reprojection_depth_threshold: 0.1
+nvs:
+  total_views: 4
+  min_source_views: 2
+  max_source_views: 3
+nvs_branch: false
+flowmap_from: noise_lq
+full_view_loss: false
