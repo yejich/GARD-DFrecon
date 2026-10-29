@@ -15,22 +15,30 @@ MAX_SCENES="${MAX_SCENES:-0}"
 
 usage() {
   cat <<'EOF'
-Usage: bash run_scripts/JIHYE_261028/prepare_nvs_stage1_data.bash
+Usage: bash run_scripts/JIHYE_261028/prepare_nvs_stage1_data.bash [DL3DV_ROOT]
 
 Required dataset roots (override with environment variables):
-  HYPERSIM_ROOT       raw Hypersim root containing data/ai_*/
-  HYPERSIM_CAMERA_CSV Hypersim metadata_camera_parameters.csv
-  TARTANAIR_ROOT      TartanAir root containing data/*/Easy/*/
-  DL3DV_ROOT          DL3DV root containing scene */*/transforms.json
+  HYPERSIM_ROOT       existing raw Hypersim root containing data/ai_*/
+  HYPERSIM_CAMERA_CSV existing Hypersim metadata_camera_parameters.csv
+  TARTANAIR_ROOT      existing TartanAir root containing data/*/Easy/*/
+  DL3DV_ROOT          downloaded DL3DV root containing scene */*/transforms.json
   PHASE1_MANIFEST     output manifest path
 
+The optional positional DL3DV_ROOT overrides the environment variable.
 This script validates existing downloads and rebuilds the portable manifest.
-Use the official dataset download tools separately; do not download large
-datasets implicitly from a training command.
 EOF
 }
 
 [[ "${1:-}" != --help ]] || { usage; exit 0; }
+if [[ $# -gt 0 ]]; then
+  DL3DV_ROOT="$1"
+  shift
+fi
+if [[ $# -gt 0 ]]; then
+  echo "Unexpected argument: $1" >&2
+  usage >&2
+  exit 2
+fi
 for path in "$HYPERSIM_ROOT" "$TARTANAIR_ROOT" "$DL3DV_ROOT" "$HYPERSIM_CAMERA_CSV"; do
   [[ -e "$path" ]] || { echo "Missing dataset asset: $path" >&2; exit 1; }
 done
