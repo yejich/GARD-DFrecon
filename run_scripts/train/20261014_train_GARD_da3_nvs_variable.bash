@@ -3,7 +3,8 @@
 # CUDA_VISIBLE_DEVICES=0,1,2,3 GLOBAL_BATCH_SIZE=16 PER_GPU_BATCH_SIZE=1 bash run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash
 # Options: NVS_BRANCH=true|false, FLOWMAP_FROM=noise|noise_lq,
 #          DISTRACTOR_AWARE_ATTN_ALIGN=true|false, ATTENTION_ALIGNMENT=true|false
-#          DISTRACTOR_LOSS=none|push_only|infoNCE
+#          DISTRACTOR_LOSS=none|push_only|infoNCE,
+#          GEOMETRY_CONTRASTIVE_USE=true|false
 # NVS_CONFIG를 지정하면 prepare_handoff_config.py로 생성한 config를 기반으로
 # ablation/batch 옵션을 적용합니다.
 # CPU 설정 준비만: 위 명령 끝에 --prepare-only 추가
@@ -34,6 +35,11 @@ ORIGINAL_GROUPS_PER_EPOCH="${ORIGINAL_GROUPS_PER_EPOCH:-10000}"
 NUM_WORKERS="${NUM_WORKERS:-2}"
 LEARNING_RATE="${LEARNING_RATE:-0.0002}"
 NOVEL_WEIGHT="${NOVEL_WEIGHT:-1.0}"         # M의 전체 1+P token MSE 가중치
+GEOMETRY_CONTRASTIVE_USE="${GEOMETRY_CONTRASTIVE_USE:-true}"
+GEOMETRY_CONTRASTIVE_LAMBDA="${GEOMETRY_CONTRASTIVE_LAMBDA:-0.05}"
+GEOMETRY_CONTRASTIVE_TEMPERATURE="${GEOMETRY_CONTRASTIVE_TEMPERATURE:-0.07}"
+GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS="${GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS:-64}"
+GEOMETRY_CONTRASTIVE_TIME_WEIGHT="${GEOMETRY_CONTRASTIVE_TIME_WEIGHT:-one_minus_t}"
 EXP_NAME="${BASE_EXP_NAME}_nvs${NVS_BRANCH}_flow${FLOWMAP_FROM}_dattn${DISTRACTOR_AWARE_ATTN_ALIGN}_align${ATTENTION_ALIGNMENT}"
 LOG_EVERY_OPTIMIZER_STEPS="${LOG_EVERY_OPTIMIZER_STEPS:-4}"
 CHECKPOINT_INTERVAL="${CHECKPOINT_INTERVAL:-200}"
@@ -119,6 +125,7 @@ export PRECISION
 export EPOCHS ORIGINAL_GROUPS_PER_EPOCH NUM_WORKERS LEARNING_RATE NOVEL_WEIGHT ATTENTION_ALIGNMENT MASK_AWARE_ATTENTION PER_GPU_BATCH_SIZE
 export LOG_EVERY_OPTIMIZER_STEPS CHECKPOINT_INTERVAL SAVE_EPOCHS EVAL_EPOCHS NEGATIVE_MANIFEST WANDB_PROJECT WANDB_ENTITY WANDB_ENABLED
 export DISTRACTOR_AWARE_ATTN_ALIGN DISTRACTOR_LOSS DISTRACTOR_LOSS_LAMBDA DISTRACTOR_LOSS_MARGIN DISTRACTOR_LOSS_TEMPERATURE FLOWMAP_FROM NVS_BRANCH
+export GEOMETRY_CONTRASTIVE_USE GEOMETRY_CONTRASTIVE_LAMBDA GEOMETRY_CONTRASTIVE_TEMPERATURE GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS GEOMETRY_CONTRASTIVE_TIME_WEIGHT
 "$ROOT/.venv/bin/python" - <<'PY'
 import math, os
 from pathlib import Path
@@ -146,6 +153,23 @@ cfg.distractor_loss = dict(mode=loss_mode,
 if cfg.distractor_loss.lambda_coeff < 0 or not math.isfinite(cfg.distractor_loss.lambda_coeff): raise ValueError('Invalid DISTRACTOR_LOSS_LAMBDA')
 if not 0 <= cfg.distractor_loss.margin < 1 or not math.isfinite(cfg.distractor_loss.margin): raise ValueError('DISTRACTOR_LOSS_MARGIN must be in [0,1)')
 if cfg.distractor_loss.temperature <= 0 or not math.isfinite(cfg.distractor_loss.temperature): raise ValueError('DISTRACTOR_LOSS_TEMPERATURE must be positive')
+geometry_use = os.environ['GEOMETRY_CONTRASTIVE_USE'].lower()
+if geometry_use not in ('true', 'false'): raise ValueError('GEOMETRY_CONTRASTIVE_USE must be true/false')
+if 'geometry_contrastive_loss' not in cfg or cfg.geometry_contrastive_loss is None:
+    cfg.geometry_contrastive_loss = {}
+OmegaConf.update(cfg, 'geometry_contrastive_loss.use', geometry_use == 'true')
+OmegaConf.update(cfg, 'geometry_contrastive_loss.lambda_coeff', float(os.environ['GEOMETRY_CONTRASTIVE_LAMBDA']))
+OmegaConf.update(cfg, 'geometry_contrastive_loss.temperature', float(os.environ['GEOMETRY_CONTRASTIVE_TEMPERATURE']))
+max_neg = os.environ['GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS']
+if max_neg.lower() == 'none':
+    max_neg = None
+else:
+    max_neg = int(max_neg)
+    if max_neg < 1: raise ValueError('GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS must be positive or none')
+OmegaConf.update(cfg, 'geometry_contrastive_loss.max_negative_tokens', max_neg)
+time_weight = os.environ['GEOMETRY_CONTRASTIVE_TIME_WEIGHT']
+if time_weight not in ('one_minus_t', 'none'): raise ValueError('GEOMETRY_CONTRASTIVE_TIME_WEIGHT must be one_minus_t or none')
+OmegaConf.update(cfg, 'geometry_contrastive_loss.time_weight', time_weight)
 if cfg.precision not in ('fp32', 'bf16'): raise ValueError('PRECISION must be fp32 or bf16')
 for key, env in [('epochs','EPOCHS'), ('workers','NUM_WORKERS'), ('accumulation','GARD_GRAD_ACCUM_STEPS'), ('per_gpu_batch_size','PER_GPU_BATCH_SIZE'), ('log_interval','LOG_EVERY_OPTIMIZER_STEPS'), ('checkpoint_interval','CHECKPOINT_INTERVAL')]:
     cfg[key] = int(os.environ[env])
@@ -172,7 +196,7 @@ cfg.wandb.name = Path(os.environ['NVS_LAUNCH_CONFIG']).parent.name
 OmegaConf.save(cfg, os.environ['NVS_LAUNCH_CONFIG'])
 print(f'Prepared config: {os.environ["NVS_LAUNCH_CONFIG"]}')
 print(f'Data config: {os.environ["NVS_DATA_TEMPLATE"]}')
-print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, per_gpu_batch_size={cfg.per_gpu_batch_size}, accumulation={cfg.accumulation}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}, distractor_loss={cfg.distractor_loss.mode}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment + {cfg.distractor_loss.lambda_coeff}*{cfg.distractor_loss.mode}; camera tokens are clean')
+print(f'V=4, N=2~3, M=4-N: nvs_branch={cfg.nvs_branch}, flowmap_from={cfg.flowmap_from}, per_gpu_batch_size={cfg.per_gpu_batch_size}, accumulation={cfg.accumulation}, distractor_aware_attn_align={cfg.attention_alignment.distractor_aware.use}, distractor_loss={cfg.distractor_loss.mode}, geometry_supcon={cfg.geometry_contrastive_loss.use}; N_group2 + {cfg.novel_weight}*M_all_tokens + {cfg.attention_alignment.lambda_coeff}*attention_alignment + {cfg.geometry_contrastive_loss.lambda_coeff}*geometry_supcon; camera tokens are clean')
 PY
 if [[ "$PREPARE_ONLY" == true ]]; then exit 0; fi
 if [[ "$WANDB_ENABLED" == true && -f "$WANDB_ENV_FILE" ]]; then

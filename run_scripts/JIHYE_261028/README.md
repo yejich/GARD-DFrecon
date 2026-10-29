@@ -23,6 +23,24 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 \
 
 이 launcher는 학습만 수행하며 optional fixed-eval pipeline은 자동 실행하지 않습니다. 학습에 필요한 pair/negative 이미지와 `ckpts/gard_denoiser.pt`는 서버에 별도로 준비되어 있어야 합니다.
 
+설정 ablation은 실행 옵션으로 바로 바꿀 수 있습니다.
+
+```bash
+# NVS ON + noise flow + SupCon OFF
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash \
+  --nvs on --flow noise --supcon off
+
+# SupCon coefficient / negative pool 변경
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash \
+  --supcon on --supcon-lambda 0.1 --supcon-temperature 0.1 \
+  --supcon-max-negatives 128
+
+# 전체 옵션 확인
+bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --help
+```
+
 실행 전 설정 생성과 파일 검사는 다음처럼 할 수 있습니다.
 
 ```bash
