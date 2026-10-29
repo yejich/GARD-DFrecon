@@ -87,7 +87,7 @@ done
 
 case "$FLOWMAP_FROM" in noise|noise_lq) ;; *) echo '--flow must be noise or noise_lq' >&2; exit 2 ;; esac
 if [[ -z "${EXP_NAME:-}" ]]; then
-  EXP_NAME="nvs_v4_n2-3_supcon${GEOMETRY_CONTRASTIVE_USE}_nvs${NVS_BRANCH}_flow${FLOWMAP_FROM}"
+  EXP_NAME="nvs_v4_n2-3"
 fi
 
 export NVS_CONFIG="${NVS_CONFIG:-$ROOT/run_configs/train/train_GARD_da3_nvs_v4_n2_3_mixed_supcon_softself.yaml}"
