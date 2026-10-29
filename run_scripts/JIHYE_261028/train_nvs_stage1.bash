@@ -11,7 +11,7 @@ IFS=',' read -r -a GPUS <<< "$CUDA_VISIBLE_DEVICES"
 NUM_GPUS=${#GPUS[@]}
 
 GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"
-# PhaseCNVS has variable N=1/2/3 and currently requires microbatch 1.
+# Stage-1 loader has variable N=1/2/3 and currently requires microbatch 1.
 PER_GPU_BATCH_SIZE=1
 ACCUMULATION=$((GLOBAL_BATCH_SIZE / NUM_GPUS))
 if (( NUM_GPUS < 1 || GLOBAL_BATCH_SIZE < NUM_GPUS || GLOBAL_BATCH_SIZE % NUM_GPUS != 0 )); then
@@ -25,7 +25,7 @@ EPOCHS="${EPOCHS:-30}"
 STEPS_PER_EPOCH="${STEPS_PER_EPOCH:-2500}"
 WORKERS="${NUM_WORKERS:-2}"
 LR="${LEARNING_RATE:-0.0002}"
-OUT="${OUT:-$ROOT/result_train/$(date +%Y%m%d)_nvs_stage1_phasec}"
+OUT="${OUT:-$ROOT/result_train/$(date +%Y%m%d)_nvs_stage1}"
 CONFIG="$OUT/launch_config.yaml"
 
 if [[ ! -f "$MANIFEST" ]]; then
@@ -44,10 +44,10 @@ import os
 from pathlib import Path
 from omegaconf import OmegaConf
 root=Path(os.environ['ROOT']) if 'ROOT' in os.environ else Path.cwd()
-cfg=OmegaConf.load(root/'run_configs/train/train_GARD_da3_phase_c_nvs.yaml')
+cfg=OmegaConf.load(root/'run_configs/train/train_GARD_da3_stage1_nvs.yaml')
 cfg.checkpoint=str(Path(os.environ['INIT_CHECKPOINT']).resolve())
 cfg.data.manifest=str(Path(os.environ['PHASE1_MANIFEST']).resolve())
-cfg.data.name='phase_c'
+cfg.data.name='stage1'
 cfg.per_gpu_batch_size=int(os.environ['PER_GPU_BATCH_SIZE'])
 cfg.accumulation=int(os.environ['ACCUMULATION'])
 cfg.steps_per_epoch=int(os.environ['STEPS_PER_EPOCH'])

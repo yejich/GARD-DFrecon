@@ -52,7 +52,8 @@ def main():
   OmegaConf.save(cfg,args.out/'config.yaml')
   save_json(args.out/'status.json',dict(status='initializing',world_size=world,wandb_enabled=False))
  # Preserve original+negative scene split and exactly-once negative variants.
- phase_c=bool(cfg.data.get('name','')=='phase_c')
+ # `phase_c` is the legacy internal name; Stage-1 is the handoff-facing name.
+ phase_c=cfg.data.get('name','') in ('phase_c','stage1')
  ds=PhaseCNVS(cfg.data.manifest,resolution=cfg.resolution,patch_size=14,seed=cfg.seed) if phase_c else MixedHypersimPairs(cfg.data.manifest,cfg.data.negative_manifest,original_root=cfg.data.root,negative_root=cfg.data.negative_root,scene_split_policy=cfg.data.scene_split,process_res=cfg.resolution)
  nvs_cfg=cfg.get('nvs',{})
  total_views=int(nvs_cfg.get('total_views',4));min_source=int(nvs_cfg.get('min_source_views',3));max_source=int(nvs_cfg.get('max_source_views',3))
