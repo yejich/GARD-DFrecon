@@ -50,7 +50,14 @@ bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --help
 - `--nvs on|off`: NVS branch 사용 여부
 - `--supcon on|off`: geometry SupCon loss 사용 여부
 
-아래 16개 명령은 네 축의 전체 조합입니다. 각 명령은 독립적인 run directory를 생성합니다. GPU를 바꾸려면 `CUDA_VISIBLE_DEVICES`만 수정하면 됩니다.
+아래 명령은 네 축의 전체 조합 중, 2026-10-20에 이미 실행한 조합을 제외한 15개입니다. 각 명령은 독립적인 run directory를 생성합니다. GPU를 바꾸려면 `CUDA_VISIBLE_DEVICES`만 수정하면 됩니다.
+
+이미 실행한 조합:
+
+```text
+distractor-aware=off, flow=noise_lq, nvs=on, supcon=off
+result_train/20261020_nvs_push_only_nvstrue_flownoise_lq_dattnfalse_aligntrue_000457_414860899
+```
 
 ```bash
 RUN=run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
@@ -72,7 +79,6 @@ CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs
 CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs off --supcon on
 CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs off --supcon off
 CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs on  --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs on  --supcon off
 CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs off --supcon on
 CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs off --supcon off
 ```
