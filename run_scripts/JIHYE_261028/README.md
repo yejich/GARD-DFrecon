@@ -41,6 +41,35 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 \
 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --help
 ```
 
+## JIHYE 2026-10-20 synthetic 데이터로 2026-10-28 실험 시작하기
+
+JIHYE_1020 때 이미 받은 synthetic Hypersim pair를 사용하는 경우, 새 Hypersim을 다시 받을 필요가 없습니다. 1028 config는 `datasets/hypersim_pairs`를 바라보므로, 1020 데이터의 실제 위치를 `DATASET_ROOT`로 지정하고 저장소 안에 symlink를 만든 뒤 manifest와 negative dataset을 검사합니다.
+
+```bash
+export PROJECT_ROOT=/absolute/path/to/GARD-DFrecon
+export DATASET_ROOT=/absolute/path/to/synthetic_distractor/data/output/hypersim_001_pairs
+cd "$PROJECT_ROOT"
+
+mkdir -p datasets
+ln -sfn "$DATASET_ROOT" datasets/hypersim_pairs
+
+test -f manifests/hypersim_hf_a935b4e251fa.json
+test -f manifests/hypersim_negative_mixed_snapshot.json
+test -d datasets/hypersim_negative
+test -f ckpts/gard_denoiser.pt
+
+HYPERSIM_PAIRS_ROOT="$DATASET_ROOT" \
+  .venv/bin/python scripts/check_hypersim_pairs.py \
+  --manifest "$PROJECT_ROOT/manifests/hypersim_hf_a935b4e251fa.json"
+```
+
+이 단계는 Stage-1 NVS-only 다운로드/manifest와 별개이며, 1020 synthetic Hypersim + 기존 HypersimNegative mixed 학습을 위한 manifest와 경로만 준비합니다. 준비가 끝나면 아래처럼 본 학습을 실행합니다.
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
+```
+
 ## 전체 ablation 명령어
 
 비교할 네 가지 축은 다음과 같습니다.
@@ -93,35 +122,6 @@ CUDA_VISIBLE_DEVICES=0,1 \
 ```
 
 기본 config는 `run_configs/train/train_GARD_da3_nvs_v4_n2_3_mixed_supcon_softself.yaml`입니다. 다른 경로를 사용할 때는 `NVS_CONFIG=/absolute/path/to/config.yaml`로 지정합니다.
-
-## JIHYE 2026-10-20 synthetic 데이터로 2026-10-28 실험 시작하기
-
-JIHYE_1020 때 이미 받은 synthetic Hypersim pair를 사용하는 경우, 새 Hypersim을 다시 받을 필요가 없습니다. 1028 config는 `datasets/hypersim_pairs`를 바라보므로, 1020 데이터의 실제 위치를 `DATASET_ROOT`로 지정하고 저장소 안에 symlink를 만든 뒤 manifest와 negative dataset을 검사합니다.
-
-```bash
-export PROJECT_ROOT=/absolute/path/to/GARD-DFrecon
-export DATASET_ROOT=/absolute/path/to/synthetic_distractor/data/output/hypersim_001_pairs
-cd "$PROJECT_ROOT"
-
-mkdir -p datasets
-ln -sfn "$DATASET_ROOT" datasets/hypersim_pairs
-
-test -f manifests/hypersim_hf_a935b4e251fa.json
-test -f manifests/hypersim_negative_mixed_snapshot.json
-test -d datasets/hypersim_negative
-test -f ckpts/gard_denoiser.pt
-
-HYPERSIM_PAIRS_ROOT="$DATASET_ROOT" \
-  .venv/bin/python scripts/check_hypersim_pairs.py \
-  --manifest "$PROJECT_ROOT/manifests/hypersim_hf_a935b4e251fa.json"
-```
-
-이 단계는 Stage-1 NVS-only 다운로드/manifest와 별개이며, 1020 synthetic Hypersim + 기존 HypersimNegative mixed 학습을 위한 manifest와 경로만 준비합니다. 준비가 끝나면 아래처럼 본 학습을 실행합니다.
-
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
-```
 
 ## Stage 1: NVS-only 사전학습
 
