@@ -98,12 +98,38 @@ CUDA_VISIBLE_DEVICES=0,1 \
 
 Hypersim, TartanAir, DL3DV의 clean multi-view 데이터만 사용해 NVS branch를 먼저 학습할 수 있습니다. 이 단계에서는 distractor-aware attention, attention alignment, distractor loss, SupCon을 모두 끄고 `nvs_branch=true`, `full_view_loss=true`로 실행합니다. Variable-N loader가 현재 per-GPU microbatch 1을 요구하므로, GPU 4개에서 global batch 16은 accumulation 4로 맞춰집니다.
 
-Hypersim과 TartanAir는 지혜님 서버에 이미 있는 root를 사용하고, DL3DV만 별도로 다운로드해서 경로를 입력합니다. 데이터 root 구조는 다음과 같아야 합니다.
+세 데이터셋 모두 로컬에 없다면 아래 다운로드 명령으로 준비할 수 있습니다. Hypersim과 TartanAir는 저장소에 포함된 upstream 다운로드 스크립트를 사용하고, DL3DV는 접근 승인 후 공식 downloader를 사용합니다. 데이터 root 구조는 다음과 같아야 합니다.
 
 ```text
 $HYPERSIM_ROOT/data/ai_*/...
 $TARTANAIR_ROOT/data/<environment>/Easy/<sequence>/image_left/
 $DL3DV_ROOT/<split>/<scene>/transforms.json
+```
+
+Hypersim 전체 다운로드는 용량이 크므로 필요한 scene만 `download_scripts/hypersim/hypersim.py`의 URL 목록에 남겨서 실행하는 것도 가능합니다. 기본 스크립트는 Phase-1 manifest가 기대하는 `$HYPERSIM_ROOT/data/ai_*` 구조로 압축을 풉니다.
+
+```bash
+export HYPERSIM_ROOT="$PWD/data/train/hypersim"
+mkdir -p "$HYPERSIM_ROOT"
+
+# Apple Hypersim scene archives: download + extract.
+bash download_scripts/hypersim/download_hypersim.sh
+```
+
+TartanAir는 NVS manifest에 필요한 left RGB와 pose를 포함하도록 Easy trajectory를 받습니다. 기본 스크립트는 Hugging Face mirror를 사용해 left RGB/depth를 내려받습니다. 전체 데이터는 매우 크므로, 우선 RGB만 받으려면 아래처럼 실행할 수 있습니다.
+
+```bash
+export TARTANAIR_ROOT="$PWD/data/train/tartanair"
+mkdir -p "$TARTANAIR_ROOT"
+python -m pip install -U huggingface_hub colorama
+
+# Recommended: left RGB + depth, Easy trajectories, Hugging Face mirror.
+bash download_scripts/tartanair_tools/download_tartanair.sh
+
+# Smaller first pass: left RGB only.
+python download_scripts/tartanair_tools/download_training.py \
+  --output-dir "$TARTANAIR_ROOT" --rgb --only-left --only-easy \
+  --unzip --huggingface
 ```
 
 DL3DV는 접근 승인 후 공식 downloader에서 필요한 subset/resolution을 선택합니다.
@@ -114,6 +140,8 @@ python /path/to/DL3DV-10K/Dataset/scripts/download.py \
   --odir "$DL3DV_ROOT" --subset 1K --resolution 480P \
   --file_type images+poses --clean_cache
 ```
+
+각 dataset은 원본 라이선스와 다운로드 약관을 확인해야 하며, Hypersim/TartanAir 전체 다운로드는 수백 GB 이상이 될 수 있습니다. 이미 다운로드한 root가 있다면 다시 받을 필요 없이 아래 manifest 생성 단계에서 그 root만 지정합니다.
 
 다운로드가 끝나면 Hypersim, TartanAir, DL3DV의 실제 경로를 positional argument로 입력해 manifest를 생성합니다.
 
