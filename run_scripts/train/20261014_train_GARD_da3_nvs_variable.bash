@@ -190,6 +190,22 @@ if any(x < 1 or x > cfg.epochs for x in cfg.eval_epochs + list(cfg.save_ema_epoc
 if os.environ['NEGATIVE_MANIFEST']:
     cfg.data.negative_manifest = str(Path(os.environ['NEGATIVE_MANIFEST']).resolve())
 if not Path(cfg.data.negative_manifest).is_file(): raise FileNotFoundError(cfg.data.negative_manifest)
+if 'scene_split' not in cfg.data:
+    cfg.data.scene_split = None
+if os.environ.get('SCENE_SPLIT_POLICY'):
+    cfg.data.scene_split = str(Path(os.environ['SCENE_SPLIT_POLICY']).resolve())
+if cfg.data.scene_split and not Path(cfg.data.scene_split).is_file():
+    raise FileNotFoundError(cfg.data.scene_split)
+if 'camera' not in cfg:
+    cfg.camera = {}
+if os.environ.get('HYPERSIM_CAMERA_ROOT'):
+    cfg.camera.root = str(Path(os.environ['HYPERSIM_CAMERA_ROOT']).resolve())
+if os.environ.get('HYPERSIM_CAMERA_PARAMETERS'):
+    cfg.camera.parameters = str(Path(os.environ['HYPERSIM_CAMERA_PARAMETERS']).resolve())
+if not cfg.camera.get('root') or not Path(cfg.camera.root).is_dir():
+    raise FileNotFoundError('Set HYPERSIM_CAMERA_ROOT to the Hypersim camera-data root')
+if not cfg.camera.get('parameters') or not Path(cfg.camera.parameters).is_file():
+    raise FileNotFoundError('Set HYPERSIM_CAMERA_PARAMETERS to metadata_camera_parameters.csv')
 cfg.checkpoint = str(Path(os.environ['NVS_INIT_CHECKPOINT']).resolve())
 if not Path(cfg.checkpoint).is_file(): raise FileNotFoundError(cfg.checkpoint)
 cfg.wandb.entity = os.environ['WANDB_ENTITY']

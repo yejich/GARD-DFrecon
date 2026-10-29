@@ -48,6 +48,9 @@ JIHYE_1020 때 이미 받은 synthetic Hypersim pair를 사용하는 경우, 새
 ```bash
 export PROJECT_ROOT=/absolute/path/to/GARD-DFrecon
 export DATASET_ROOT=/absolute/path/to/synthetic_distractor/data/output/hypersim_001_pairs
+export SCENE_SPLIT_POLICY=/absolute/path/to/scene_split_policy.json
+export HYPERSIM_CAMERA_ROOT=/absolute/path/to/hypersim/data
+export HYPERSIM_CAMERA_PARAMETERS=/absolute/path/to/metadata_camera_parameters.csv
 cd "$PROJECT_ROOT"
 
 mkdir -p datasets
@@ -57,6 +60,9 @@ test -f manifests/hypersim_hf_a935b4e251fa.json
 test -f manifests/hypersim_negative_mixed_snapshot.json
 test -d datasets/hypersim_negative
 test -f ckpts/gard_denoiser.pt
+test -f "$SCENE_SPLIT_POLICY"
+test -d "$HYPERSIM_CAMERA_ROOT"
+test -f "$HYPERSIM_CAMERA_PARAMETERS"
 
 HYPERSIM_PAIRS_ROOT="$DATASET_ROOT" \
   .venv/bin/python scripts/check_hypersim_pairs.py \
@@ -79,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 \
 - `--nvs on|off`: NVS branch 사용 여부
 - `--supcon on|off`: geometry SupCon loss 사용 여부
 
-아래 명령은 네 축의 전체 조합 중, 이미 실행한 5개 조합을 제외한 11개입니다. 각 명령은 독립적인 run directory를 생성합니다. GPU를 바꾸려면 `CUDA_VISIBLE_DEVICES`만 수정하면 됩니다.
+아래 명령은 네 축의 전체 조합 중, 이미 실행한 조합을 제외하고 현재 추가로 실행할 8개입니다. 각 명령은 독립적인 run directory를 생성합니다. GPU를 바꾸려면 `CUDA_VISIBLE_DEVICES`만 수정하면 됩니다.
 
 이미 실행한 조합:
 
@@ -98,19 +104,11 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_soft
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs off --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs on --supcon on
-
-
-
 # 2차
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs on --supcon off
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs off --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon off
-
 ```
-
-
-
-
 위 명령 중 하나를 그대로 복사해서 실행하면 됩니다. 여러 실험을 동시에 실행할 때는 각 명령의 `CUDA_VISIBLE_DEVICES=0,1,2,3`를 서로 다른 GPU 조합으로 바꿔야 합니다. `--nvs off`에서도 flow 옵션은 config에 기록되므로 실험 조건을 일관되게 관리할 수 있지만, 실제 NVS branch가 꺼져 있어 flow 차이는 학습 loss에 적용되지 않습니다.
 
 실행 전 설정 생성과 파일 검사는 다음처럼 할 수 있습니다.
