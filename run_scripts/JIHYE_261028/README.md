@@ -135,6 +135,9 @@ python download_scripts/tartanair_tools/download_training.py \
 DL3DV는 접근 승인 후 공식 downloader에서 필요한 subset/resolution을 선택합니다.
 
 ```bash
+export DL3DV_ROOT="$PWD/data/train/dl3dv"
+mkdir -p "$DL3DV_ROOT"
+
 # DL3DV: official downloader after accepting the dataset terms.
 python /path/to/DL3DV-10K/Dataset/scripts/download.py \
   --odir "$DL3DV_ROOT" --subset 1K --resolution 480P \
