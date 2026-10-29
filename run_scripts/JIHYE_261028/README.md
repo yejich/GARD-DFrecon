@@ -9,6 +9,7 @@
 - soft self-view behavior
 - mask-aware attention OFF
 - NVS branch OFF, `flowmap_from=noise_lq`
+- global batch 16, per-GPU batch 2, 4 GPUs 기준 gradient accumulation 2
 - W&B OFF
 
 저장소 루트에서 실행합니다.
@@ -17,6 +18,10 @@
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
   bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
 ```
+
+위 기본값은 `GLOBAL_BATCH_SIZE=16`, `PER_GPU_BATCH_SIZE=2`이므로 GPU 4개에서 accumulation이 자동으로 2가 됩니다. GPU 수나 batch를 바꿀 때도 `GLOBAL_BATCH_SIZE = GPU 수 × PER_GPU_BATCH_SIZE × accumulation`이 되도록 맞춥니다.
+
+이 launcher는 학습만 수행하며 optional fixed-eval pipeline은 자동 실행하지 않습니다. 학습에 필요한 pair/negative 이미지와 `ckpts/gard_denoiser.pt`는 서버에 별도로 준비되어 있어야 합니다.
 
 실행 전 설정 생성과 파일 검사는 다음처럼 할 수 있습니다.
 

@@ -15,6 +15,8 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 export NVS_CONFIG="${NVS_CONFIG:-$ROOT/run_configs/train/train_GARD_da3_nvs_v4_n2_3_mixed_supcon_softself.yaml}"
 export EXP_NAME="${EXP_NAME:-nvs_v4_n2-3_mixed_geometry_supcon_softself}"
+export GLOBAL_BATCH_SIZE="${GLOBAL_BATCH_SIZE:-16}"
+export PER_GPU_BATCH_SIZE="${PER_GPU_BATCH_SIZE:-2}"
 export NVS_BRANCH="${NVS_BRANCH:-false}"
 export FLOWMAP_FROM="${FLOWMAP_FROM:-noise_lq}"
 export ATTENTION_ALIGNMENT="${ATTENTION_ALIGNMENT:-true}"
@@ -22,5 +24,8 @@ export DISTRACTOR_AWARE_ATTN_ALIGN="${DISTRACTOR_AWARE_ATTN_ALIGN:-true}"
 export DISTRACTOR_LOSS="${DISTRACTOR_LOSS:-none}"
 export MASK_AWARE_ATTENTION="${MASK_AWARE_ATTENTION:-false}"
 export WANDB_ENABLED="${WANDB_ENABLED:-false}"
+# The handoff commit contains the trainer but not the optional eval pipeline.
+# Leave this empty unless the recipient has separately installed that pipeline.
+export EVAL_EPOCHS="${EVAL_EPOCHS:-}"
 
 exec bash "$ROOT/run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash" "$@"
