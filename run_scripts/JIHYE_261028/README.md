@@ -116,20 +116,12 @@ HYPERSIM_PAIRS_ROOT="$DATASET_ROOT" \
   --manifest "$PROJECT_ROOT/manifests/hypersim_hf_a935b4e251fa.json"
 ```
 
-그 다음 1-step smoke test로 loader와 config를 확인한 뒤 본 학습을 시작합니다.
+이 단계는 Stage-1 NVS-only 다운로드/manifest와 별개이며, 1020 synthetic Hypersim + 기존 HypersimNegative mixed 학습을 위한 manifest와 경로만 준비합니다. 준비가 끝나면 아래처럼 본 학습을 실행합니다.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
-  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --prepare-only
-
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
-  bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --max-steps 1
-
-CUDA_VISIBLE_DEVICES=0,1,2,3 \
   bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
 ```
-
-이 단계는 Stage-1 NVS-only 다운로드/manifest와 별개이며, 1020 synthetic Hypersim + 기존 HypersimNegative mixed 학습을 실행합니다.
 
 ## Stage 1: NVS-only 사전학습
 
