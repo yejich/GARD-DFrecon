@@ -63,7 +63,7 @@ bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --help
 ```
 
 ```bash
-1차
+# 1차
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise --nvs on --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise_lq --nvs on --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon on
@@ -72,7 +72,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_soft
 
 
 
-2차
+# 2차
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs on --supcon off
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs off --supcon on
 CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon off
@@ -118,6 +118,7 @@ python /path/to/DL3DV-10K/Dataset/scripts/download.py \
 다운로드가 끝나면 Hypersim, TartanAir, DL3DV의 실제 경로를 positional argument로 입력해 manifest를 생성합니다.
 
 ```bash
+HYPERSIM_CAMERA_CSV=/absolute/path/to/metadata_camera_parameters.csv \
 PHASE1_MANIFEST=/absolute/path/to/phase1_nvs_manifest.json \
 bash run_scripts/JIHYE_261028/prepare_nvs_stage1_data.bash \
   /absolute/path/to/hypersim \
