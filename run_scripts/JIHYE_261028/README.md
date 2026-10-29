@@ -151,10 +151,12 @@ python /path/to/DL3DV-10K/Dataset/scripts/download.py \
 각 dataset은 원본 라이선스와 다운로드 약관을 확인해야 하며, Hypersim/TartanAir 전체 다운로드는 수백 GB 이상이 될 수 있습니다. 이미 다운로드한 root가 있다면 다시 받을 필요 없이 아래 manifest 생성 단계에서 그 root만 지정합니다.
 
 다운로드가 끝나면 Hypersim, TartanAir, DL3DV의 실제 경로를 positional argument로 입력해 manifest를 생성합니다.
+지혜님께 전달하는 공식 Stage-1 manifest는 **전체 scene 사용**이 기본입니다. `MAX_SCENES=0`은 scene 수 제한이 없다는 뜻이며, 기존 `phase_c_nvs_manifest.json`(dataset별 100 scene pilot)은 재사용하지 않습니다.
 
 ```bash
 HYPERSIM_CAMERA_CSV=/absolute/path/to/metadata_camera_parameters.csv \
 PHASE1_MANIFEST=/absolute/path/to/phase1_nvs_manifest.json \
+MAX_SCENES=0 \
 bash run_scripts/JIHYE_261028/prepare_nvs_stage1_data.bash \
   /absolute/path/to/hypersim \
   /absolute/path/to/tartanair \
