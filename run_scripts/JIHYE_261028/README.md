@@ -60,30 +60,27 @@ result_train/20261020_nvs_push_only_nvstrue_flownoise_lq_dattnfalse_aligntrue_00
 ```
 
 ```bash
-RUN=run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash
-GPU=0,1,2,3
-
 # distractor-aware ON
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise    --nvs on  --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise    --nvs on  --supcon off
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise    --nvs off --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise    --nvs off --supcon off
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise_lq --nvs on  --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise_lq --nvs on  --supcon off
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise_lq --nvs off --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware on  --flow noise_lq --nvs off --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs on --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs off --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise --nvs off --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs on --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs on --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs off --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware on --flow noise_lq --nvs off --supcon off
 
 # distractor-aware OFF
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs on  --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs on  --supcon off
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs off --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise    --nvs off --supcon off
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs on  --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs off --supcon on
-CUDA_VISIBLE_DEVICES=$GPU bash $RUN --distractor-aware off --flow noise_lq --nvs off --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise --nvs on --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise --nvs on --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise --nvs off --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise --nvs off --supcon off
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise_lq --nvs on --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise_lq --nvs off --supcon on
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash run_scripts/JIHYE_261028/train_nvs_supcon_softself.bash --distractor-aware off --flow noise_lq --nvs off --supcon off
 ```
 
-여러 실험을 동시에 실행할 때는 각 프로세스에 서로 다른 GPU를 지정해야 합니다. `--nvs off`에서도 flow 옵션은 config에 기록되므로 실험 조건을 일관되게 관리할 수 있지만, 실제 NVS branch가 꺼져 있어 flow 차이는 학습 loss에 적용되지 않습니다.
+위 명령 중 하나를 그대로 복사해서 실행하면 됩니다. 여러 실험을 동시에 실행할 때는 각 명령의 `CUDA_VISIBLE_DEVICES=0,1,2,3`를 서로 다른 GPU 조합으로 바꿔야 합니다. `--nvs off`에서도 flow 옵션은 config에 기록되므로 실험 조건을 일관되게 관리할 수 있지만, 실제 NVS branch가 꺼져 있어 flow 차이는 학습 loss에 적용되지 않습니다.
 
 실행 전 설정 생성과 파일 검사는 다음처럼 할 수 있습니다.
 
