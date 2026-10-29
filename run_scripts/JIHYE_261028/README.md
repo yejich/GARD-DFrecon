@@ -139,7 +139,14 @@ DL3DV는 접근 승인 후 공식 downloader에서 필요한 subset/resolution�
 python /path/to/DL3DV-10K/Dataset/scripts/download.py \
   --odir "$DL3DV_ROOT" --subset 1K --resolution 480P \
   --file_type images+poses --clean_cache
+
+# Full DL3DV-10K at 480P (requires access approval and substantially more storage).
+python /path/to/DL3DV-10K/Dataset/scripts/download.py \
+  --odir "$DL3DV_ROOT" --subset 10K --resolution 480P \
+  --file_type images+poses --clean_cache
 ```
+
+위의 `1K` 명령은 저장공간을 줄이는 실용적인 예시이고, 전체 DL3DV가 필요하면 `10K` 명령을 사용합니다.
 
 각 dataset은 원본 라이선스와 다운로드 약관을 확인해야 하며, Hypersim/TartanAir 전체 다운로드는 수백 GB 이상이 될 수 있습니다. 이미 다운로드한 root가 있다면 다시 받을 필요 없이 아래 manifest 생성 단계에서 그 root만 지정합니다.
 
