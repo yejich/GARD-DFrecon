@@ -16,6 +16,7 @@ Main ablations:
   --supcon on|off                    geometry SupCon (default: on)
   --attention-alignment on|off       attention alignment (default: on)
   --distractor-aware on|off          distractor-aware alignment (default: on)
+  --camera-pose-mode MODE            da3_aligned|first_relative (default: da3_aligned)
 
 SupCon options:
   --supcon-lambda FLOAT              loss coefficient (default: 0.05)
@@ -53,6 +54,7 @@ FLOWMAP_FROM=noise_lq
 GEOMETRY_CONTRASTIVE_USE=true
 ATTENTION_ALIGNMENT=true
 DISTRACTOR_AWARE_ATTN_ALIGN=true
+CAMERA_POSE_MODE=da3_aligned
 GEOMETRY_CONTRASTIVE_LAMBDA=0.05
 GEOMETRY_CONTRASTIVE_TEMPERATURE=0.07
 GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS=64
@@ -71,6 +73,7 @@ while [[ $# -gt 0 ]]; do
     --supcon) GEOMETRY_CONTRASTIVE_USE="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
     --attention-alignment) ATTENTION_ALIGNMENT="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
     --distractor-aware) DISTRACTOR_AWARE_ATTN_ALIGN="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
+    --camera-pose-mode) CAMERA_POSE_MODE="${2:?$1 requires da3_aligned or first_relative}"; shift 2 ;;
     --supcon-lambda) GEOMETRY_CONTRASTIVE_LAMBDA="${2:?$1 requires a value}"; shift 2 ;;
     --supcon-temperature) GEOMETRY_CONTRASTIVE_TEMPERATURE="${2:?$1 requires a value}"; shift 2 ;;
     --supcon-max-negatives) GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS="${2:?$1 requires INT or none}"; shift 2 ;;
@@ -86,12 +89,13 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$FLOWMAP_FROM" in noise|noise_lq) ;; *) echo '--flow must be noise or noise_lq' >&2; exit 2 ;; esac
+case "$CAMERA_POSE_MODE" in da3_aligned|first_relative) ;; *) echo '--camera-pose-mode must be da3_aligned or first_relative' >&2; exit 2 ;; esac
 if [[ -z "${EXP_NAME:-}" ]]; then
   EXP_NAME="nvs_v4_n2-3"
 fi
 
 export NVS_CONFIG="${NVS_CONFIG:-$ROOT/run_configs/train/train_GARD_da3_nvs_v4_n2_3_mixed_supcon_softself.yaml}"
-export EXP_NAME NVS_BRANCH FLOWMAP_FROM ATTENTION_ALIGNMENT DISTRACTOR_AWARE_ATTN_ALIGN
+export EXP_NAME NVS_BRANCH FLOWMAP_FROM ATTENTION_ALIGNMENT DISTRACTOR_AWARE_ATTN_ALIGN CAMERA_POSE_MODE
 export DISTRACTOR_LOSS GLOBAL_BATCH_SIZE PER_GPU_BATCH_SIZE WANDB_ENABLED
 export SCENE_SPLIT_POLICY="${SCENE_SPLIT_POLICY:-}"
 export HYPERSIM_CAMERA_ROOT="${HYPERSIM_CAMERA_ROOT:-}"
@@ -104,6 +108,7 @@ export EVAL_EPOCHS="${EVAL_EPOCHS:-}"
 
 echo "SupCon=${GEOMETRY_CONTRASTIVE_USE} NVS=${NVS_BRANCH} flow=${FLOWMAP_FROM} " \
      "attn=${ATTENTION_ALIGNMENT} distractor-aware=${DISTRACTOR_AWARE_ATTN_ALIGN} " \
+     "camera-pose=${CAMERA_POSE_MODE} " \
      "global-batch=${GLOBAL_BATCH_SIZE} per-gpu=${PER_GPU_BATCH_SIZE}"
 
 exec bash "$ROOT/run_scripts/train/20261014_train_GARD_da3_nvs_variable.bash" "${PASSTHROUGH[@]}"

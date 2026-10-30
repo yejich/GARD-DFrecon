@@ -80,4 +80,5 @@ nvs:
   max_source_views: 3
 nvs_branch: false
 flowmap_from: noise_lq
+camera_pose_mode: da3_aligned
 full_view_loss: false

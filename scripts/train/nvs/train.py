@@ -13,7 +13,7 @@ from types import SimpleNamespace
 from mvr.nvs_training import NVSGARD,NVSLossTracker,nvs_training_step,target_plucker_rays
 from mvr.nvs_attention import geometry_target,clear_attention
 from mvr.grouped_mse import token_groups,grouped_mse
-from mvr.nvs_camera import HypersimCameraReferences,align_target_camera,align_target_camera_single
+from mvr.nvs_camera import HypersimCameraReferences,target_cameras_for_condition,align_target_camera_single
 from mvr.dataset.hypersim_mixed import MixedHypersimPairs
 from mvr.dataset.hypersim_nvs import MixedHypersimNVS,nvs_collate_fn,mixed_nvs_sampler
 from mvr.dataset.phase_c_nvs import PhaseCNVS,PhaseCUpdateSampler,phase_c_collate
@@ -30,6 +30,9 @@ def main():
  cfg=OmegaConf.load(args.config)
  cfg.nvs_branch = bool(cfg.get('nvs_branch', True))
  cfg.flowmap_from = str(cfg.get('flowmap_from', 'noise_lq'))
+ cfg.camera_pose_mode = str(cfg.get('camera_pose_mode', 'da3_aligned')).lower()
+ if cfg.camera_pose_mode not in ('da3_aligned','first_relative'):
+  raise ValueError("camera_pose_mode must be 'da3_aligned' or 'first_relative'")
  if cfg.flowmap_from not in ('noise', 'noise_lq'):
   raise ValueError("flowmap_from must be 'noise' or 'noise_lq'")
  precision=cfg.get('precision','fp32')
@@ -120,15 +123,17 @@ def main():
    else:
     alignment_target=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment)
   for i,records in enumerate(batch.get('camera_records',[])):
-   gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=align_target_camera(gt,pose[i]);scales.append(scale);residuals.append(residual)
+   gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode);scales.append(scale);residuals.append(residual)
    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
   if phase_c:
    for i in range(v.shape[0]):
     gt=batch['camera_c2w'][i].numpy()
-    if source_views==1:
+    if cfg.camera_pose_mode == 'first_relative':
+     target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode)
+    elif source_views==1:
      target,scale,residual=align_target_camera_single(gt,pose[i],scale=1.0)
     else:
-     target,scale,residual=align_target_camera(gt,pose[i])
+     target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode)
     scales.append(scale);residuals.append(residual)
     k=batch['camera_k'][i,source_views:].to(device=device,dtype=torch.float32)[None]
     rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],k,v.shape[-2:]))

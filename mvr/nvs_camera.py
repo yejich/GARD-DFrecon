@@ -43,6 +43,43 @@ def align_target_camera(gt_c2w,predicted_source_w2c):
  residual=np.linalg.norm(scale*(gt[:,:3,3]@rotation.T)+translation-pc[:,:3,3],axis=-1).mean()
  return result,scale,float(residual)
 
+def relative_camera_condition(gt_c2w, source_views, *, scale_mode='max_distance'):
+ """Return target cameras in the first-source relative coordinate frame.
+
+ The input contains source cameras followed by target cameras.  The first
+ source camera becomes identity; translation is scaled after the transform,
+ keeping the ray condition independent of the dataset's absolute world frame.
+ """
+ gt=np.asarray(gt_c2w,dtype=np.float64)
+ if gt.ndim != 3 or gt.shape[-2:] != (4,4):
+  raise ValueError('Expected c2w cameras with shape [V,4,4]')
+ if not 1 <= int(source_views) < len(gt):
+  raise ValueError(f'Expected 1 <= source_views < V, got {source_views} for V={len(gt)}')
+ if scale_mode != 'max_distance':
+  raise ValueError(f'Unsupported relative camera scale mode: {scale_mode}')
+ ref_inv=np.linalg.inv(gt[0])
+ relative=ref_inv[None] @ gt
+ centers=relative[:,:3,3]
+ scale=float(np.linalg.norm(centers,axis=-1).max())
+ if not np.isfinite(scale) or scale <= 1e-8:
+  raise ValueError('Degenerate relative camera baseline')
+ relative=relative.copy()
+ relative[:,:3,3] /= scale
+ return relative[int(source_views):],scale,0.0
+
+def target_cameras_for_condition(gt_c2w, predicted_source_w2c, source_views, mode='da3_aligned'):
+ """Select the target-camera coordinate convention for NVS conditioning.
+
+ ``da3_aligned`` is the historical behavior. ``first_relative`` uses the
+ dataset cameras in a first-source relative, max-distance-normalized frame.
+ """
+ mode=str(mode).lower()
+ if mode == 'da3_aligned':
+  return align_target_camera(gt_c2w,predicted_source_w2c)
+ if mode == 'first_relative':
+  return relative_camera_condition(gt_c2w,source_views)
+ raise ValueError("camera pose mode must be 'da3_aligned' or 'first_relative'")
+
 def align_target_camera_single(gt_c2w,predicted_source_w2c,scale=1.0):
  """Align target cameras when only one source view is available.
 
