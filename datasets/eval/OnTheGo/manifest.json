@@ -1,0 +1,3830 @@
+{
+  "schema_version": "frozen_eval_v1",
+  "protocol": {
+    "seed": 42,
+    "noise_lvl": 0.3,
+    "reference_view": "first",
+    "process_res": 504,
+    "process_res_method": "upper_bound_resize",
+    "precision": "bf16",
+    "attention_layer": 9,
+    "capture_calls": [
+      0,
+      24,
+      48
+    ],
+    "own_trajectory": true,
+    "clutter_views_source": "per-group clutter_views"
+  },
+  "groups": [
+    {
+      "id": "arcdetriomphe__g00",
+      "dataset": "OnTheGo",
+      "scene": "arcdetriomphe",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/arcdetriomphe/frame_0137.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/arcdetriomphe/frame_0135.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/arcdetriomphe/frame_0140.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/arcdetriomphe/frame_0133.png"
+      ],
+      "input_sha256": [
+        "582ff2b585a97c78aca074403d677445e53c3f19258236428017c0185d95a686",
+        "c63573895ecc48adc9eab1f084e66ce6ceb62326ada513b173802d768bb8974d",
+        "30de6eb7ee06cc14b88843e48749dc1149b82f225712d73e75a93ff54992eaa4",
+        "e58a28f6ac897fc751d2f34b3485329be4500677815319e70bee219a3324635c"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_1480.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_1460.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_1510.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_1440.jpg"
+      ],
+      "frame_order": [
+        137,
+        135,
+        140,
+        133
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        280,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.6182642851268135,
+            0.7843571980636361,
+            -0.050329510329749486,
+            -0.9556118501133599
+          ],
+          [
+            -0.18943439235812148,
+            0.0865609601841212,
+            -0.9780704531080615,
+            -0.136662394198346
+          ],
+          [
+            -0.7628000293707469,
+            0.6142401696550681,
+            0.20210177937502977,
+            3.914666530251226
+          ]
+        ],
+        [
+          [
+            0.621489234284923,
+            0.7821983501557255,
+            -0.04378210490031103,
+            -0.8182110004906139
+          ],
+          [
+            -0.19638112031114618,
+            0.10144429425747029,
+            -0.9752658667393412,
+            -0.07883821673299259
+          ],
+          [
+            -0.7584099071958067,
+            0.6147152155074626,
+            0.21665552506976116,
+            3.9433716392317737
+          ]
+        ],
+        [
+          [
+            0.6054174746605775,
+            0.7933307138864517,
+            -0.06400046723710275,
+            -1.100407121924839
+          ],
+          [
+            -0.21880513998940868,
+            0.08858435654746041,
+            -0.9717392255993236,
+            -0.025269783654576484
+          ],
+          [
+            -0.7652411333490231,
+            0.6023115391386809,
+            0.2272153553452183,
+            3.893214947870659
+          ]
+        ],
+        [
+          [
+            0.631496933118534,
+            0.7731634066775936,
+            -0.05856594629634679,
+            -0.7455123732395911
+          ],
+          [
+            -0.18228400467819683,
+            0.07461958150231243,
+            -0.9804103527473232,
+            -0.17896518593888142
+          ],
+          [
+            -0.7536472418710475,
+            0.6298017661385519,
+            0.1880573589091278,
+            3.947739975503302
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          0.46734443169353096,
+          0.4717477649154341,
+          1.1477835804174847,
+          1.6904517916890764
+        ],
+        "input_target_distance_normalized": [
+          0.01300804864435187,
+          0.014490881677961653,
+          0.04898250395205384,
+          0.040224499495264104
+        ]
+      }
+    },
+    {
+      "id": "arcdetriomphe__g01",
+      "dataset": "OnTheGo",
+      "scene": "arcdetriomphe",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/arcdetriomphe/frame_0214.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/arcdetriomphe/frame_0015.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/arcdetriomphe/frame_0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/arcdetriomphe/frame_0215.png"
+      ],
+      "input_sha256": [
+        "4fe357bfa41a4e74fc00bd23f1fa78a1c4e312fb13505e2411280f002fc5c6a0",
+        "2b3c9ccde15cde4ddf7a8d9de01f2d05d08ed8b06cdd1e22af87c7fc3d289216",
+        "a88cb9336e89bb3ec5bfa6615b16bf090300863bd04df4c42455ec6364cb0595",
+        "6236570f1cc293a7162ff936fbd05388d2b4ad2fde0443420cad653b81873c92"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_2250.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_0150.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_0170.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/images/frame_2260.jpg"
+      ],
+      "frame_order": [
+        214,
+        15,
+        17,
+        215
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        280,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.6128740573506122,
+            -0.790124523808702,
+            -0.009414177053514949,
+            -0.48714603062844597
+          ],
+          [
+            0.22007569899022708,
+            -0.15923882718369728,
+            -0.9623978817042955,
+            -0.05271883781971969
+          ],
+          [
+            0.7589150654849564,
+            -0.5919005260965353,
+            0.27148055297034546,
+            3.685078127223528
+          ]
+        ],
+        [
+          [
+            -0.6639968176548482,
+            -0.7473957191489998,
+            -0.022535864173502777,
+            -0.4758155618073124
+          ],
+          [
+            0.20135523562501154,
+            -0.14969882263081496,
+            -0.9680115348834124,
+            -0.07231537517350416
+          ],
+          [
+            0.7201140849268982,
+            -0.647294292807236,
+            0.24989158296791025,
+            3.9911288326651935
+          ]
+        ],
+        [
+          [
+            -0.5553891273705841,
+            -0.8309523829197079,
+            -0.03257383214197327,
+            -0.2862106242564165
+          ],
+          [
+            0.22227525438104076,
+            -0.11059028465894766,
+            -0.9686916435624215,
+            -0.07129345810394838
+          ],
+          [
+            0.8013342801651866,
+            -0.5452411633939919,
+            0.2461207939844075,
+            4.010357159083677
+          ]
+        ],
+        [
+          [
+            -0.5860157530830187,
+            -0.8101538079373833,
+            -0.015373504725314088,
+            -0.5433825377697024
+          ],
+          [
+            0.2221546387592917,
+            -0.1423896015482516,
+            -0.9645581983098962,
+            -0.07724622575701166
+          ],
+          [
+            0.779251470127419,
+            -0.568661594320919,
+            0.2634219761242836,
+            3.671320739618051
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/arcdetriomphe/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          1.3851867546011956,
+          3.886930705886311,
+          3.5945999797827515,
+          1.9785046958251864
+        ],
+        "input_target_distance_normalized": [
+          0.06390257165212622,
+          0.03101912923999692,
+          0.029968804763735934,
+          0.08411552426256276
+        ],
+        "input_baseline_scene_normalized": 0.06383428791822605
+      }
+    },
+    {
+      "id": "corner__g00",
+      "dataset": "OnTheGo",
+      "scene": "corner",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/corner/frame_0018.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/corner/frame_0027.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/corner/frame_0047.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/corner/frame_0034.png"
+      ],
+      "input_sha256": [
+        "7af272bc1e2643e23168bc8bf3620cdd068a384015aa3bf9ce2ffcc3184ec94a",
+        "9dc16f1a67b72ec7d3bd07a98ec574044a3140b1c06b9188a71189a83d2887c2",
+        "c1348029bf3675684ed610c957af3078c687d07ed23ceaffcb14409567a18423",
+        "ae1778eb340630174a973bc3a2482258bc841562fdc48066c52c759c535f9eb0"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7147.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7156.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7179.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7165.JPG"
+      ],
+      "frame_order": [
+        18,
+        27,
+        47,
+        34
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.28223059028951947,
+            0.9555867289789438,
+            -0.08485220861407895,
+            0.7667219103249506
+          ],
+          [
+            0.09247557916600409,
+            -0.1151348423675887,
+            -0.9890360131721692,
+            -0.06984746925008874
+          ],
+          [
+            -0.9548791343324915,
+            0.2712894606732535,
+            -0.12086301072997067,
+            3.9572868565784174
+          ]
+        ],
+        [
+          [
+            0.20920027639393482,
+            0.9747297120322649,
+            -0.07834049297653554,
+            1.0750239258810788
+          ],
+          [
+            -0.012810437723340265,
+            -0.07737451738480491,
+            -0.9969197945499836,
+            0.4573701640257809
+          ],
+          [
+            -0.9777889020963906,
+            0.20955947256337124,
+            -0.003700056149669846,
+            3.661470666472228
+          ]
+        ],
+        [
+          [
+            0.16014213268234892,
+            0.9848182424671118,
+            -0.06698900391125384,
+            1.1435971733360684
+          ],
+          [
+            0.16478269053028285,
+            -0.09358460200874773,
+            -0.981880128727098,
+            -0.27686257977154766
+          ],
+          [
+            -0.9732426019561501,
+            0.1462017495481002,
+            -0.17726783742894486,
+            3.434041403986197
+          ]
+        ],
+        [
+          [
+            0.34414675313497256,
+            0.9259092213392703,
+            -0.15574057322797374,
+            0.32160062554154367
+          ],
+          [
+            0.08666001584412418,
+            -0.1964887475838298,
+            -0.9766689376379732,
+            -0.17219240506528505
+          ],
+          [
+            -0.9349080457357183,
+            0.32262096322451844,
+            -0.14786027230001414,
+            3.2641159388317034
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          2.0736547717664995,
+          5.986708172947629,
+          6.9953934817833225,
+          5.5843501307162144
+        ],
+        "input_target_distance_normalized": [
+          0.05972140884437502,
+          0.0738594648358483,
+          0.13894509043916548,
+          0.27864742746123927
+        ]
+      }
+    },
+    {
+      "id": "corner__g01",
+      "dataset": "OnTheGo",
+      "scene": "corner",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/corner/frame_0088.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/corner/frame_0083.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/corner/frame_0086.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/corner/frame_0084.png"
+      ],
+      "input_sha256": [
+        "73caf3108547d7e78b8f2a80581865b898d28f403bf4112ab0e91d5bbec78cf0",
+        "98ae46e5d66185eaa4a65b3de5d4cd4809c81558e3acdf7fabc7986712eb328b",
+        "2c129f8e629da02910a4ab33a36d7c0bd4cd888af4ca916f4a074c351013745b",
+        "0f7f35a103b7935ab44b0f38e007bee90c3387bd3affa346c5347e280a8f8eaf"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7226.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7220.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7224.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/images/IMG_7222.JPG"
+      ],
+      "frame_order": [
+        88,
+        83,
+        86,
+        84
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.8508264558606766,
+            0.4556109211813386,
+            0.26174993891771287,
+            -0.8124131232112262
+          ],
+          [
+            -0.11326393024979278,
+            0.3274101036145582,
+            -0.9380692438056206,
+            0.9181419437792806
+          ],
+          [
+            -0.5130941669252899,
+            -0.8277809568668926,
+            -0.22696489447362453,
+            1.7197393442176512
+          ]
+        ],
+        [
+          [
+            -0.8628121497465625,
+            0.4403398488358819,
+            0.24830628625305667,
+            -0.3723143098613983
+          ],
+          [
+            -0.05376562897455027,
+            0.4084666869773022,
+            -0.9111883574695891,
+            0.1041819597928922
+          ],
+          [
+            -0.502657389691541,
+            -0.7995347291750692,
+            -0.32875487135552284,
+            2.653110235061955
+          ]
+        ],
+        [
+          [
+            -0.8579748697579059,
+            0.3727912104188175,
+            0.35342019794508933,
+            -0.7739765699156541
+          ],
+          [
+            -0.2274670293460367,
+            0.3411618198210581,
+            -0.9120676308668968,
+            0.5631387410920816
+          ],
+          [
+            -0.46058427398818236,
+            -0.862922549323477,
+            -0.2079105587270609,
+            2.536300835878047
+          ]
+        ],
+        [
+          [
+            -0.8756436795235079,
+            0.4464671900606595,
+            0.18416078498313956,
+            -0.2565119527532814
+          ],
+          [
+            -0.036217177212777965,
+            0.3195415153721019,
+            -0.946879895259786,
+            0.3580203367632892
+          ],
+          [
+            -0.4815978224681851,
+            -0.8357991793206736,
+            -0.263634726938827,
+            2.796862309296793
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/corner/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          34.638077027775644,
+          30.857598336935244,
+          33.013993014057,
+          31.844175523345477
+        ],
+        "input_target_distance_normalized": [
+          0.31118627738082777,
+          0.5800489331495535,
+          0.43447402512116906,
+          0.6272681257025375
+        ],
+        "input_baseline_scene_normalized": 0.26700152094631247
+      }
+    },
+    {
+      "id": "drone__g00",
+      "dataset": "OnTheGo",
+      "scene": "drone",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/drone/frame_0076.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/drone/frame_0077.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/drone/frame_0079.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/drone/frame_0131.png"
+      ],
+      "input_sha256": [
+        "0df73432573e3619dcb7bbcbdfdb48d0e76d935bf5247b05e4d69715db6ef263",
+        "5bc26bf349481744295a88204434e3a00eff7ee15e1bff2cdf73df6a15a88361",
+        "79a8cb4eb2f131198404f66799780d6004a3541b8670a5605a931fbe115a813d",
+        "ff08d32640f752a9acc8d238bb82b8013d3713881c53fe5eda9f7dc57ab03b8c"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0470.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0473.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0479.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0627.JPG"
+      ],
+      "frame_order": [
+        76,
+        77,
+        79,
+        131
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.8834087369613092,
+            0.4686030641147421,
+            -0.00041451646312615,
+            -0.4579580302131092
+          ],
+          [
+            -0.10331561079268657,
+            -0.19563286055260026,
+            -0.9752198052294314,
+            0.03707005409968873
+          ],
+          [
+            -0.45707208195544835,
+            -0.8614748703092521,
+            0.22123779003723937,
+            3.460378807553906
+          ]
+        ],
+        [
+          [
+            -0.8679404066651909,
+            0.4966582331532933,
+            -0.0031701700465828165,
+            -0.22429724431915743
+          ],
+          [
+            -0.10791965778516818,
+            -0.19481883819879317,
+            -0.9748840791702437,
+            -0.16600645603750763
+          ],
+          [
+            -0.48480181313349563,
+            -0.8457991603944649,
+            0.22269032821039014,
+            3.3928868522706033
+          ]
+        ],
+        [
+          [
+            -0.9271229170243668,
+            0.37475591811359793,
+            -0.0010481574301276703,
+            0.2749821855582124
+          ],
+          [
+            -0.08203172143122696,
+            -0.20566887578928797,
+            -0.9751774763003384,
+            0.23904337438923218
+          ],
+          [
+            -0.365669103812981,
+            -0.9040234042160997,
+            0.22142220114228503,
+            3.227907326087563
+          ]
+        ],
+        [
+          [
+            -0.9109287932052482,
+            0.41253841319938034,
+            0.004559759791955573,
+            0.05313148050300826
+          ],
+          [
+            -0.07772150470809962,
+            -0.16074203681582844,
+            -0.9839315857214749,
+            -0.3054107020540947
+          ],
+          [
+            -0.4051766299919928,
+            -0.8966460033007991,
+            0.17848765583774373,
+            3.730074900528991
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          0.4875777869908641,
+          2.3072812782616947,
+          5.296132684278592,
+          4.006115827051306
+        ],
+        "input_target_distance_normalized": [
+          0.08392206102480992,
+          0.06487145945792247,
+          0.02060911123174064,
+          0.10731919414213471
+        ]
+      }
+    },
+    {
+      "id": "drone__g01",
+      "dataset": "OnTheGo",
+      "scene": "drone",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/drone/frame_0063.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/drone/frame_0205.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/drone/frame_0060.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/drone/frame_0059.png"
+      ],
+      "input_sha256": [
+        "de18ece4655820d833c1adb80142b0796afef8b966b895ff96346151e1034231",
+        "8c47cac1e74544382270083c745941684992aa834b64d58d0cbb8b984557abb8",
+        "6099b5fe18762c3a8b178fabd4671000d7b2096129617c68d091844c072783e0",
+        "0277f9193476a9e9db3daa67dfeaf73eb6cc202b2da3cf94e1f896890ad9efc5"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0206.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0864.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0197.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/images/DJI_0192.JPG"
+      ],
+      "frame_order": [
+        63,
+        205,
+        60,
+        59
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.877622470119726,
+            -0.47928931720860474,
+            0.007781414467545965,
+            0.18132275831274838
+          ],
+          [
+            -0.03692487275505101,
+            -0.08377993933095822,
+            -0.9957999174600116,
+            -0.7185951427159336
+          ],
+          [
+            0.4779281889458941,
+            0.8736490554996726,
+            -0.09122485435289931,
+            2.56245658092812
+          ]
+        ],
+        [
+          [
+            0.9350310581207121,
+            -0.35452025617174565,
+            0.005684046232220391,
+            -0.18202360185378197
+          ],
+          [
+            -0.0924719811062253,
+            -0.25930417016201707,
+            -0.9613585596008625,
+            0.2869397379420995
+          ],
+          [
+            0.342294979712062,
+            0.8983744961320796,
+            -0.27524064303219176,
+            3.5391477139330796
+          ]
+        ],
+        [
+          [
+            0.9500164274115231,
+            -0.31214971746641984,
+            0.005598357247277993,
+            -0.18303711155985597
+          ],
+          [
+            0.04100807987365189,
+            0.10698988608046203,
+            -0.993414063589229,
+            -0.01234794170539562
+          ],
+          [
+            0.30949495167038166,
+            0.9439892574400329,
+            0.11444280988972715,
+            3.200772799754911
+          ]
+        ],
+        [
+          [
+            0.925324764727571,
+            -0.3791510304709948,
+            0.004309981594544862,
+            0.304478871829958
+          ],
+          [
+            0.04746504181690065,
+            0.10454699413585355,
+            -0.993386629614982,
+            -0.032885127894877055
+          ],
+          [
+            0.37619296865214663,
+            0.9194098227178135,
+            0.11473634226796019,
+            3.231146757876099
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/drone/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          2.6306452411407193,
+          11.761426960489711,
+          14.306274228920712,
+          12.544232184054529
+        ],
+        "input_target_distance_normalized": [
+          0.14007045931534215,
+          0.3209742641789856,
+          0.06156912843677428,
+          0.08997217489620679
+        ],
+        "input_baseline_scene_normalized": 0.2572159550301754
+      }
+    },
+    {
+      "id": "fountain__g00",
+      "dataset": "OnTheGo",
+      "scene": "fountain",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/fountain/frame_0081.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/fountain/frame_0148.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/fountain/frame_0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/fountain/frame_0149.png"
+      ],
+      "input_sha256": [
+        "c59996000a603302b47f1a392d5544880940fe0efa667e96770eb26a163b20ea",
+        "8ed4961e602463591875ab4fe41630af68a88a1be4105cd2ea766d87e58190f1",
+        "247ee2f3b8b7e1b56aee2233166a7632054139fb18f6f717fc5abca6008719c5",
+        "09fdbf39b26162d531e0855d5863a7e59bd0e679eeae54b1f08bc19733b35146"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6468.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6535.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6402.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6536.JPG"
+      ],
+      "frame_order": [
+        81,
+        148,
+        17,
+        149
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.9986662251542666,
+            -0.04119224932401654,
+            0.03112827178818283,
+            0.0619802456416976
+          ],
+          [
+            -0.037830479132920876,
+            0.1734892476879139,
+            -0.9841089044199943,
+            0.055412475477960015
+          ],
+          [
+            0.03513723889788419,
+            -0.983973922181018,
+            -0.17481617462183277,
+            3.6445638836861334
+          ]
+        ],
+        [
+          [
+            -0.9975706163617797,
+            0.06965427986849355,
+            -0.0010708129122217012,
+            -0.011482489614839133
+          ],
+          [
+            0.013309558196710359,
+            0.17548274075513356,
+            -0.9843925351866355,
+            0.27868918202854776
+          ],
+          [
+            -0.06837924396228559,
+            -0.9820153201417247,
+            -0.1759834935475126,
+            3.2723768165216143
+          ]
+        ],
+        [
+          [
+            -0.9935186040961038,
+            0.11286785616502264,
+            0.013477029810589408,
+            -0.2881556640454205
+          ],
+          [
+            0.009237826287296965,
+            0.1983438097417512,
+            -0.9800889733469829,
+            0.056394045571001375
+          ],
+          [
+            -0.11329362670989533,
+            -0.9736121302561028,
+            -0.1981009186343999,
+            3.461560907553683
+          ]
+        ],
+        [
+          [
+            -0.9881048074885085,
+            -0.15117204237081258,
+            0.028211752817063902,
+            0.021043356180665992
+          ],
+          [
+            -0.05814454607751321,
+            0.1974247622706168,
+            -0.9785921903313625,
+            0.10767814563390159
+          ],
+          [
+            0.14236608146677163,
+            -0.9685920074251148,
+            -0.20386618650013388,
+            3.4172136913522917
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          2.61023313044264,
+          5.941863417179718,
+          8.067818227345835,
+          6.742437697234535
+        ],
+        "input_target_distance_normalized": [
+          0.09457527341216253,
+          0.03276047608101375,
+          0.055815707846790734,
+          0.10307159263246095
+        ]
+      }
+    },
+    {
+      "id": "fountain__g01",
+      "dataset": "OnTheGo",
+      "scene": "fountain",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/fountain/frame_0125.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/fountain/frame_0131.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/fountain/frame_0050.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/fountain/frame_0056.png"
+      ],
+      "input_sha256": [
+        "43e9fa249ac1d76ba2e7bbbb76701d731bcf12df08449102b201985d2dfca4a3",
+        "51c23de963559ba433071c2196fa10a9fa6d8163aad987ac80ea834f77f1cea1",
+        "5957ebf5e97faf03b25c4eca8e7d20c5f0cc4f1746ed62264d395a3ae6e5910e",
+        "8fbf3e112b3042e0334e0b1998edc0a30676f65bba87e72ac4ae4601f86dc06a"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6512.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6518.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6435.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/images/IMG_6442.JPG"
+      ],
+      "frame_order": [
+        125,
+        131,
+        50,
+        56
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.764890503328953,
+            0.64386999934447,
+            -0.019337576009874218,
+            0.3902667567343825
+          ],
+          [
+            0.008657636545464604,
+            -0.04029274695475802,
+            -0.9991504090200743,
+            0.8251071500066574
+          ],
+          [
+            -0.6441021372572,
+            0.7640732415724147,
+            -0.03639393193558399,
+            2.7629597595018147
+          ]
+        ],
+        [
+          [
+            0.5138157571154122,
+            0.8577172893701702,
+            0.017731870987489743,
+            -1.4458875075210345
+          ],
+          [
+            0.16184330902943572,
+            -0.07661306931192095,
+            -0.9838379850899264,
+            0.14691964934030935
+          ],
+          [
+            -0.8424963566894423,
+            0.5083812438771522,
+            -0.17818080653686666,
+            3.585705004990626
+          ]
+        ],
+        [
+          [
+            0.597842346130928,
+            0.8015848899310263,
+            -0.006796572500058099,
+            -0.13013165252436165
+          ],
+          [
+            0.16189707648008353,
+            -0.129042160652274,
+            -0.9783340213722898,
+            0.04447018630243025
+          ],
+          [
+            -0.7850948132375704,
+            0.5837891614345394,
+            -0.2069211183046024,
+            3.218227289127252
+          ]
+        ],
+        [
+          [
+            0.7256678819535263,
+            0.6878273421540504,
+            -0.017311050591764174,
+            0.2909789420293161
+          ],
+          [
+            0.1707238990816823,
+            -0.20437512761232088,
+            -0.9638901169062505,
+            -0.1937834211456076
+          ],
+          [
+            -0.666527925413554,
+            0.696508689535693,
+            -0.2657370317259445,
+            3.093233332436548
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/fountain/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          2.8979661896127507,
+          21.558740544358308,
+          17.052713779742852,
+          12.608558280493604
+        ],
+        "input_target_distance_normalized": [
+          0.7381043297786565,
+          0.8286760901518965,
+          0.6849474063879556,
+          0.6752270223198794
+        ],
+        "input_baseline_scene_normalized": 0.2792803798896179
+      }
+    },
+    {
+      "id": "mountain__g00",
+      "dataset": "OnTheGo",
+      "scene": "mountain",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/mountain/frame_0069.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/mountain/frame_0007.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/mountain/frame_0006.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/mountain/frame_0008.png"
+      ],
+      "input_sha256": [
+        "f856736d536a82d584cea2c3623c6e2b05da680df00fbc75085e046ece24726e",
+        "fce7120fd5c0a07d35296af842145872cbd9c8ca915e08985ff7e9c36f6a1ae9",
+        "dc6ef94432d460318fcd807517b9cbae599301b8a042fb26fbfe8eb2e6174263",
+        "f3856439f720bd99f0e0bb93752e38ffc5497df556e7a08119f75e44dd327199"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7888.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7818.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7817.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7819.JPG"
+      ],
+      "frame_order": [
+        69,
+        7,
+        6,
+        8
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.9945446731851556,
+            -0.10264696545687603,
+            0.01856053654195148,
+            0.13386946276771955
+          ],
+          [
+            -0.03802850790257489,
+            0.19110420387081184,
+            -0.9808328174795876,
+            0.3992304377611698
+          ],
+          [
+            0.09713251577560729,
+            -0.9761878834248031,
+            -0.19396517892005796,
+            5.324014085249034
+          ]
+        ],
+        [
+          [
+            -0.9975574641850795,
+            -0.06940958241248775,
+            0.007836805033552698,
+            -0.20491028961039323
+          ],
+          [
+            -0.019983473556784582,
+            0.17608370567649104,
+            -0.9841723372332467,
+            0.061817064174409346
+          ],
+          [
+            0.06693105727838441,
+            -0.9819250676424136,
+            -0.17704065947367964,
+            5.329220191278151
+          ]
+        ],
+        [
+          [
+            -0.9987931066758917,
+            -0.04730392734186216,
+            -0.01321622146921727,
+            -0.4347992426684371
+          ],
+          [
+            0.0065085690843284475,
+            0.13923760701688764,
+            -0.990237611543785,
+            0.7075060878616815
+          ],
+          [
+            0.04868232307890066,
+            -0.9891285190763868,
+            -0.13876168119944957,
+            5.351193078398514
+          ]
+        ],
+        [
+          [
+            -0.9922885273837311,
+            -0.12281346335889426,
+            -0.01674310710823481,
+            0.15302415652837292
+          ],
+          [
+            -0.01594689031508627,
+            0.2604515903606307,
+            -0.9653552018627067,
+            -0.7761820436643188
+          ],
+          [
+            0.1229193845862746,
+            -0.9576438911706225,
+            -0.260401617883101,
+            5.505494486528392
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          3.411669368898293,
+          3.434024144207291,
+          5.591623064302432,
+          4.297184645316038
+        ],
+        "input_target_distance_normalized": [
+          0.061086937258795146,
+          0.09722324736746998,
+          0.08785645704584734,
+          0.14043834980457898
+        ]
+      }
+    },
+    {
+      "id": "mountain__g01",
+      "dataset": "OnTheGo",
+      "scene": "mountain",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/mountain/frame_0099.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/mountain/frame_0026.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/mountain/frame_0098.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/mountain/frame_0122.png"
+      ],
+      "input_sha256": [
+        "db4d2236539f18f743c8ee4adb7d7b3cb9f5d6f952bf231411d04cda008c2bdc",
+        "28fca449907724a055ebdc42f9fbb3c659945a557a51d822bc149d97b3d58ae7",
+        "01aa5e388a808621cf7b8de53bc60f5e5bfaccf3ec56dbdea4c2d8317bc68534",
+        "be8a87b8fc0cf761e334eee56ad14ed64a581255cfa74ea5083072fe371b14e3"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7920.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7837.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7919.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/images/IMG_7943.JPG"
+      ],
+      "frame_order": [
+        99,
+        26,
+        98,
+        122
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.6842871574726901,
+            -0.7190995578681355,
+            0.12102442724316521,
+            0.1384450670567829
+          ],
+          [
+            -0.15020291618708737,
+            -0.30140139480707684,
+            -0.9415924188165693,
+            0.08256763333672211
+          ],
+          [
+            0.7135756232397541,
+            0.626141377871004,
+            -0.3142559543314778,
+            2.721369226094997
+          ]
+        ],
+        [
+          [
+            0.44641305399401854,
+            -0.8938692902710812,
+            0.04138933598277469,
+            1.1877927760780798
+          ],
+          [
+            -0.2370930828508189,
+            -0.16275573263177376,
+            -0.9577564625493648,
+            -0.6695908249272386
+          ],
+          [
+            0.8628454411325305,
+            0.41774186216582054,
+            -0.2845865093552281,
+            3.513863231882279
+          ]
+        ],
+        [
+          [
+            0.7975953995243639,
+            -0.5896111786645655,
+            0.12728015025237788,
+            0.4234897169972109
+          ],
+          [
+            -0.05944768536611749,
+            -0.2868205352742606,
+            -0.9561380408942814,
+            0.6043025715802042
+          ],
+          [
+            0.6002562380828244,
+            0.7550447924055683,
+            -0.26381775926146256,
+            2.618012159955273
+          ]
+        ],
+        [
+          [
+            0.9860953470829451,
+            -0.15178319627598855,
+            0.06765964665077524,
+            -1.2350734593882287
+          ],
+          [
+            -5.1658778469190144e-05,
+            -0.40742542532903153,
+            -0.9132384793266175,
+            -0.5037034462323359
+          ],
+          [
+            0.1661805156686531,
+            0.9005367200307278,
+            -0.40176815713475955,
+            4.035810905428308
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/mountain/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          4.103660901643742,
+          16.440132183723673,
+          8.495871927704021,
+          35.84572923323533
+        ],
+        "input_target_distance_normalized": [
+          0.33351650195804167,
+          0.5517125792702903,
+          0.3462610727016871,
+          0.6686472360671284
+        ],
+        "input_baseline_scene_normalized": 0.5510028262565547
+      }
+    },
+    {
+      "id": "patio__g00",
+      "dataset": "OnTheGo",
+      "scene": "patio",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio/frame_0062.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio/frame_0061.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio/frame_0032.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio/frame_0104.png"
+      ],
+      "input_sha256": [
+        "e0643c3c90bf8936faead6621a0457c6744f1bfdf9c565e6831b9680235e96e1",
+        "3ea4a27bc87bd0348b43334e24333dbf1727b3c76e1b4916e1af39e1437fecb6",
+        "00817c1463c63beaa4ea8955e66f06aecae046d06d2c61e2fef42e87523258ea",
+        "2a83dcc39f13cf708334756c95be479fc6230b8a28b4dca917a77d75ca514e04"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_1550.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_1525.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_0800.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_7800.jpg"
+      ],
+      "frame_order": [
+        62,
+        61,
+        32,
+        104
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        280,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.2391573833298389,
+            0.9707984322436716,
+            0.018818872235440775,
+            0.17431488865057548
+          ],
+          [
+            0.04667851578371498,
+            0.00786390305990023,
+            -0.9988790092885281,
+            0.12098128651606661
+          ],
+          [
+            -0.9698581660054121,
+            0.23976772714838931,
+            -0.043434719463726804,
+            4.112219779441921
+          ]
+        ],
+        [
+          [
+            0.15127523302417822,
+            0.9867752061028289,
+            0.05822797003382902,
+            -0.08723459209776223
+          ],
+          [
+            0.027616978931690992,
+            0.054663818628029236,
+            -0.9981228228089031,
+            0.18865743380485184
+          ],
+          [
+            -0.9881058173862226,
+            0.1525993432283772,
+            -0.01898246817631042,
+            4.246131776351206
+          ]
+        ],
+        [
+          [
+            0.33923843266504283,
+            0.9397002211153436,
+            -0.04336796328073631,
+            -0.5373608559832486
+          ],
+          [
+            0.03496108575816469,
+            -0.05866430433102655,
+            -0.9976653857302513,
+            0.03428982467621861
+          ],
+          [
+            -0.9400505349660215,
+            0.33693025069462357,
+            -0.05275412667202243,
+            4.257735428352877
+          ]
+        ],
+        [
+          [
+            0.26494870179388347,
+            0.9639356246741932,
+            0.025105714527095885,
+            -0.8509015962946985
+          ],
+          [
+            0.044013390764018535,
+            0.01391966417987889,
+            -0.9989339639770543,
+            0.05962340286674114
+          ],
+          [
+            -0.9632574976897492,
+            0.26577124455648476,
+            -0.038738078366277934,
+            4.0407886389075625
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          2.2416905946551737,
+          3.458695944543953,
+          7.753910264309871,
+          3.4230058052447534
+        ],
+        "input_target_distance_normalized": [
+          0.14782670048980967,
+          0.1581670993537493,
+          0.1256760601635595,
+          0.22194504320202826
+        ]
+      }
+    },
+    {
+      "id": "patio__g01",
+      "dataset": "OnTheGo",
+      "scene": "patio",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio/frame_0037.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio/frame_0052.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio/frame_0111.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio/frame_0038.png"
+      ],
+      "input_sha256": [
+        "74a5d1a081194dcfdc195ac51ecc413b2d4ec41cc64ac95c7ae5bbffd3092bbb",
+        "0c61ab06746561eb34aa4e5a33a9d9d29dc9dd6f819c258308656a50b166056a",
+        "554fc9a1cb60700fcd667cae2effceabe70ccc33670d9f9c9b4d1fdf625bb8aa",
+        "1d05c9d5ec369f4fa6edce92de886ff69993bc173ff5917aaed15560be3c02b9"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_0925.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_1300.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_8500.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/images/frame_0950.jpg"
+      ],
+      "frame_order": [
+        37,
+        52,
+        111,
+        38
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        280,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.5975940938685933,
+            0.7969022134856462,
+            0.08847689594940607,
+            0.31847498234195903
+          ],
+          [
+            -0.025975304910988175,
+            0.09104848208559571,
+            -0.9955076380666267,
+            0.11095555358938841
+          ],
+          [
+            -0.8013779273928647,
+            -0.5972076992567972,
+            -0.03371025717052145,
+            4.337895574604156
+          ]
+        ],
+        [
+          [
+            -0.7692749571385281,
+            0.6270973999533824,
+            0.12233107247980379,
+            -0.3687970423256843
+          ],
+          [
+            -0.014913937679931332,
+            0.17378928544238642,
+            -0.9846699237472993,
+            -0.19755022905612873
+          ],
+          [
+            -0.638743778667724,
+            -0.7593063513741625,
+            -0.12433925356767558,
+            4.328424397546055
+          ]
+        ],
+        [
+          [
+            -0.39628173298503344,
+            0.9139738974279721,
+            0.08724965858716743,
+            0.5248952423962733
+          ],
+          [
+            -0.020367887483419438,
+            0.08625508628855011,
+            -0.9960648619709078,
+            0.3244659816711787
+          ],
+          [
+            -0.9179030108165944,
+            -0.396499400894488,
+            -0.015565597567605038,
+            3.573936260681883
+          ]
+        ],
+        [
+          [
+            -0.6477685382168304,
+            0.753806268823945,
+            0.11032692318847619,
+            0.06549736652522051
+          ],
+          [
+            -0.04216672269865693,
+            0.10911971639445621,
+            -0.9931338555276105,
+            0.10435017771078117
+          ],
+          [
+            -0.7606693686468602,
+            -0.6479729906220832,
+            -0.038898779273463545,
+            4.2803337332851195
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          5.412651852350468,
+          18.64238342222433,
+          8.60966814307972,
+          8.979470706967625
+        ],
+        "input_target_distance_normalized": [
+          0.5046431812755245,
+          0.5217406557664421,
+          0.5999473879823843,
+          0.42877835021091987
+        ],
+        "input_baseline_scene_normalized": 0.5555325049014265
+      }
+    },
+    {
+      "id": "patio_high__g00",
+      "dataset": "OnTheGo",
+      "scene": "patio_high",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio_high/frame_0135.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio_high/frame_0136.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio_high/frame_0225.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/patio_high/frame_0134.png"
+      ],
+      "input_sha256": [
+        "e68775bd3a79dabfed5f68bc1e1918c0ac00302dc7fc4f631c997ed1241171a8",
+        "927b5bd07e92e75d8deccd70f45b982c538a3f11be6932422784346e7900c400",
+        "b6e54520a34645d3c3d521074492a9f7e42a1385bcff3eba6b9704e8320db6e2",
+        "448a3b71227f90661f1f2c7b88d46335df41854565ff5f22afffe22d957e5591"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8608.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8609.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8702.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8607.JPG"
+      ],
+      "frame_order": [
+        135,
+        136,
+        225,
+        134
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.01439896987183462,
+            0.9989894544148523,
+            0.042576280186663,
+            0.15090229474037012
+          ],
+          [
+            -0.042056746424512376,
+            0.04193792502396583,
+            -0.9982346620525123,
+            0.9161017078595369
+          ],
+          [
+            -0.9990114612681092,
+            -0.016164170643554288,
+            0.04141038324618016,
+            4.291994189632376
+          ]
+        ],
+        [
+          [
+            -0.03797750292545783,
+            0.9983495736442226,
+            0.04307943913198655,
+            0.20600535140061235
+          ],
+          [
+            -0.02942204194808529,
+            0.04197470606970658,
+            -0.9986853696215802,
+            1.0518280422450854
+          ],
+          [
+            -0.99884535976165,
+            -0.03919506161182723,
+            0.02777938851205598,
+            4.362263788647874
+          ]
+        ],
+        [
+          [
+            0.06663986013686034,
+            0.9945652637957981,
+            0.07999415660985884,
+            -0.5203150615429937
+          ],
+          [
+            -0.04428114133459729,
+            0.08304132415929592,
+            -0.9955618107391473,
+            0.858140320838147
+          ],
+          [
+            -0.996794015612691,
+            0.06280186727048362,
+            0.049574347240178035,
+            3.9521938521293114
+          ]
+        ],
+        [
+          [
+            0.015700430283870605,
+            0.9974273569543801,
+            0.06994400680465668,
+            -0.039944542900953076
+          ],
+          [
+            0.10760082296613996,
+            0.06786094763472499,
+            -0.9918754733742327,
+            -0.027177433268706128
+          ],
+          [
+            -0.9940701984186725,
+            0.023098904413664037,
+            -0.1062585583798966,
+            4.301427580525832
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          3.1538784845880836,
+          4.169842788816713,
+          2.598672925924547,
+          7.028590288133654
+        ],
+        "input_target_distance_normalized": [
+          0.04578922018667092,
+          0.1007335541806537,
+          0.15202735505413034,
+          0.05997599021638046
+        ]
+      }
+    },
+    {
+      "id": "patio_high__g01",
+      "dataset": "OnTheGo",
+      "scene": "patio_high",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio_high/frame_0161.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio_high/frame_0188.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio_high/frame_0175.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/patio_high/frame_0191.png"
+      ],
+      "input_sha256": [
+        "8e693917f6df9c85cdbadb449400e14d2aec233b32af0cf7d97aa3124446ed56",
+        "b0d731352d431ec3afeabc15c6c399bc497b4a4a4f32d0f56db608b89461f238",
+        "ca44b233ec0c9333e71ce6a4d24bfe2ff9486788a166973184ff3f8bfb00ab1a",
+        "d9f3af21f30d80c6d41a627d6ce22b333daa446d1e99474639c82c0dac0cf3df"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8635.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8662.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8649.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/images/IMG_8665.JPG"
+      ],
+      "frame_order": [
+        161,
+        188,
+        175,
+        191
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.9338893041372262,
+            0.28238663776240835,
+            -0.21933662354871908,
+            0.15340213276807865
+          ],
+          [
+            -0.20949604431283694,
+            -0.0649791174213299,
+            -0.9756480521759122,
+            1.54141164912193
+          ],
+          [
+            -0.28976227330967375,
+            0.9570974355374599,
+            -0.0015244191740302973,
+            3.686172901175508
+          ]
+        ],
+        [
+          [
+            0.9557097921091757,
+            0.109481132152002,
+            -0.2731898149046228,
+            0.6312800913077764
+          ],
+          [
+            -0.25295394828890555,
+            -0.1689283181244439,
+            -0.9526161469232937,
+            0.7939730457983395
+          ],
+          [
+            -0.15044299023190788,
+            0.9795290220500654,
+            -0.1337527631550765,
+            4.53026256710699
+          ]
+        ],
+        [
+          [
+            0.9595388967611457,
+            -0.026001974496379338,
+            -0.2803729710990645,
+            0.6337802237519374
+          ],
+          [
+            -0.27570201028441643,
+            -0.2890852989972931,
+            -0.9167431981897463,
+            0.8177012387219595
+          ],
+          [
+            -0.05721457092177703,
+            0.9569501487673898,
+            -0.28455738550974446,
+            4.229158538472592
+          ]
+        ],
+        [
+          [
+            0.9455144342032087,
+            0.23051824814213911,
+            -0.22992127345078564,
+            -0.041046704267630484
+          ],
+          [
+            -0.15184668264191567,
+            -0.3124596721854318,
+            -0.9377161288080856,
+            -0.2507660882340966
+          ],
+          [
+            -0.2880018049982664,
+            0.9215369176171109,
+            -0.26043169888891887,
+            4.684536724145831
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/patio_high/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          14.137052208040096,
+          6.279705435051941,
+          12.150708087214529,
+          17.44655728529535
+        ],
+        "input_target_distance_normalized": [
+          0.12758510395126793,
+          0.33957676542180465,
+          0.3832419370789804,
+          0.358009696775227
+        ],
+        "input_baseline_scene_normalized": 0.37934405766352197
+      }
+    },
+    {
+      "id": "spot__g00",
+      "dataset": "OnTheGo",
+      "scene": "spot",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/spot/frame_0044.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/spot/frame_0081.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/spot/frame_0045.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/spot/frame_0083.png"
+      ],
+      "input_sha256": [
+        "43b7e2e0c60b5a2031e0c3ff64eabce7e9a92a08457a442152576f3198024bb2",
+        "31ae3df18be81a538eb85cccfc626cb04d92e48845d89e772fd42cbe0550564c",
+        "e436cd68ecabcb9862a4d30c3ca0b51b1d189537eb2b7a01cc4bf039a606483b",
+        "ce1b39b6f598620804ae8b1bda1135b8e1f03d6d8ae5b1b2fb48d001e587c91a"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8265.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8303.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8266.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8305.JPG"
+      ],
+      "frame_order": [
+        44,
+        81,
+        45,
+        83
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.9755413782628789,
+            0.21974104797524108,
+            -0.0057350712878416355,
+            -0.2106049785724478
+          ],
+          [
+            0.18677694378268977,
+            -0.8423893266213011,
+            -0.5054647323431091,
+            -0.49709156713926256
+          ],
+          [
+            -0.11590251285209899,
+            0.4920305826091579,
+            -0.8628282060905035,
+            3.770784854969567
+          ]
+        ],
+        [
+          [
+            0.9533420194698765,
+            0.3016636823611661,
+            -0.011748045293401111,
+            -0.20868387716833725
+          ],
+          [
+            0.27051325823055616,
+            -0.87087892346127,
+            -0.41035652520380433,
+            -0.4790207104827083
+          ],
+          [
+            -0.13402078552171157,
+            0.3880321164654988,
+            -0.9118494972116654,
+            3.270253873691725
+          ]
+        ],
+        [
+          [
+            0.9956757691114693,
+            0.09127130740351462,
+            -0.01730061163111075,
+            -0.6011225866523578
+          ],
+          [
+            0.06701589741195205,
+            -0.8346886856271617,
+            -0.5466293694552706,
+            -0.1288677429002775
+          ],
+          [
+            -0.06433220201131966,
+            0.5431062018834877,
+            -0.8371959276040741,
+            3.7028058721448076
+          ]
+        ],
+        [
+          [
+            0.912870766361891,
+            0.4065225513399979,
+            -0.03750172111318311,
+            -0.42228788290280944
+          ],
+          [
+            0.35189728592264247,
+            -0.8301080785680175,
+            -0.43253771863102286,
+            -0.8346858854611814
+          ],
+          [
+            -0.2069668185951607,
+            0.3816542848463596,
+            -0.9008355803284764,
+            3.373455397985681
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          4.071476779272914,
+          5.509568753870695,
+          8.313713404943588,
+          5.148672033724831
+        ],
+        "input_target_distance_normalized": [
+          0.07359662478593883,
+          0.10488922707522517,
+          0.04793919383389811,
+          0.1981059438766462
+        ]
+      }
+    },
+    {
+      "id": "spot__g01",
+      "dataset": "OnTheGo",
+      "scene": "spot",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/spot/frame_0166.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/spot/frame_0110.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/spot/frame_0138.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/spot/frame_0009.png"
+      ],
+      "input_sha256": [
+        "415b8428c9ca3104bb8d117db3698dac9401234d64306ebfe174e8ddb5d3fdce",
+        "c0619ee2983019b59e90d218464926b726163683f8317aadbec0f27e84997784",
+        "697a60656b00e076dbe1877216595a441202e7d5b5da28bde97b2eb879e79626",
+        "15e9bccbbe6baae97ba9c8d856e767fec6737911a45fedda968c7000ab78e3d6"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8403.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8336.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8366.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/images/IMG_8229.JPG"
+      ],
+      "frame_order": [
+        166,
+        110,
+        138,
+        9
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.9976804234614562,
+            0.05856144431581521,
+            -0.03470345518328272,
+            0.1176757689180148
+          ],
+          [
+            0.06711169496490663,
+            0.7608652309885405,
+            -0.6454301826130866,
+            -0.178273625195511
+          ],
+          [
+            -0.011392671239748452,
+            -0.6462620656559178,
+            -0.7630305036373731,
+            3.9258460289517876
+          ]
+        ],
+        [
+          [
+            -0.9714235979710865,
+            -0.21624255781523322,
+            0.09785371431595022,
+            -1.1926027304906457
+          ],
+          [
+            -0.2026911380254224,
+            0.5412666482842511,
+            -0.8160555850929692,
+            0.02439579216942654
+          ],
+          [
+            0.12350099508967018,
+            -0.8125697334002248,
+            -0.5696296450711354,
+            2.733306399445701
+          ]
+        ],
+        [
+          [
+            -0.9576137171385234,
+            -0.2803814801879457,
+            0.06604690928795366,
+            -0.053003947167074406
+          ],
+          [
+            -0.26436844364467166,
+            0.7644020898257011,
+            -0.5880465721725805,
+            0.27341385693261316
+          ],
+          [
+            0.11439097285321591,
+            -0.5805821824954424,
+            -0.8061259421705211,
+            3.922461593460867
+          ]
+        ],
+        [
+          [
+            -0.9876662844838144,
+            -0.10280323464009995,
+            0.11809659332397493,
+            0.35043322998563564
+          ],
+          [
+            -0.15598489454498782,
+            0.7113926621897407,
+            -0.6852657826086885,
+            -0.23706643407123942
+          ],
+          [
+            -0.013565510863837895,
+            -0.6952351941059803,
+            -0.7186542991882096,
+            4.48202839843311
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/spot/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          8.282768263700722,
+          8.363286796023239,
+          11.744622816404426,
+          5.598826855768731
+        ],
+        "input_target_distance_normalized": [
+          0.13935960288072163,
+          0.5185353564828874,
+          0.14409721199774458,
+          0.3001055526613361
+        ],
+        "input_baseline_scene_normalized": 0.4814708559879217
+      }
+    },
+    {
+      "id": "statue__g00",
+      "dataset": "OnTheGo",
+      "scene": "statue",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/statue/frame_0153.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/statue/frame_0020.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/statue/frame_0018.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/statue/frame_0021.png"
+      ],
+      "input_sha256": [
+        "7c377d969587fa1bb1d15e8f15676a2f50cc35573938c2ad3296e506fba7a46f",
+        "d43709fafebb68ca00c673578ce6671bc2ce2614f55c616ce98146797520cd05",
+        "93b8a5dfbd35585eb7485e7765e7c0ade2852e8b230c80a1cd8db33fd0d25696",
+        "8129d79bc382acfebb105f99e0995f4c2127a0e307cad5578665ecfe148d5a37"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6774.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6641.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6639.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6642.JPG"
+      ],
+      "frame_order": [
+        153,
+        20,
+        18,
+        21
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.9827864761920188,
+            0.18469471018877073,
+            -0.004313497533233019,
+            0.9749572537986758
+          ],
+          [
+            -0.02466729933040767,
+            0.10804729145862084,
+            -0.9938396788072728,
+            0.6547417798527426
+          ],
+          [
+            -0.18309086972735028,
+            0.9768385981505899,
+            0.11074333653567926,
+            4.175289865453287
+          ]
+        ],
+        [
+          [
+            0.9864733869463582,
+            0.16215532803770258,
+            -0.023998051053730977,
+            0.7275839264579289
+          ],
+          [
+            -0.02860437434922288,
+            0.026131866034521282,
+            -0.99924917581422,
+            0.33810160765105696
+          ],
+          [
+            -0.16140646404146503,
+            0.9864191680855596,
+            0.03041674210021418,
+            3.888601263798497
+          ]
+        ],
+        [
+          [
+            0.9815430384383911,
+            0.18793331200019506,
+            -0.03541657736635279,
+            0.8559528710068895
+          ],
+          [
+            -0.06926121684916088,
+            0.176711974071379,
+            -0.981822673439328,
+            1.0448484924018873
+          ],
+          [
+            -0.1782586535161862,
+            0.9661542053215432,
+            0.186466897834094,
+            3.7494078343963624
+          ]
+        ],
+        [
+          [
+            0.9911357729842626,
+            0.13216695319676317,
+            -0.01348243348306945,
+            0.6013152371467536
+          ],
+          [
+            -0.0011070429938102166,
+            -0.09326409150758466,
+            -0.9956407905016095,
+            -0.2277443414424761
+          ],
+          [
+            -0.13284823667025875,
+            0.9868301301227167,
+            -0.0922910629284952,
+            3.9129563969718415
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          2.025245718535832,
+          5.234199792657933,
+          5.354611590369274,
+          12.151972568331129
+        ],
+        "input_target_distance_normalized": [
+          0.00943477644905572,
+          0.11563097971931299,
+          0.11965644335329308,
+          0.11812160765569164
+        ]
+      }
+    },
+    {
+      "id": "statue__g01",
+      "dataset": "OnTheGo",
+      "scene": "statue",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/statue/frame_0119.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/statue/frame_0104.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/statue/frame_0142.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/statue/frame_0017.png"
+      ],
+      "input_sha256": [
+        "230833d719711125e81a9e150a355de32e89144bce96180787b7fe5eaa4ab204",
+        "0074073048cd9124b8eff20a68a00068de1d404f7885d9ab731bccfce967fd26",
+        "762c5470533c8d6c7f0434e043d7349fd4ff0675553c0087a0a4998895ce3542",
+        "a6db1f2bf530459e48f2c6598094e6fdb5415ea44e07a6a74b82c52f579fb5f0"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6740.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6725.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6763.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/images/IMG_6603.JPG"
+      ],
+      "frame_order": [
+        119,
+        104,
+        142,
+        17
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.42384780658262416,
+            0.9028052100164182,
+            0.07277217617415276,
+            -1.4996359781574289
+          ],
+          [
+            -0.13241501132672606,
+            0.14124757110688288,
+            -0.9810786861669991,
+            0.8674605304396609
+          ],
+          [
+            -0.8960018424367998,
+            0.4061919206775109,
+            0.1794124353089268,
+            4.064932935545736
+          ]
+        ],
+        [
+          [
+            0.343688862412008,
+            0.9383674836420658,
+            0.03666649013559405,
+            -0.0910876938186915
+          ],
+          [
+            -0.026310500559041723,
+            0.0486515024340563,
+            -0.9984692228060734,
+            0.35883477609650727
+          ],
+          [
+            -0.9387149319329969,
+            0.34219803762475726,
+            0.041409897729146966,
+            3.1328819527278187
+          ]
+        ],
+        [
+          [
+            0.3165050454502524,
+            0.9462179296356228,
+            0.0670536042434618,
+            0.8392752988408152
+          ],
+          [
+            -0.026649103002588017,
+            0.07952914240203514,
+            -0.9964762620542454,
+            0.30434326713139964
+          ],
+          [
+            -0.9482164212527591,
+            0.3136028462003189,
+            0.05038723390033098,
+            4.697532776833014
+          ]
+        ],
+        [
+          [
+            0.2979977143589903,
+            0.9514639095649665,
+            0.07690117706145994,
+            -0.02883287381706
+          ],
+          [
+            -0.028939209698572065,
+            0.08952923616656856,
+            -0.9955636785424967,
+            0.4008006875399625
+          ],
+          [
+            -0.9541278134498219,
+            0.2944502414107492,
+            0.0542141213454674,
+            5.785372438358786
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/statue/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          9.401646017795608,
+          1.2234747731361637,
+          0.5783946536654934,
+          1.7444333826638476
+        ],
+        "input_target_distance_normalized": [
+          0.08099913858061801,
+          0.40177009391531465,
+          0.579126297230351,
+          0.5758592943437854
+        ],
+        "input_baseline_scene_normalized": 0.5188578012183258
+      }
+    },
+    {
+      "id": "train__g00",
+      "dataset": "OnTheGo",
+      "scene": "train",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train/frame_0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train/frame_0058.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train/frame_0059.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train/frame_0056.png"
+      ],
+      "input_sha256": [
+        "25bd651a23e8396fa0facb315a7f51b0f625aa642cd040eedfa29cd6f8f2e367",
+        "734722dce370529b5e0f9411ed120871046904e6fb56e561907632b076ae0b2d",
+        "1d85113fce40346c1d924446c14333d325b31454d21027037d30950210e467ec",
+        "d235f9646a058554c650865f757f20d674e12dd135d55cf7a3f23eb78b5222d6"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7319.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7361.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7362.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7359.JPG"
+      ],
+      "frame_order": [
+        17,
+        58,
+        59,
+        56
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.23100826874484212,
+            0.972950494962261,
+            -0.0015855989749398508,
+            1.0633017844226955
+          ],
+          [
+            0.06912211682407657,
+            0.014786104554081617,
+            -0.9974986235959954,
+            -0.23605804438514705
+          ],
+          [
+            -0.9704933347196673,
+            -0.2305400300702825,
+            -0.07066811019134306,
+            3.884489780152538
+          ]
+        ],
+        [
+          [
+            -0.1533595118967129,
+            0.9874186223284045,
+            -0.038539906458585474,
+            0.6010908226407963
+          ],
+          [
+            0.0549516328220909,
+            -0.030419170705290637,
+            -0.9980255468182271,
+            -0.16663136499124676
+          ],
+          [
+            -0.9866413624813318,
+            -0.15517454150948112,
+            -0.04959519640421912,
+            3.866061148709059
+          ]
+        ],
+        [
+          [
+            -0.22427853679036763,
+            0.9734893879814678,
+            -0.04491713951875925,
+            0.890779705657747
+          ],
+          [
+            0.17790712349192725,
+            -0.0044164781414939335,
+            -0.9840373723236758,
+            -0.7319134299341978
+          ],
+          [
+            -0.9581483148991239,
+            -0.22868954109948375,
+            -0.1722001755103587,
+            3.7306708381969664
+          ]
+        ],
+        [
+          [
+            -0.17561554647174682,
+            0.9828589832874899,
+            -0.05610168275955381,
+            0.9182241410416896
+          ],
+          [
+            0.12263738361832727,
+            -0.034701950520328664,
+            -0.9918446686691266,
+            -0.5178679452352398
+          ],
+          [
+            -0.9767902804464793,
+            -0.18106350709396363,
+            -0.1144410521718839,
+            3.971713265820016
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          1.2113118282729318,
+          3.486902760681261,
+          5.854854373252891,
+          2.8900857422000996
+        ],
+        "input_target_distance_normalized": [
+          0.10794970313229399,
+          0.05971467154739363,
+          0.058093791447085735,
+          0.14649118889172522
+        ]
+      }
+    },
+    {
+      "id": "train__g01",
+      "dataset": "OnTheGo",
+      "scene": "train",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train/frame_0120.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train/frame_0134.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train/frame_0097.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train/frame_0115.png"
+      ],
+      "input_sha256": [
+        "9d75be3e931cf7a823c128a97b0cc0576d06ea544481d0b52adea9411f407a91",
+        "fe42083e0120f9c8e84acdc7752ea283e1e71d0429771475411f10ee14971dae",
+        "ec896eabe44c7fbc8cfdbc4539ce44183cdc50b2eceb3ec98b7f08ca671e8de2",
+        "86d52858a036af6a5113e80576776cac9025d2d7529ccac27be7529cb5b9450e"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7423.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7437.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7400.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/images/IMG_7418.JPG"
+      ],
+      "frame_order": [
+        120,
+        134,
+        97,
+        115
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.9949358093524662,
+            -0.03125125732517199,
+            0.09553059291023422,
+            0.24457670759670103
+          ],
+          [
+            -0.09233972356253548,
+            -0.09121004152015165,
+            -0.9915412768898394,
+            0.512106542283199
+          ],
+          [
+            0.039700260938428975,
+            -0.9953411913718274,
+            0.08786240401853608,
+            4.0429327882393284
+          ]
+        ],
+        [
+          [
+            -0.9902571323843943,
+            0.04970944878420736,
+            0.13007606413727657,
+            -1.408867688118655
+          ],
+          [
+            -0.1356124951582396,
+            -0.13212689915591658,
+            -0.9819122841040653,
+            0.5018230731648932
+          ],
+          [
+            -0.03162377138836294,
+            -0.9899855823298702,
+            0.13758082665154706,
+            3.9703589553987078
+          ]
+        ],
+        [
+          [
+            -0.7564706386733985,
+            0.6476167764573714,
+            0.09134924014411892,
+            -1.139079238891171
+          ],
+          [
+            -0.05724683716686436,
+            0.07357115471086134,
+            -0.9956455618476598,
+            -0.12331989530827997
+          ],
+          [
+            -0.6515174383372114,
+            -0.7584060891405565,
+            -0.018580406243679907,
+            3.34700326463795
+          ]
+        ],
+        [
+          [
+            -0.9973137518530996,
+            0.00028422875312260847,
+            0.0732475226662415,
+            -0.6274735532502609
+          ],
+          [
+            -0.07322387669352431,
+            -0.029570386715773254,
+            -0.9968770516515482,
+            0.14153472709722767
+          ],
+          [
+            0.0018826164498336785,
+            -0.9995626600886489,
+            0.02951176565042629,
+            4.573786676100862
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          3.6108017990842023,
+          3.4456338983974195,
+          39.723724160256765,
+          3.1430393001951438
+        ],
+        "input_target_distance_normalized": [
+          0.4528646689640576,
+          0.9035426347072154,
+          0.21471357202507466,
+          0.817224978641079
+        ],
+        "input_baseline_scene_normalized": 0.5730527597667551
+      }
+    },
+    {
+      "id": "train_station__g00",
+      "dataset": "OnTheGo",
+      "scene": "train_station",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train_station/frame_0033.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train_station/frame_0038.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train_station/frame_0031.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/train_station/frame_0039.png"
+      ],
+      "input_sha256": [
+        "93a5e4fd1a677ae32e14d624bf26394bdc16ecf31e8f1e5fc1fcb9d3750e34a0",
+        "4d32660f44fb9b90fbea6466664479c6902ff410c466dd33d39831d545789967",
+        "b51fb3c7c70859dacbbcae99dac320c82c1491a03b71d730a9c523ca36682457",
+        "7dc2b2d90c6ba57b7c4a54390eef5bc008d005ab5eba5e67c9128f94426beb23"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6829.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6834.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6827.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6835.JPG"
+      ],
+      "frame_order": [
+        33,
+        38,
+        31,
+        39
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.1831655245573452,
+            0.9829432164895395,
+            -0.016523430982214964,
+            -0.7327734602368314
+          ],
+          [
+            -0.0676042334211251,
+            -0.029362075838336985,
+            -0.997280069062096,
+            0.6840421693381635
+          ],
+          [
+            -0.9807548410584953,
+            -0.18155027309170613,
+            0.07182924267029189,
+            6.733403809009341
+          ]
+        ],
+        [
+          [
+            -0.24377399871371253,
+            0.9676143104475686,
+            -0.06554985712732914,
+            -0.26162640859598
+          ],
+          [
+            -0.08792869786209558,
+            -0.0893614586357013,
+            -0.9921104141299567,
+            1.0800421598508487
+          ],
+          [
+            -0.9658378651025762,
+            -0.2360870092308914,
+            0.10686506645289914,
+            6.644567396215842
+          ]
+        ],
+        [
+          [
+            -0.24738913446577918,
+            0.9645839998655604,
+            -0.09152225605265854,
+            -0.5115304714879487
+          ],
+          [
+            -0.08352668711524777,
+            -0.11533788990248618,
+            -0.9898082964466474,
+            1.0346146626575472
+          ],
+          [
+            -0.9653092295789591,
+            -0.23722326689473253,
+            0.10910184670723026,
+            6.649734950583311
+          ]
+        ],
+        [
+          [
+            -0.2262485212565298,
+            0.9717200838051756,
+            -0.06761423932828611,
+            -0.20173734480805405
+          ],
+          [
+            -0.12720343952724292,
+            -0.09829420342220298,
+            -0.9869941917601841,
+            1.1572146658877707
+          ],
+          [
+            -0.9657281665272958,
+            -0.2147052125665972,
+            0.14584505509008108,
+            6.600326525274547
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          1.682095020242478,
+          2.1558802245917157,
+          2.291189541705271,
+          3.607914264982377
+        ],
+        "input_target_distance_normalized": [
+          0.00890289746717205,
+          0.04094072958398726,
+          0.06054315485161946,
+          0.0537891962401922
+        ]
+      }
+    },
+    {
+      "id": "train_station__g01",
+      "dataset": "OnTheGo",
+      "scene": "train_station",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train_station/frame_0157.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train_station/frame_0057.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train_station/frame_0154.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/train_station/frame_0059.png"
+      ],
+      "input_sha256": [
+        "f2c3c6ccb6703fc0e4c4447aeb67232ebb38dff465787fd4c694bce0491c0294",
+        "7c9f1b2e53158487ba9c9a282fa5979a6c62a2358f6a326053aad8069f5d341c",
+        "d3d401eda6b7daf0ae427d5ef54ad48f81e75056374c2ab310e54cf8de5626ae",
+        "0b077a0487912830188f40f9f684d4b29fafaa3b81cfcbcdd2ddb9b840b65bb7"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6980.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6853.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6977.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/images/IMG_6855.JPG"
+      ],
+      "frame_order": [
+        157,
+        57,
+        154,
+        59
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.9735373165744122,
+            -0.15143100167552695,
+            0.1711541556330931,
+            0.1408997006033469
+          ],
+          [
+            0.16419311004519946,
+            -0.057430675416261144,
+            -0.9847549645253604,
+            -0.8533855867951149
+          ],
+          [
+            0.1589519294418191,
+            0.9867980387357839,
+            -0.031046978511438374,
+            2.8523716466700324
+          ]
+        ],
+        [
+          [
+            0.9745852408497017,
+            -0.124340804925174,
+            0.18634101150986837,
+            -0.1608876120742542
+          ],
+          [
+            0.1803730097603847,
+            -0.057742314790283626,
+            -0.9819019311800261,
+            -0.930232871202362
+          ],
+          [
+            0.13285023782593952,
+            0.9905580191554814,
+            -0.03384708254672537,
+            3.253263881583047
+          ]
+        ],
+        [
+          [
+            0.9579534622874125,
+            -0.22176981530479778,
+            0.18205305032439956,
+            -0.3471405439287758
+          ],
+          [
+            0.191874832653431,
+            0.023391461984791542,
+            -0.9811406056844932,
+            -0.6013984365429453
+          ],
+          [
+            0.21332888390528978,
+            0.9748184387494429,
+            0.06495997819548575,
+            3.057284846147639
+          ]
+        ],
+        [
+          [
+            0.9558336309010951,
+            -0.20218191357180448,
+            0.21331794084010264,
+            0.0777644055193319
+          ],
+          [
+            0.18647232448239795,
+            -0.14383867928011987,
+            -0.9718737091654963,
+            -1.210834973540224
+          ],
+          [
+            0.22717865714688032,
+            0.9687274684695404,
+            -0.09978451568830143,
+            2.9995403686215987
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/train_station/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          2.226525852797406,
+          3.555011998608544,
+          4.27196819753235,
+          5.995782665431713
+        ],
+        "input_target_distance_normalized": [
+          0.012135190022553833,
+          0.14205579928329842,
+          0.08605891845347671,
+          0.06270402019597875
+        ],
+        "input_baseline_scene_normalized": 0.0794022573417183
+      }
+    },
+    {
+      "id": "tree__g00",
+      "dataset": "OnTheGo",
+      "scene": "tree",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/tree/frame_0157.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/tree/frame_0128.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/tree/frame_0064.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20260929_onthego_eval/tree/frame_0043.png"
+      ],
+      "input_sha256": [
+        "67f3e8456096c1af361322036e8d893a6cc888dd67de10fcfc5b2eab508c905d",
+        "8d05341f9cae2717ed29b6dbff2f1852d94e64e31800c1ec3ddf657457edaee1",
+        "7abfa2856e5eea11292a4e8915755fffcc9265a0937b27a26fa8297c4b1abcfd",
+        "2f17f8e4adf666b770253c8cfb3944e56e30c962b9f22531478797b550c6aff4"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6317.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6288.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6224.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6203.JPG"
+      ],
+      "frame_order": [
+        157,
+        128,
+        64,
+        43
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.29994536328874827,
+            0.9532714112663029,
+            0.0361440935932169,
+            -0.3070546398209068
+          ],
+          [
+            0.20719597422607394,
+            -0.028116159255618004,
+            -0.9778953470682372,
+            0.2875647208587081
+          ],
+          [
+            -0.9311834444784037,
+            0.3008040858282442,
+            -0.20594731036139674,
+            4.062040749583163
+          ]
+        ],
+        [
+          [
+            0.18875870579894902,
+            0.9819004763713823,
+            0.015543663856504391,
+            -0.11659698653917454
+          ],
+          [
+            0.21487712797082348,
+            -0.02585258678768904,
+            -0.9762988597739319,
+            0.33738201263938356
+          ],
+          [
+            -0.9582264715737567,
+            0.18762488709640698,
+            -0.21586785513946535,
+            3.9194134125529345
+          ]
+        ],
+        [
+          [
+            0.2514920844240368,
+            0.9670510443592474,
+            0.0395475545926765,
+            -0.5176176314304054
+          ],
+          [
+            0.13990682931785456,
+            0.004108153655333335,
+            -0.9901561503865187,
+            0.42274573766823736
+          ],
+          [
+            -0.9576940067405941,
+            0.254549407143554,
+            -0.13426387727890832,
+            4.221407777064836
+          ]
+        ],
+        [
+          [
+            0.28160136557573046,
+            0.9593538223540279,
+            0.01846386846506286,
+            0.03796385536615886
+          ],
+          [
+            0.2584244977730229,
+            -0.05729628936707751,
+            -0.9643308115683487,
+            -0.16104037773372648
+          ],
+          [
+            -0.9240765389410229,
+            0.27632838934749676,
+            -0.26405524305666084,
+            4.305899239622761
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "minimize mean normalized center distance + viewing-axis angle/45 over four clutter neighbors; greedy minimum center separation 0.025 scene median pair distance, 20-neighbor pool; target selected from extra without model output",
+        "input_target_angles_deg": [
+          3.340839335780783,
+          3.988555958935105,
+          2.974676176118079,
+          4.990517906027128
+        ],
+        "input_target_distance_normalized": [
+          0.034649176133725236,
+          0.06025267701478499,
+          0.08682335528372896,
+          0.09733968684284798
+        ]
+      }
+    },
+    {
+      "id": "tree__g01",
+      "dataset": "OnTheGo",
+      "scene": "tree",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/tree/frame_0169.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/tree/frame_0153.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/tree/frame_0174.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/frames/tree/frame_0180.png"
+      ],
+      "input_sha256": [
+        "541f2c47b59722222045461f143280fed491eada3319bf78426bb7beb284effa",
+        "f99fdb1353eecf064fe22f3dc9adcdf01bff3a09fd1942c56b1080ab6ff87e15",
+        "b54fb9ef7fa9d9d2d1e632b0e9a0c687caa53f3a14f578f15938d94347614249",
+        "2695c628b39fd8cd96da9ab0d483808e608d256893f760025466b4378add6030"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6329.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6313.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6334.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/images/IMG_6340.JPG"
+      ],
+      "frame_order": [
+        169,
+        153,
+        174,
+        180
+      ],
+      "clutter_views": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+      "split_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/split.json",
+      "pose_source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/transforms.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.32567486692377834,
+            -0.9454542696032934,
+            -0.00721838904349201,
+            -0.8281065014215017
+          ],
+          [
+            -0.45932767883650033,
+            0.16488571295042923,
+            -0.8728291843680984,
+            0.0810418652541242
+          ],
+          [
+            0.8264102882185261,
+            -0.28094292259039627,
+            -0.48797244772570286,
+            3.2812188698847806
+          ]
+        ],
+        [
+          [
+            -0.4873908119527117,
+            -0.8731569277681023,
+            0.006868472009160327,
+            1.112293340391972
+          ],
+          [
+            -0.3693669390343731,
+            0.19903800937790575,
+            -0.9077179821601414,
+            0.44683699380384095
+          ],
+          [
+            0.7912131575858873,
+            -0.44495039084526244,
+            -0.4195245987065098,
+            3.1100243576771036
+          ]
+        ],
+        [
+          [
+            -0.3107561503037464,
+            -0.9504628833474817,
+            0.007135995009609991,
+            -2.862399537566121
+          ],
+          [
+            -0.45615891057639335,
+            0.14254725721275843,
+            -0.8784072675745875,
+            0.4194494195096599
+          ],
+          [
+            0.8338762877757884,
+            -0.2762256085880049,
+            -0.4778595502988792,
+            4.932062932117506
+          ]
+        ],
+        [
+          [
+            -0.5720221249035071,
+            -0.8191088890184453,
+            0.043026928101706816,
+            -0.4310715937624446
+          ],
+          [
+            -0.49289700738961567,
+            0.3013368219323482,
+            -0.8162405649201939,
+            -1.2950874402460544
+          ],
+          [
+            0.6556243045310428,
+            -0.488115506492657,
+            -0.5761076493168357,
+            4.788801603162574
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/on-the-go/on-the-go/tree/transforms.json",
+        "note": "Dataset-provided COLMAP-derived camera transforms"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes",
+      "group_selection": {
+        "policy": "pose-only target spread; 20 nearest eligible clutter candidates; alternate near/wide preference; max frame reuse4, separation>=0.025 scene baseline, target angle<=60deg and distance<=2 scene baselines",
+        "input_target_angles_deg": [
+          10.50950748923629,
+          12.231791681599988,
+          9.825577341745655,
+          23.37071196394628
+        ],
+        "input_target_distance_normalized": [
+          0.2715850606486961,
+          0.43551506054257216,
+          0.622416758671564,
+          0.27069701415414976
+        ],
+        "input_baseline_scene_normalized": 0.5334340720006976
+      }
+    }
+  ],
+  "correspondence": {
+    "hypersim_data_root": "/mnt/nvme1n1/MV_Restoration/hypersim/data",
+    "hypersim_camera_parameters": "/mnt/nvme1n1/yejichoi/hypersim-synthesis/workspace/hypersim/ml-hypersim/contrib/mikeroberts3000/metadata_camera_parameters.csv"
+  },
+  "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json"
+}

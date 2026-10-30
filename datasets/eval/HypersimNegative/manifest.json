@@ -1,0 +1,1274 @@
+{
+  "schema_version": "frozen_eval_v1",
+  "protocol": {
+    "seed": 42,
+    "noise_lvl": 0.3,
+    "reference_view": "first",
+    "process_res": 504,
+    "process_res_method": "upper_bound_resize",
+    "precision": "bf16",
+    "attention_layer": 9,
+    "capture_calls": [
+      0,
+      24,
+      48
+    ],
+    "own_trajectory": true,
+    "clutter_views_source": "per-group clutter_views"
+  },
+  "groups": [
+    {
+      "id": "ai_001_006_cam_00_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_001_006/cam_00/group_000240/variant_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0087/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0087/clean.png"
+      ],
+      "frame_order": [
+        72,
+        95,
+        73,
+        87
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 35,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 175,
+          "y": 245,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 203,
+          "y": 245,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 287,
+          "y": 259,
+          "target": "distractor_B",
+          "patch_occupancy": 0.9948979591836735
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B interior. First eligible completed group, >=50% patch occupancy.",
+      "input_sha256": [
+        "510227271cf7a38069c86580e26b029a15a0a9bd1e3bf2497dee93683bd96026",
+        "e10b144a022c6b3a0afb25b42bf877922cd4c7519c2b307700cd40b458289459",
+        "e43ea3d4fd83fcb175bd361b2be5726e0d3347765c84a643fa4e0fd5acb2e6da",
+        "43adbb6eab326eb278fb3ddef2447adafa80d93b2020e7d092cd760d8738a874"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0072/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0087/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0072/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0087/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai001006_d2_20260923/cam_00_shared_asset",
+      "mask_sha256": {
+        "1": [
+          "f615a5d1d7bb479b6125e05d8145a5803d13446fbe27641a4111f4380aa902e1"
+        ],
+        "2": [
+          "b183811842207e5697237a24771b3709da03919c03c50268e492fa3e07efeeb8"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_001_006_cam_00_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_001_006/cam_00/group_000240/variant_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0087/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0087/clean.png"
+      ],
+      "frame_order": [
+        72,
+        95,
+        73,
+        87
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 35,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 175,
+          "y": 245,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 203,
+          "y": 245,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 273,
+          "y": 273,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B interior. First eligible completed group, >=50% patch occupancy.",
+      "input_sha256": [
+        "510227271cf7a38069c86580e26b029a15a0a9bd1e3bf2497dee93683bd96026",
+        "5fe21bb26111b451eae579f58cb005d94d49c752f059f44e2f5360af3bd1b00e",
+        "b9314a0bde5cc1c099f37dd6ffb294db4d32d961f33af6e9be8c3c96d7b47c84",
+        "43adbb6eab326eb278fb3ddef2447adafa80d93b2020e7d092cd760d8738a874"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0072/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0087/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0072/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0087/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai001006_d2_20260923/cam_00_independent_assets",
+      "mask_sha256": {
+        "1": [
+          "f615a5d1d7bb479b6125e05d8145a5803d13446fbe27641a4111f4380aa902e1"
+        ],
+        "2": [
+          "e77ec935352a10f6d43e03eb332a184b30ddc20cbabd981b07a3a629f0343bf0"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_001_006_cam_01_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_006",
+      "camera": "cam_01",
+      "static_group_id": "scenes_006/ai_001_006/cam_01/group_000264/variant_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0097/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0097/clean.png"
+      ],
+      "frame_order": [
+        84,
+        11,
+        99,
+        97
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 105,
+          "y": 231,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 7,
+          "y": 259,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 231,
+          "y": 245,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 273,
+          "y": 259,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B interior. First eligible completed group, >=50% patch occupancy.",
+      "input_sha256": [
+        "97fcf4a1d76a25e2e0150819259a8c68fe02fe4cac1ef2db90c6ba4f4902934e",
+        "142a66683e4278c2368f372befb67d4c23ab4ba9bf2ef393c574fdc0314de72c",
+        "6458eabab74a7f9a60985886f714e679c7d30f6a61e705722458b00125b8d3a1",
+        "167afb6ba3ef1d65a7c69bb912bddd0012902a66b82222408be739c695a1519e"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0084/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0097/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0084/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0097/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai001006_d2_20260923/cam_01_shared_asset",
+      "mask_sha256": {
+        "1": [
+          "d6ee3642387b6b50eee40199c51aa611bc2053d6619a14f5795c5ca1dce7cc22"
+        ],
+        "2": [
+          "8a73885e47ea6a3f0c6ba4ffbc9d0181b17f7bb2e7686405ee1094cb1091f0ee"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_001_006_cam_01_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_006",
+      "camera": "cam_01",
+      "static_group_id": "scenes_006/ai_001_006/cam_01/group_000264/variant_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0097/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0097/clean.png"
+      ],
+      "frame_order": [
+        84,
+        11,
+        99,
+        97
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 105,
+          "y": 231,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 7,
+          "y": 259,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 231,
+          "y": 245,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 273,
+          "y": 287,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B interior. First eligible completed group, >=50% patch occupancy.",
+      "input_sha256": [
+        "97fcf4a1d76a25e2e0150819259a8c68fe02fe4cac1ef2db90c6ba4f4902934e",
+        "ede5be7f9d88cc9c3af57baafc10b08959f52b28bcba360603ec747932e9ef62",
+        "1d6b62a7d82a310974d8fa92a4974c9172c9140b2fc9ee59ebcc564b25203eb8",
+        "167afb6ba3ef1d65a7c69bb912bddd0012902a66b82222408be739c695a1519e"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0084/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0097/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0084/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0097/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai001006_d2_20260923/cam_01_independent_assets",
+      "mask_sha256": {
+        "1": [
+          "d6ee3642387b6b50eee40199c51aa611bc2053d6619a14f5795c5ca1dce7cc22"
+        ],
+        "2": [
+          "846483f693a5f6b9531f0d209d0714911680a6f6e87c091f95ebfa844ebb4ab5"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_003_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_003_006/cam_00/group_000581/variant_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0001/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0001/clean.png"
+      ],
+      "frame_order": [
+        11,
+        2,
+        0,
+        1
+      ],
+      "original_view_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 385,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 469,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 189,
+          "y": 287,
+          "target": "distractor_B",
+          "patch_occupancy": 0.47959183673469385
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 231,
+          "y": 273,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B. First eligible view pair, patch occupancy >= 40%.",
+      "input_sha256": [
+        "916b5dcc060015ea48a918b51b4f265df9f927620467cc60e647e25a483ba83f",
+        "b6df6baccd9e0443b88407991aaab171dc1f0ad242389ab1196527eb2f4cd057",
+        "dc14bb9131da34db874d98a5386a82d77325199d538ad7df28107a2e52b57da6",
+        "e73292d244f81380aab120452cd5ec55eddbbee1dd523cfec74a5cd5eb845dde"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0011/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0001/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0011/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0001/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai003006_d2_20260923/cam_00_group_000581_shared_asset",
+      "mask_sha256": {
+        "1": [
+          "1d8e176e5685777e3252de171f5a1d46d9251873a9914b4800d70276960c928e"
+        ],
+        "2": [
+          "d405e3266557b88ce168c33b27ee2637f8b797e2378805d5873ebc2e278bc535"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_003_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_003_006/cam_00/group_000581/variant_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0001/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0001/clean.png"
+      ],
+      "frame_order": [
+        11,
+        2,
+        0,
+        1
+      ],
+      "original_view_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 385,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 469,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 189,
+          "y": 287,
+          "target": "distractor_B",
+          "patch_occupancy": 0.47959183673469385
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 231,
+          "y": 245,
+          "target": "distractor_B",
+          "patch_occupancy": 0.44387755102040816
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B. First eligible view pair, patch occupancy >= 40%.",
+      "input_sha256": [
+        "916b5dcc060015ea48a918b51b4f265df9f927620467cc60e647e25a483ba83f",
+        "20916242a71ce37567e5770c0195833158735d7d29585a0bad9c63f9a297388d",
+        "ca61788fc430a1d3d627c44f9f82aa063dce62559f4f4d5b94b7cd7f96922d2f",
+        "e73292d244f81380aab120452cd5ec55eddbbee1dd523cfec74a5cd5eb845dde"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0011/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0001/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0011/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0001/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai003006_d2_20260923/cam_00_group_000581_independent_assets",
+      "mask_sha256": {
+        "1": [
+          "1d8e176e5685777e3252de171f5a1d46d9251873a9914b4800d70276960c928e"
+        ],
+        "2": [
+          "fa07ceb06064d5fe43ea260f5ca94ca589cd93494724917825cbff2f289ba18d"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_003_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_003_006/cam_00/group_000582/variant_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0008/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0008/clean.png"
+      ],
+      "frame_order": [
+        6,
+        7,
+        4,
+        8
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 385,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 399,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 231,
+          "y": 273,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 273,
+          "y": 287,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B. First eligible view pair, patch occupancy >= 40%.",
+      "input_sha256": [
+        "9f48c17cb4d3b6da05dc612e9b03e3d4855e2f09ed419496ca8b2be371ac7454",
+        "7f8a64d48bbec046c30a28d1125cf6fe8a8321586c30f530ee240b6334ef39d9",
+        "e4e922db86c47af10acdfd2cab25a42e18d485758f6b06aa223fe57e415aec6c",
+        "430c76bdaaab379f12619dd9fb052a95b377267cc66688108e185ce94e1da07b"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0006/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0008/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0006/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0008/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai003006_d2_20260923/cam_00_group_000582_shared_asset",
+      "mask_sha256": {
+        "1": [
+          "da2c5d1b24694b9724daba82ae4daf799943e018a11a16147dcf9a305df4dd04"
+        ],
+        "2": [
+          "5bf6034f54c5e105cb720fd44855160c6af0adb8d987467967876befd90e04e2"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_003_006",
+      "camera": "cam_00",
+      "static_group_id": "scenes_006/ai_003_006/cam_00/group_000582/variant_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0008/clean.png"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0008/clean.png"
+      ],
+      "frame_order": [
+        6,
+        7,
+        4,
+        8
+      ],
+      "original_view_order": [
+        2,
+        0,
+        1,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 385,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 399,
+          "y": 287,
+          "target": "static_A",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 1,
+          "x": 231,
+          "y": 273,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 273,
+          "y": 287,
+          "target": "distractor_B",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "query_selection": "Q1/Q2: same visible A patch in both variants; Q3/Q4: B. First eligible view pair, patch occupancy >= 40%.",
+      "input_sha256": [
+        "9f48c17cb4d3b6da05dc612e9b03e3d4855e2f09ed419496ca8b2be371ac7454",
+        "cda7bdf7eb149762d960b83c7ad0b118b772685d4438f51e9918bcd864b97d05",
+        "0616676153b0cf1ecb65ab148c5b8a94b19e37d3139e1685a11d16a7901deb94",
+        "430c76bdaaab379f12619dd9fb052a95b377267cc66688108e185ce94e1da07b"
+      ],
+      "static_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0006/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/static_mask.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0008/static_mask.png"
+      ],
+      "object_mask_paths": [
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0006/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/mask_object.png",
+        "/mnt/dataset1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0008/mask_object.png"
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/mask_object.png"
+        ]
+      },
+      "previous_output": "/mnt/dataset1/yejichoi/GARD-DFrecon/result_eval/negative_ai003006_d2_20260923/cam_00_group_000582_independent_assets",
+      "mask_sha256": {
+        "1": [
+          "da2c5d1b24694b9724daba82ae4daf799943e018a11a16147dcf9a305df4dd04"
+        ],
+        "2": [
+          "e33ca518e1b53d69b91abf6560b237f60c93a661bc18a0d4ed328f465671a386"
+        ]
+      },
+      "evaluation_scope": "heldout_synthetic_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_007",
+      "camera": "cam_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0086/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0038/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0033/clean.png"
+      ],
+      "input_sha256": [
+        "ce3fa08d68afedd9cf589be30680aafeaa14246990e382f7b0217db561573413",
+        "cad6aaff6f4be78d737b27bf0ab7c1f49bad08a8dfc2821f043737c2122fabd0",
+        "a695adeeeae144a4aa16891d401701c714be4eb18ee453f1920c6a8f97474802",
+        "20c0a959c57a1fe940a586f4936fb98341c806f04b0e1ae6f6d0e2616eac2cb5"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0086/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0038/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0033/clean.png"
+      ],
+      "frame_order": [
+        57,
+        86,
+        38,
+        33
+      ],
+      "original_view_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0086/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0038/mask_object.png"
+        ]
+      },
+      "mask_sha256": {
+        "1": [
+          "8f483c069cf562477a2462c0725167ef3e78b4a4263ff37094197a6912bf6008"
+        ],
+        "2": [
+          "d4e68043df26b4eba24150e5ef2bbe0aac067e53b25eca092f614c506f1fb24e"
+        ]
+      },
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "heldout_synthetic_scene",
+      "group_selection": "First two complete distinct background groups; two clutter views maximize minimum object mask area",
+      "source_group_json": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/group.json",
+      "scene_training_exclusion": "Entire ai_001_007 reserved, including unselected groups"
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_shared_asset",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_007",
+      "camera": "cam_00",
+      "variant": "shared_asset",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0055/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0083/clean.png"
+      ],
+      "input_sha256": [
+        "8474738521d56e6c90d7aed28fcbeda2d428b40ab456569fdfff0457e613eaf6",
+        "7803f3107447bbeb852c0bc104eb36802891a3cd8574e9f97cf28d423484b8a7",
+        "f4d9cc4cc01a7a43e1ba1f3372dccf15bce25bf619f94df4ba362e2484afb5aa",
+        "26d86c17c1e36679d4c8e8b432d920ccd89c01cd6598fba1062f3c7a4e639b94"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0055/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0073/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0083/clean.png"
+      ],
+      "frame_order": [
+        46,
+        55,
+        73,
+        83
+      ],
+      "original_view_order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0055/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0073/mask_object.png"
+        ]
+      },
+      "mask_sha256": {
+        "1": [
+          "05ccf0b5d58c6ef6b188c9bacf06aff84343943ac473413f2dab5130e0e2d13e"
+        ],
+        "2": [
+          "6f1c89904b7a8455da196a6f0939a52f1c0bb093833cf10138a62835f653cbd8"
+        ]
+      },
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "heldout_synthetic_scene",
+      "group_selection": "First two complete distinct background groups; two clutter views maximize minimum object mask area",
+      "source_group_json": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/group.json",
+      "scene_training_exclusion": "Entire ai_001_007 reserved, including unselected groups"
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_007",
+      "camera": "cam_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0086/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0038/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0033/clean.png"
+      ],
+      "input_sha256": [
+        "ce3fa08d68afedd9cf589be30680aafeaa14246990e382f7b0217db561573413",
+        "a2dacf521bb72702f89f84654de5ed9e612ec9b647c3be7b1c9b0a17adabf6f5",
+        "2200bba56d83a4a50f10143e4ac633f423c754a0484989307171f43247d7adac",
+        "20c0a959c57a1fe940a586f4936fb98341c806f04b0e1ae6f6d0e2616eac2cb5"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0086/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0038/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0033/clean.png"
+      ],
+      "frame_order": [
+        57,
+        86,
+        38,
+        33
+      ],
+      "original_view_order": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0086/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0038/mask_object.png"
+        ]
+      },
+      "mask_sha256": {
+        "1": [
+          "8f483c069cf562477a2462c0725167ef3e78b4a4263ff37094197a6912bf6008"
+        ],
+        "2": [
+          "59a79e5a2ecbaa8eddd296444ae5706896a9684518f0056879255d3d8453fa73"
+        ]
+      },
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "heldout_synthetic_scene",
+      "group_selection": "First two complete distinct background groups; two clutter views maximize minimum object mask area",
+      "source_group_json": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/group.json",
+      "scene_training_exclusion": "Entire ai_001_007 reserved, including unselected groups"
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_independent_assets",
+      "dataset": "HypersimNegative",
+      "scene": "ai_001_007",
+      "camera": "cam_00",
+      "variant": "independent_assets",
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0055/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0083/clean.png"
+      ],
+      "input_sha256": [
+        "8474738521d56e6c90d7aed28fcbeda2d428b40ab456569fdfff0457e613eaf6",
+        "5978b013fd55756b5e25e20ce08263d0d88a788ce9f207a0488ab0eec4d4df22",
+        "7c490672c192c8a260f88d1bc0aec530b59a9007e2aebca4dfc74c5bc3e5264d",
+        "26d86c17c1e36679d4c8e8b432d920ccd89c01cd6598fba1062f3c7a4e639b94"
+      ],
+      "clean_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0055/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0073/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0083/clean.png"
+      ],
+      "frame_order": [
+        46,
+        55,
+        73,
+        83
+      ],
+      "original_view_order": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0055/mask_object.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0073/mask_object.png"
+        ]
+      },
+      "mask_sha256": {
+        "1": [
+          "e8f62fff2e263fce99eadd13a8ff5753404cbe7b3a845a62ed42234006ff135c"
+        ],
+        "2": [
+          "3c103cd441955cb601c43d1f152fbf19fcf5a64424108d4079fbec8ebe89ca76"
+        ]
+      },
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "heldout_synthetic_scene",
+      "group_selection": "First two complete distinct background groups; two clutter views maximize minimum object mask area",
+      "source_group_json": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/group.json",
+      "scene_training_exclusion": "Entire ai_001_007 reserved, including unselected groups"
+    }
+  ],
+  "correspondence": {
+    "hypersim_data_root": "/mnt/nvme1n1/MV_Restoration/hypersim/data",
+    "hypersim_camera_parameters": "/mnt/nvme1n1/yejichoi/hypersim-synthesis/workspace/hypersim/ml-hypersim/contrib/mikeroberts3000/metadata_camera_parameters.csv"
+  },
+  "excluded_groups": [
+    "ai_001_006_cam_02_independent_assets",
+    "ai_001_006_cam_02_shared_asset",
+    "ai_003_006_cam_00_group_000578_independent_assets",
+    "ai_003_006_cam_00_group_000578_shared_asset",
+    "ai_003_006_cam_00_group_000579_independent_assets",
+    "ai_003_006_cam_00_group_000579_shared_asset",
+    "ai_003_006_cam_00_group_000580_independent_assets",
+    "ai_003_006_cam_00_group_000580_shared_asset"
+  ],
+  "heldout_scenes": [
+    "ai_001_007"
+  ]
+}

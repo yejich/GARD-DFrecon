@@ -1,0 +1,151 @@
+{
+  "schema_version": "gard_default_evaluation_v1",
+  "default_registry": "datasets/eval/registry.json",
+  "scope": "All frozen groups in registry; never substitute training/in-domain samples",
+  "reference_view": "first",
+  "weights": "Record explicit checkpoint path/hash and raw/EMA selection",
+  "geometry": {
+    "depth": {
+      "metrics": [
+        "absrel",
+        "rmse",
+        "delta1"
+      ],
+      "report": [
+        "full_valid_reference_support",
+        "confidence_retained_support",
+        "coverage",
+        "delta1_fixed_support"
+      ],
+      "save": [
+        "depth.npy",
+        "depth_conf.npy",
+        "depth_comparison.jpg"
+      ]
+    },
+    "pose": {
+      "metrics": [
+        "rre_median",
+        "rte_median",
+        "auc_5",
+        "auc_10",
+        "auc_20",
+        "auc_30",
+        "ate_rmse_sim3_when_nondegenerate"
+      ],
+      "confidence_independent": true,
+      "save": [
+        "poses.npz",
+        "camera_comparison.png"
+      ]
+    },
+    "point_cloud": {
+      "color_source": "decoded_rgb",
+      "metrics": [
+        "accuracy",
+        "completeness",
+        "chamfer_unsquared",
+        "fscore_0.01",
+        "fscore_0.02",
+        "fscore_0.05"
+      ],
+      "save": [
+        "decoded_rgb_colored_p20.ply",
+        "decoded_rgb_colored_p40.ply",
+        "decoded_rgb_colored_p50.ply",
+        "point_cloud_comparison_p20.png",
+        "point_cloud_comparison_p40.png",
+        "point_cloud_comparison_p50.png"
+      ],
+      "support": "Reference-visible support of the four input views; common deterministic voxel/downsampling settings across methods"
+    },
+    "confidence_filter": {
+      "percentiles": [
+        20,
+        40,
+        50
+      ],
+      "population": "All finite depth confidence values across the four input views of each group/method, before filtering",
+      "keep": "confidence >= percentile threshold AND valid image region AND finite positive depth AND finite points",
+      "record": [
+        "numeric_threshold",
+        "retained_fraction",
+        "reference_coverage"
+      ],
+      "pose_based_alignment": "One deterministic Sim3 per group/method, reused at every percentile; no separate threshold-dependent fitting"
+    },
+    "reference_policy": {
+      "Hypersim": "Measured source depth/cameras on valid unchanged surfaces; source GT invalid on newly inserted static assets",
+      "HypersimNegative": "Source depth invalid on inserted static assets; use a clearly labeled joint clean DA3 geometry reference for complete clean/static-background support",
+      "RealX3D": "Dataset-provided COLMAP-derived cameras; joint clean-view DA3 pseudo-GT geometry",
+      "RobustNeRF": "COLMAP cameras; joint clean-view DA3 pseudo-GT geometry",
+      "OnTheGo": "Dataset-provided transforms; joint clean extra-view DA3 pseudo-GT geometry"
+    },
+    "distance_units": "Meters only for metric GT; otherwise record explicit normalized reference-camera-baseline units. F@0.02 in normalized units is not 2cm"
+  },
+  "decoded_input_rgb": {
+    "metrics": [
+      "psnr",
+      "ssim",
+      "lpips_alex"
+    ],
+    "target": "Corresponding clean RGB at the same input-view camera, with identical preprocessing; never score restoration against clutter input as clean GT",
+    "confidence_independent": true,
+    "report": [
+      "per_view",
+      "equal_view_group_mean",
+      "full_valid",
+      "registered_support_if_required"
+    ],
+    "save": [
+      "decoded_view0.png",
+      "decoded_view1.png",
+      "decoded_view2.png",
+      "decoded_view3.png",
+      "input_decoded_clean_comparison.jpg"
+    ],
+    "reference_policy": {
+      "Hypersim": "Corresponding synthetic clean image",
+      "HypersimNegative": "group.clean_paths",
+      "RealX3D": "Paired clean frames from source multigroup manifest; record approximate registration and valid regions",
+      "RobustNeRF": "Corresponding 0clean capture with explicit camera registration/valid support",
+      "OnTheGo": "No corresponding clean input GT; PSNR/SSIM/LPIPS are N/A with reason. Keep decoded RGB qualitative outputs; held-out render RGB, if measured, is a separate metric"
+    },
+    "missing_reference": "N/A with explicit reason; never zero or silently skip"
+  },
+  "artifacts": {
+    "per_group": [
+      "metrics.json",
+      "reference_provenance.json",
+      "prediction_arrays.npz",
+      "input RGB qualitative comparison",
+      "depth qualitative comparison",
+      "pose qualitative comparison",
+      "point cloud P20/P40/P50 qualitative comparisons and colored PLYs"
+    ],
+    "aggregate": [
+      "per_view.csv",
+      "per_group.csv",
+      "per_scene.csv",
+      "per_dataset.csv",
+      "summary.json",
+      "qualitative_index.html"
+    ],
+    "aggregation": "Equal group means within each scene, equal scene means within each dataset; report counts, missing-reference counts, and coverage"
+  },
+  "reproducibility": [
+    "registry and manifest hashes",
+    "input hashes",
+    "checkpoint hash",
+    "seed",
+    "sampler settings",
+    "preprocessing",
+    "reference provenance and GT/pseudo-GT designation",
+    "alignment settings",
+    "voxel size",
+    "confidence thresholds",
+    "metric implementation/version"
+  ],
+  "mask_prediction": "Keep mask-head probability/binary qualitative outputs when enabled; additive to required geometry/RGB evaluation",
+  "execution_status": "Default evaluation contract fixed; legacy fixed_suite_training_eval currently implements pose and partial RGB only. Full contract requires extending runner; do not label partial output as complete evaluation."
+}

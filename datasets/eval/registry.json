@@ -1,0 +1,37 @@
+{
+  "schema_version": "eval_registry_v1",
+  "storage": "source paths + sha256; previews only, no original image copies",
+  "manifests": [
+    "Hypersim/manifest.json",
+    "HypersimNegative/manifest.json",
+    "OnTheGo/manifest.json",
+    "RealX3D/manifest.json",
+    "RobustNeRF/manifest.json"
+  ],
+  "groups": 65,
+  "source_suite": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_negative_attn_true_ep3_10_20_26/suite.json",
+  "training_run_audited": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_train/20261006_da3_attn_off_d2_mask_on_realmask_t1_every4_212455_252610308",
+  "scope_counts": {
+    "heldout_synthetic_scene": 17,
+    "same_scene_heldout_mask": 4,
+    "unseen_real_dataset": 40,
+    "unseen_real_scene": 4
+  },
+  "excluded": [
+    {
+      "scene": "crab1",
+      "reason": "No 0clean captures; 1extra not assumed clean"
+    },
+    {
+      "group": "crab2,yoda base",
+      "reason": "Use set01/set02 only"
+    }
+  ],
+  "preview_layout": "four input views horizontally",
+  "realx3d_source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+  "realx3d_source_sha256": "5be63d9fdd47e91cf226f8a1fd130a7071f11a35facf0946cd15c212f7b715c3",
+  "onthego_source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261001_onthego_multigroup/manifest.json",
+  "onthego_source_sha256": "0192283af6bdd6078a1e27184af3368d1a28e56323cce5591ee6c2d5724bdf19",
+  "evaluation_protocol": "evaluation_protocol.json",
+  "reference_availability": "reference_availability.json"
+}

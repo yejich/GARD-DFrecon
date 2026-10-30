@@ -1,0 +1,2250 @@
+{
+  "schema_version": "frozen_eval_v1",
+  "protocol": {
+    "seed": 42,
+    "noise_lvl": 0.3,
+    "reference_view": "first",
+    "process_res": 504,
+    "process_res_method": "upper_bound_resize",
+    "precision": "bf16",
+    "attention_layer": 9,
+    "capture_calls": [
+      0,
+      24,
+      48
+    ],
+    "own_trajectory": true,
+    "clutter_views_source": "per-group clutter_views"
+  },
+  "groups": [
+    {
+      "id": "chocolate__g00",
+      "dataset": "RealX3D",
+      "scene": "Chocolate",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/val/0003.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/train/0001.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/train/0002.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/val/0004.png"
+      ],
+      "input_sha256": [
+        "4fc3dd0ef526a72a46d16550d3271429a149f795f3ea7718c19f42d5b38bf7ad",
+        "c577615a0b9b0cbdbd490cf881d4a0c77dc5f48bc1a50a0e1d4078d35e5c37ba",
+        "c9c1485e958b0f97469e30c33051824f0ba660a76667b010b4fa8ca989f4fd58",
+        "195b79da99cace1681011bc5aa2d33531dd48a018047b782a7231a273ba9d832"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/val/0003.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/train/0001.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/train/0002.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/val/0004.JPG"
+      ],
+      "frame_order": [
+        3,
+        1,
+        2,
+        4
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.5538476124021346,
+            0.8226286086285105,
+            0.12858846956452077,
+            0.11173896357395206
+          ],
+          [
+            -0.044518300441062364,
+            0.1249600533893656,
+            -0.9911625023124826,
+            0.06195832166643956
+          ],
+          [
+            -0.8314270522240591,
+            -0.5546775255252812,
+            -0.03258679966500631,
+            3.9716256092944557
+          ]
+        ],
+        [
+          [
+            -0.750783356825645,
+            0.634976928474288,
+            0.18201277818783196,
+            0.3830083928192615
+          ],
+          [
+            -0.015506763150970906,
+            0.25852922703064884,
+            -0.9658789670940641,
+            -0.29822779059599774
+          ],
+          [
+            -0.6603664826578418,
+            -0.7279882822383169,
+            -0.1842530040714281,
+            3.6224279920599805
+          ]
+        ],
+        [
+          [
+            -0.6377346993047303,
+            0.7523752466414161,
+            0.16500285314926877,
+            0.2101209656172809
+          ],
+          [
+            -0.0428704884877025,
+            0.17921541130790283,
+            -0.9828753520024878,
+            -0.06091582834485808
+          ],
+          [
+            -0.7690621395747064,
+            -0.6338874699747651,
+            -0.08203719209164587,
+            3.8836568903280386
+          ]
+        ],
+        [
+          [
+            -0.4093201260295713,
+            0.9033774938319498,
+            0.12793020779520234,
+            -0.11676144630677422
+          ],
+          [
+            -0.017496158291626197,
+            0.13241682973741986,
+            -0.9910396902520534,
+            -0.07255095361592741
+          ],
+          [
+            -0.9122230642117443,
+            -0.4078907780769232,
+            -0.03839523780738063,
+            4.047796579214921
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "chocolate__g01",
+      "dataset": "RealX3D",
+      "scene": "Chocolate",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/val/0024.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/train/0013.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/train/0016.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Chocolate/val/0018.png"
+      ],
+      "input_sha256": [
+        "e3fca9810427d96567450925e34f519012b6cc4645854ca8d040803259a0955e",
+        "3f112fdf3881aee650eeffb46a096f7f2737bbdf9f5c1cc902ac38ccb30d953c",
+        "5fd3811c69cc2ff5fe330bcb1e6b2afdf27b05c9ba665e47961bb19df47ccb12",
+        "9b5c0b0c77a11ed23e9f4b69b27d1dc537d47a01961e3617647dccd5cab359b9"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/val/0024.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/train/0013.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/train/0016.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Chocolate/val/0018.JPG"
+      ],
+      "frame_order": [
+        24,
+        13,
+        16,
+        18
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.48398811115500745,
+            0.870184371061471,
+            -0.0923832702536209,
+            0.09649558666259017
+          ],
+          [
+            0.020651062108075418,
+            -0.11690038613356186,
+            -0.9929289165711829,
+            0.050842968988896606
+          ],
+          [
+            -0.874830864740214,
+            0.47865797818711586,
+            -0.07454862857034064,
+            3.7971705281552923
+          ]
+        ],
+        [
+          [
+            0.14965904887735992,
+            0.9887203856861401,
+            -0.005845341557283743,
+            -0.11811470685547312
+          ],
+          [
+            -0.0486410629636374,
+            0.0014576000420124051,
+            -0.9988152593966413,
+            0.1425175534841895
+          ],
+          [
+            -0.9875404883297625,
+            0.14976606535116316,
+            0.04831055356952254,
+            4.404695526403974
+          ]
+        ],
+        [
+          [
+            0.3531887106077965,
+            0.9339738866865075,
+            -0.05431863112989298,
+            -0.0741110587148027
+          ],
+          [
+            -0.027807537858368675,
+            -0.04755469088526719,
+            -0.998481493178887,
+            0.10449056709238395
+          ],
+          [
+            -0.9351387466815565,
+            0.35416285853051677,
+            0.009175734255642911,
+            3.9682496164986136
+          ]
+        ],
+        [
+          [
+            0.4553528423546344,
+            0.8881452458618965,
+            -0.06206296169230338,
+            -0.015277847089466489
+          ],
+          [
+            0.028298066448914194,
+            -0.0841120211125838,
+            -0.9960544098327413,
+            -0.12986951004096542
+          ],
+          [
+            -0.889861229856938,
+            0.4517999448398253,
+            -0.06343344107349524,
+            3.8597888146388972
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "cupcake__g00",
+      "dataset": "RealX3D",
+      "scene": "Cupcake",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/val/0005.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/train/0001.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/train/0002.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/val/0006.png"
+      ],
+      "input_sha256": [
+        "693a28deec92615b4657487c725624af671f48a91859310b6be233eea51453e5",
+        "871630e54551bd5d1c6b26baae1319ac07a914f0b411d2c9b3adaa8754ad8e34",
+        "daf39bfac4e34cc5785c5d5a51fac138c1e136da9501d8afcafcda3685ea2fc6",
+        "2a3802a004583d46729eb65d3b194acec7cf500ef216aa80f63d9ad50cb51b2e"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/val/0005.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/train/0001.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/train/0002.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/val/0006.JPG"
+      ],
+      "frame_order": [
+        5,
+        1,
+        2,
+        6
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.8370920400453692,
+            0.5442451053385865,
+            0.05544530459534479,
+            -0.33533838524638504
+          ],
+          [
+            -0.0038750105343045354,
+            0.09544963585403361,
+            -0.9954267181965872,
+            -0.13870367374214024
+          ],
+          [
+            -0.5470483532348104,
+            -0.8334786333975811,
+            -0.07779117488220987,
+            3.881918770522905
+          ]
+        ],
+        [
+          [
+            -0.9828662964574724,
+            0.15185664384595807,
+            0.10446723409299107,
+            -0.03881267129251256
+          ],
+          [
+            -0.08848024177747867,
+            0.10848556419731495,
+            -0.9901525787305505,
+            -0.05727687332878123
+          ],
+          [
+            -0.16169443433169825,
+            -0.9824308841239716,
+            -0.09319049213870742,
+            3.7127618331906427
+          ]
+        ],
+        [
+          [
+            -0.9777972081011335,
+            0.197519692297539,
+            0.06998993481728102,
+            0.13563476153200346
+          ],
+          [
+            -0.048168389879398074,
+            0.11320068257581173,
+            -0.9924038551274231,
+            -0.10794449558553923
+          ],
+          [
+            -0.20394221249396288,
+            -0.9737410213290965,
+            -0.10117310583032468,
+            3.7197003343405126
+          ]
+        ],
+        [
+          [
+            -0.7953975855306887,
+            0.6044025627052751,
+            0.0451688290959235,
+            -0.20493835766774718
+          ],
+          [
+            -0.024621115028054807,
+            0.042242096168100825,
+            -0.998803987775865,
+            0.09040268071597658
+          ],
+          [
+            -0.6055877158740947,
+            -0.7955583872391748,
+            -0.018718196280244848,
+            3.9223601104227357
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "cupcake__g01",
+      "dataset": "RealX3D",
+      "scene": "Cupcake",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/val/0024.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/train/0015.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/train/0013.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Cupcake/val/0014.png"
+      ],
+      "input_sha256": [
+        "3bef496b10549fe8f53d06344d3be973028f98f1ec88ed0a574165cef44b7bb8",
+        "3db2cff7632fee6b482f7a2e01bb7341485e5a4e9383d2b50ca9d27413cd5f4d",
+        "a466b3c46fe0c4c1ced91b015c20026fe576533645a38a71dd3076d9d0efeeb3",
+        "8386ce22ee6b670b8c9074a2dc053ced992ac089453d766e00130395f4911cf4"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/val/0024.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/train/0015.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/train/0013.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Cupcake/val/0014.JPG"
+      ],
+      "frame_order": [
+        24,
+        15,
+        13,
+        14
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.33673267000007906,
+            0.9412723361638403,
+            -0.024849509583069803,
+            0.1669480533317199
+          ],
+          [
+            0.0370204928402417,
+            -0.013135752645305546,
+            -0.9992281696905677,
+            -0.10271952702051784
+          ],
+          [
+            -0.9408722506564641,
+            -0.3373927106134391,
+            -0.030423128720956687,
+            3.8360841361420928
+          ]
+        ],
+        [
+          [
+            -0.20690686397698912,
+            0.9776229332359375,
+            -0.03798618235795345,
+            0.2137616319910455
+          ],
+          [
+            0.04546948161504105,
+            -0.029175623926104996,
+            -0.9985395881992079,
+            0.0049417635735819416
+          ],
+          [
+            -0.9773034717383049,
+            -0.20833190677296698,
+            -0.03841537113809157,
+            4.295884972862878
+          ]
+        ],
+        [
+          [
+            -0.36694353726812245,
+            0.9291699620223526,
+            -0.044672386678897905,
+            0.25208097304124966
+          ],
+          [
+            0.03581633434872271,
+            -0.033874854469214635,
+            -0.9987841030069385,
+            0.08427288907110876
+          ],
+          [
+            -0.9295534576568769,
+            -0.3680973728649056,
+            -0.020849303103206096,
+            4.099953659687383
+          ]
+        ],
+        [
+          [
+            -0.24447796311226533,
+            0.9686977602741144,
+            -0.043071740062695596,
+            0.051515709603863855
+          ],
+          [
+            0.0428169098610407,
+            -0.03359161210680292,
+            -0.998518059835115,
+            0.05807294176962547
+          ],
+          [
+            -0.9687090573403898,
+            -0.24595986021291405,
+            -0.0332642357787203,
+            4.120952050330014
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "gearworks__g00",
+      "dataset": "RealX3D",
+      "scene": "GearWorks",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/val/0003.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/train/0001.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/train/0002.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/val/0004.png"
+      ],
+      "input_sha256": [
+        "4a824bf40743a2f70b1f844ea07fe47e0ac5e591158652d690e3b42ef10ccfd8",
+        "92724c58adfeb5492c0f6a0741e0b32371d80af3e22327834cffbf14af1e8008",
+        "06e9b35709b14c82e8d40a5ff2df9f8dc6a5656ec7476204acfb7cb5e92ebed0",
+        "d2774e2cc3e04917fdcf52c19e8db48d0f5c681c4b94f12e4459e8834eb26ff1"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/val/0003.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/train/0001.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/train/0002.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/val/0004.JPG"
+      ],
+      "frame_order": [
+        3,
+        1,
+        2,
+        4
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.5896785907579554,
+            0.8065043518025078,
+            0.04277721501930947,
+            0.02225067770473982
+          ],
+          [
+            0.020729597446990496,
+            0.06806237790157586,
+            -0.9974656868797419,
+            -0.09803567325337602
+          ],
+          [
+            -0.8073719362163874,
+            -0.587297406122315,
+            -0.05685343763674862,
+            3.610782512776108
+          ]
+        ],
+        [
+          [
+            -0.7765671345047204,
+            0.6268018154193395,
+            0.06374142917456384,
+            0.31120254422475
+          ],
+          [
+            -0.0030472145843352233,
+            0.09743348595446993,
+            -0.9952373738442765,
+            -0.0566309250911905
+          ],
+          [
+            -0.6300271423429354,
+            -0.7730628693720705,
+            -0.073753643359035,
+            3.423483885762326
+          ]
+        ],
+        [
+          [
+            -0.651627535059997,
+            0.7570220354237472,
+            0.04794990546264009,
+            0.1163593875071227
+          ],
+          [
+            0.008388422685345783,
+            0.0704013398528534,
+            -0.9974834764096007,
+            -0.06131827607634179
+          ],
+          [
+            -0.758492709203513,
+            -0.6495854749221298,
+            -0.052225672368491176,
+            3.5612008888565514
+          ]
+        ],
+        [
+          [
+            -0.5194959686167352,
+            0.8541343906905343,
+            0.024049557797861137,
+            -0.1405340371462551
+          ],
+          [
+            0.032826187441988605,
+            0.04807422282189691,
+            -0.9983042174189672,
+            -0.10120385319834947
+          ],
+          [
+            -0.8538421282692629,
+            -0.517825561110862,
+            -0.0530123405598143,
+            3.6401697462188505
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "gearworks__g01",
+      "dataset": "RealX3D",
+      "scene": "GearWorks",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/val/0008.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/train/0014.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/train/0023.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/GearWorks/val/0009.png"
+      ],
+      "input_sha256": [
+        "a5500aac2cfd2147da1e95529ab31e5155bd85a531372cd74e47b09897b3f5f1",
+        "f86e90b62fc1df027ee4ae0f51693af011298bcc1ce3dfe8821e091e5bc14faf",
+        "f55ad686ba348693b2e439c8c55890cf1f6c9ffeefcfab94aa1f2df1bd469134",
+        "bdcf028740e95055afda1719c7df43966a328d8a82ff82914787e5b288ed7471"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/val/0008.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/train/0014.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/train/0023.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/GearWorks/val/0009.JPG"
+      ],
+      "frame_order": [
+        8,
+        14,
+        23,
+        9
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.244593188417226,
+            0.9695159536604882,
+            -0.014594100781199121,
+            -0.3380255541583414
+          ],
+          [
+            0.050669285870160834,
+            -0.0022505614930280315,
+            -0.9987129509727874,
+            -0.1427256721652445
+          ],
+          [
+            -0.968300984016697,
+            -0.24501785765686357,
+            -0.04857420900039611,
+            3.930911993923578
+          ]
+        ],
+        [
+          [
+            0.017746150563327658,
+            0.9993617889510477,
+            -0.03100143423683016,
+            0.019970468164790648
+          ],
+          [
+            0.010588587589074503,
+            -0.03119242408750406,
+            -0.9994573099891834,
+            -0.016858880450657202
+          ],
+          [
+            -0.9997864551750303,
+            0.01740825850295173,
+            -0.01113537528977436,
+            4.359471272146556
+          ]
+        ],
+        [
+          [
+            -0.27885065276176013,
+            0.9601495637368392,
+            0.018844858985778236,
+            0.4008931375867415
+          ],
+          [
+            -0.048133359082865486,
+            0.005624851993297779,
+            -0.9988250801726261,
+            0.09315969064056386
+          ],
+          [
+            -0.9591274645197791,
+            -0.27943009196579033,
+            0.04464673007458256,
+            4.02357469135891
+          ]
+        ],
+        [
+          [
+            -0.200461277070075,
+            0.9796620889313296,
+            -0.008801585430425805,
+            -0.26975106542424554
+          ],
+          [
+            0.021607655974169256,
+            -0.0045606956543840105,
+            -0.9997561248908903,
+            -0.040460301435711124
+          ],
+          [
+            -0.979463315084918,
+            -0.20060257118454583,
+            -0.020253958513358403,
+            4.023554269071667
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "laboratory__g00",
+      "dataset": "RealX3D",
+      "scene": "Laboratory",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/val/0016.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/train/0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/train/0015.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/val/0014.png"
+      ],
+      "input_sha256": [
+        "31303d48b601d7408b09e52a1f266e71be1c44a28b3ccaae5798107a53c24fba",
+        "e58627586eaa0ff7f648c05dbdee08b8a4e3eef3eeab59a99129a3871fa513ab",
+        "cb4a1dd13f1f52c60310384e59e645fef4f26c1c624ae22e181e8c9df5093f22",
+        "5f033f3c20fe2782b42debb13b01308da5bf01c92d5b3562ac168405aa22bdc3"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/val/0016.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/train/0017.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/train/0015.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/val/0014.JPG"
+      ],
+      "frame_order": [
+        16,
+        17,
+        15,
+        14
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.2853584017413355,
+            0.9583720844520173,
+            -0.0096711064208661,
+            -0.08266977252529828
+          ],
+          [
+            0.039121196812180126,
+            -0.02172953514199815,
+            -0.9989981778122577,
+            -0.1013491350810004
+          ],
+          [
+            -0.9576221146805921,
+            0.2846941781027722,
+            -0.04369336835384948,
+            4.056300922397535
+          ]
+        ],
+        [
+          [
+            0.35012056728138957,
+            0.9364612118393134,
+            -0.02135385417342653,
+            -0.07488025298135519
+          ],
+          [
+            0.05753658398838357,
+            -0.04425411887982491,
+            -0.9973620779209629,
+            -0.2025059956428096
+          ],
+          [
+            -0.934935896133645,
+            0.34796834867933035,
+            -0.06937505637359848,
+            4.058083706428954
+          ]
+        ],
+        [
+          [
+            0.2437031490960752,
+            0.969806489362889,
+            0.00917323883720176,
+            -0.10688315154081332
+          ],
+          [
+            0.036102201782799034,
+            0.000380527359132189,
+            -0.9993480305854832,
+            -0.0796602082739694
+          ],
+          [
+            -0.969177695862222,
+            0.24387543621398677,
+            -0.034919413853509274,
+            4.0961342586103076
+          ]
+        ],
+        [
+          [
+            0.19967601433525392,
+            0.9797672478805686,
+            0.013624583664573415,
+            -0.0915477965306773
+          ],
+          [
+            0.03213557481611299,
+            0.007349169116935688,
+            -0.9994564995807717,
+            -0.065258087175903
+          ],
+          [
+            -0.9793348733401367,
+            0.20000532416371383,
+            -0.030017930898697687,
+            4.115976086487477
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "laboratory__g01",
+      "dataset": "RealX3D",
+      "scene": "Laboratory",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/val/0024.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/train/0027.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/train/0025.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Laboratory/val/0010.png"
+      ],
+      "input_sha256": [
+        "5e3ab17c6a6371bb11ba58f5b4cf7c8cae47559eba981a554c80b0c45ee49b9c",
+        "d1181acd7bd16cb952e4004d40e36ac51c43ec224ae95f03578d3e2c51cb26d7",
+        "3c05f7cfd48bd549c93ff3f32720a6500f394a184c5a36ce6182f480de8e66ca",
+        "3dc549d4aa21d9fff754c79c762e4a2de9c0e594acf91d1da831771ea21a06da"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/val/0024.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/train/0027.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/train/0025.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Laboratory/val/0010.JPG"
+      ],
+      "frame_order": [
+        24,
+        27,
+        25,
+        10
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.641801452178291,
+            0.7620781319503144,
+            -0.08560266811741099,
+            0.1271811905384993
+          ],
+          [
+            0.003022137369170897,
+            -0.1141385070050669,
+            -0.9934602497905847,
+            -0.09268786927135525
+          ],
+          [
+            -0.7668648920620077,
+            0.6373455279687609,
+            -0.07555736434610898,
+            3.9417536135435522
+          ]
+        ],
+        [
+          [
+            0.7101345839137061,
+            0.6973192345144449,
+            -0.0972355794484455,
+            0.2887932998290487
+          ],
+          [
+            0.01180731347506206,
+            -0.14988132640253282,
+            -0.9886334888894985,
+            -0.20884094640962647
+          ],
+          [
+            -0.7039669453091708,
+            0.7009147403015654,
+            -0.11466938015539939,
+            3.764446624685544
+          ]
+        ],
+        [
+          [
+            0.6619166604756562,
+            0.7441068205343171,
+            -0.09039565378484257,
+            0.24365250458591967
+          ],
+          [
+            0.002978880292864877,
+            -0.12320584284250675,
+            -0.9923766656724864,
+            -0.17528794760480057
+          ],
+          [
+            -0.7495715181800007,
+            0.656601370638062,
+            -0.08376860518887659,
+            3.8539974204171883
+          ]
+        ],
+        [
+          [
+            0.048006858720101554,
+            0.9985002869307514,
+            0.026315746522726453,
+            -0.21255680791783446
+          ],
+          [
+            -0.04558575526917686,
+            0.02850886602764814,
+            -0.9985535456269082,
+            0.23586456838886075
+          ],
+          [
+            -0.9978062339162261,
+            0.04673779580841959,
+            0.04688601081988771,
+            4.277123082013849
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "limon__g00",
+      "dataset": "RealX3D",
+      "scene": "Limon",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/val/0012.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/train/0011.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/train/0018.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/val/0003.png"
+      ],
+      "input_sha256": [
+        "3d8091c81ddcda45cebe04f448930b900f91e1591f001eebb154f3501203f7d6",
+        "fbbf4707db0260fac84d66d6a98b3a5cd9d53c78501c67dbeee5205c2c920b25",
+        "56f91e064c0fb5ee9e6f6c468767b2d0ffdda136ba8c4bd8fdc8de5ff82a39b4",
+        "e08c53056c5a6f0f28259da818f39af366035a1a744f1db02e2a4a350dda76b1"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/val/0012.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/train/0011.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/train/0018.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/val/0003.JPG"
+      ],
+      "frame_order": [
+        12,
+        11,
+        18,
+        3
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.28528286452543977,
+            0.9567886946669448,
+            -0.0562945909158692,
+            0.006427905715080975
+          ],
+          [
+            -0.04621523663811669,
+            -0.04493479361808757,
+            -0.9979203456353802,
+            0.07631506229207335
+          ],
+          [
+            -0.9573284907066711,
+            0.2872912426093498,
+            0.0313990892964801,
+            3.9279452454716526
+          ]
+        ],
+        [
+          [
+            0.34561504271337556,
+            0.9355578862185207,
+            -0.07267519374308079,
+            0.018013639197332877
+          ],
+          [
+            -0.00030218370966613107,
+            -0.07733683998859692,
+            -0.9970049758519791,
+            0.08536012957730035
+          ],
+          [
+            -0.9383763375870618,
+            0.34460187857136243,
+            -0.026446064903311528,
+            3.8832769219959586
+          ]
+        ],
+        [
+          [
+            0.22717064908083945,
+            0.9733406067619769,
+            -0.03164742366854745,
+            -0.03858739391195118
+          ],
+          [
+            -0.0666559886210558,
+            -0.016880254227971327,
+            -0.9976332172728698,
+            0.1780885509179357
+          ],
+          [
+            -0.9715711375834554,
+            0.22874247582254104,
+            0.061044282099120016,
+            4.033020103586526
+          ]
+        ],
+        [
+          [
+            0.27058061255477067,
+            0.9612149006817712,
+            -0.053404558021293805,
+            0.03432913226001157
+          ],
+          [
+            0.05934470060432854,
+            -0.07202242092006365,
+            -0.9956359663064727,
+            -0.1786670942299334
+          ],
+          [
+            -0.9608664520253256,
+            0.2662305121359047,
+            -0.07653088126760751,
+            4.143679709249863
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "limon__g01",
+      "dataset": "RealX3D",
+      "scene": "Limon",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/val/0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/train/0015.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/train/0004.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Limon/val/0002.png"
+      ],
+      "input_sha256": [
+        "2e4ef7bb6ef0f9e6a1c7a49028a3faecd288796f18be219576b24963dd2ec3dd",
+        "92c64bfc4061386fbcc010f4ba5f677636d3c7f3cd9287b0472e97a2595fad81",
+        "7dce64e58ec16d854065b58db756ac5f4a6a4de85c48b8777278f0d9d79851e8",
+        "38268297a1ad5460014fcb6cb2b8a2b23774d9684be1b7c3c1c3168af2b39a9f"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/val/0017.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/train/0015.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/train/0004.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Limon/val/0002.JPG"
+      ],
+      "frame_order": [
+        17,
+        15,
+        4,
+        2
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.004409621981298513,
+            0.9999812463568684,
+            -0.004249961005266858,
+            0.07239076535333072
+          ],
+          [
+            -0.03877186187768444,
+            -0.004417776011125601,
+            -0.9992383229188735,
+            0.04108349233493003
+          ],
+          [
+            -0.9992383589357396,
+            -0.0042414843722172555,
+            0.0387906154862303,
+            4.089973210416376
+          ]
+        ],
+        [
+          [
+            -0.28264212480152134,
+            0.9573729597170607,
+            0.05958561312038039,
+            -0.13271108215928715
+          ],
+          [
+            -0.022466531562501505,
+            0.05549429852751235,
+            -0.9982062100580897,
+            -0.10561842831442056
+          ],
+          [
+            -0.9589622955337203,
+            -0.2834738062564775,
+            0.00582382336638275,
+            4.207461386160313
+          ]
+        ],
+        [
+          [
+            0.058469303200693636,
+            0.9980493093593369,
+            -0.02188416483697254,
+            0.1862776353685937
+          ],
+          [
+            0.02196598361439808,
+            -0.023202588428693858,
+            -0.9994894373939758,
+            0.08908462984263205
+          ],
+          [
+            -0.9980475119728256,
+            0.057958743754153365,
+            -0.02327977395362676,
+            3.7580148407963034
+          ]
+        ],
+        [
+          [
+            0.1514003727682051,
+            0.9881992157367637,
+            -0.02324300202413739,
+            -0.09034241679576589
+          ],
+          [
+            0.0036245092608532354,
+            -0.024068899804490368,
+            -0.9997037316139641,
+            0.04933489095283308
+          ],
+          [
+            -0.9884658770369046,
+            0.15127127314677863,
+            -0.00722577761152627,
+            4.334091011157
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "milkcookie__g00",
+      "dataset": "RealX3D",
+      "scene": "MilkCookie",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/val/0003.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/train/0001.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/train/0002.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/val/0004.png"
+      ],
+      "input_sha256": [
+        "56b98d5b557541a5d1d364f2bd73f4ba7036a16bc89ff2af81dd57076a89b784",
+        "ad2a34129a6b3866e520fb0540b16056956ce66410971a920caaf4f41323641b",
+        "b152b93e413aec982feec36114036b554d0a9ae0c2551304334eb9605b5cc386",
+        "e2cb742792263bff77f46d5340d0c7ca7535ec52096b27ab79b4d526eaa54f3e"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/val/0003.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/train/0001.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/train/0002.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/val/0004.JPG"
+      ],
+      "frame_order": [
+        3,
+        1,
+        2,
+        4
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.037262858169826454,
+            0.9968584505792757,
+            0.06989069258199875,
+            -0.09995700927243827
+          ],
+          [
+            -0.013853846040128567,
+            0.06941721649220901,
+            -0.9974915142469869,
+            0.06677517240341806
+          ],
+          [
+            -0.9992094626960157,
+            -0.038137639716447236,
+            0.011223639605433055,
+            4.5575109510179965
+          ]
+        ],
+        [
+          [
+            -0.18785661131671222,
+            0.9781911987722883,
+            0.08861079069981984,
+            -0.14395447417767246
+          ],
+          [
+            0.005531631053116605,
+            0.09126921612400193,
+            -0.9958108913023668,
+            0.01027550632542672
+          ],
+          [
+            -0.9821808869209597,
+            -0.1865794973530739,
+            -0.022556518469601824,
+            4.2540974040024295
+          ]
+        ],
+        [
+          [
+            -0.10931921114655142,
+            0.990933953243777,
+            0.07809744158852193,
+            -0.10364265989094057
+          ],
+          [
+            0.024919107918480305,
+            0.0812757230417323,
+            -0.9963800955935377,
+            -0.07544224192577295
+          ],
+          [
+            -0.9936942930927963,
+            -0.10697736747875877,
+            -0.0335781880492558,
+            4.409581029079459
+          ]
+        ],
+        [
+          [
+            0.037667369381560914,
+            0.9976668109306294,
+            0.0569394735780806,
+            -0.16029318575518575
+          ],
+          [
+            -0.016399317300390227,
+            0.05758939044973013,
+            -0.9982056524033873,
+            0.07956138126418166
+          ],
+          [
+            -0.9991557594621088,
+            0.03666601253365083,
+            0.01853029543504869,
+            4.617140984719473
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "milkcookie__g01",
+      "dataset": "RealX3D",
+      "scene": "MilkCookie",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/val/0024.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/train/0005.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/train/0009.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/MilkCookie/val/0022.png"
+      ],
+      "input_sha256": [
+        "1454bc4d758d3658cc50f14fa153c2007473aff2b63ea8a798ac451b9ea4ef73",
+        "644e45f2b0ab743e5ac05435d497671adc1b1ba119f11c66bd574d37f3b8494f",
+        "55ea348eb6eacf2d9dc1de35e818bc0afd1596ca144a48bbd23a774b2e832b66",
+        "99a89c1d15361c30aaab66882e97c5aac69e26121fe99950b5a60d04e741b6b8"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/val/0024.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/train/0005.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/train/0009.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/MilkCookie/val/0022.JPG"
+      ],
+      "frame_order": [
+        24,
+        5,
+        9,
+        22
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.40657028096519915,
+            0.9136121174131847,
+            0.003674989847243615,
+            -0.010104726990852008
+          ],
+          [
+            0.00292512821826145,
+            0.002720728276367009,
+            -0.9999920205946065,
+            -0.12108894907975831
+          ],
+          [
+            -0.9136148259803663,
+            0.4065777865961509,
+            -0.001566265325438443,
+            3.9968200182240343
+          ]
+        ],
+        [
+          [
+            0.11209395813194958,
+            0.9925311396495983,
+            0.04813399397634023,
+            -0.21093170531872982
+          ],
+          [
+            -0.012251453914942659,
+            0.04981599705846463,
+            -0.9986832672596431,
+            0.06549560689574664
+          ],
+          [
+            -0.9936220843045066,
+            0.11135664893899556,
+            0.017744021805135346,
+            4.614921699902281
+          ]
+        ],
+        [
+          [
+            0.3147660528382743,
+            0.9485943629492436,
+            0.033031296686613656,
+            -0.09603290168786459
+          ],
+          [
+            0.002340529000976373,
+            0.03402440842731267,
+            -0.9994182615629501,
+            0.05344224229916542
+          ],
+          [
+            -0.949166399476381,
+            0.3146602520371331,
+            0.008489516124177067,
+            4.329646533818423
+          ]
+        ],
+        [
+          [
+            0.6575883141309014,
+            0.752093897072145,
+            -0.043958834169322544,
+            0.23542082379046242
+          ],
+          [
+            -0.02961662609004797,
+            -0.032496974016241326,
+            -0.9990329334557355,
+            -0.018077497817908253
+          ],
+          [
+            -0.7527951013176629,
+            0.6582542948333902,
+            0.0009048533764968491,
+            3.674930126534386
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "popcorn__g00",
+      "dataset": "RealX3D",
+      "scene": "Popcorn",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/val/0013.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/train/0017.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/train/0014.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/val/0012.png"
+      ],
+      "input_sha256": [
+        "d24f6cabb5b8fd7ea196ab1469bee3f4607e60e4e7cb81221d61e292fd4d99b9",
+        "8cbbb526c495423d4f09c68c5fd82df527825ff206358ef85056d6d8c90a5e0c",
+        "81e4eddfac09208977d556c746f0717a4635ac42b3c35592ebcd7f5ebaa02aed",
+        "6e1bd3a3ceec68dcad80a633fcc475d95a11962552465a832febc09af01a4e6b"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/val/0013.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/train/0017.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/train/0014.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/val/0012.JPG"
+      ],
+      "frame_order": [
+        13,
+        17,
+        14,
+        12
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.453961590043958,
+            0.8873576514474284,
+            -0.08071724215896468,
+            0.04464115564726328
+          ],
+          [
+            0.020997449602463247,
+            -0.10121831420646955,
+            -0.9946426292775459,
+            -0.028713566715958
+          ],
+          [
+            -0.8907738107239555,
+            0.4498346932895513,
+            -0.0645814744243654,
+            3.8114738316802654
+          ]
+        ],
+        [
+          [
+            0.4298107754632807,
+            0.9017883099847013,
+            -0.04517235072428442,
+            0.04644881789304727
+          ],
+          [
+            0.040137169845450446,
+            -0.06906210130108727,
+            -0.9968046116252745,
+            -0.13970117639417062
+          ],
+          [
+            -0.9020264435642529,
+            0.42662427279611553,
+            -0.06587886587784164,
+            3.661380590831647
+          ]
+        ],
+        [
+          [
+            0.523614222155532,
+            0.8501852382486231,
+            -0.054892686394986755,
+            -0.03764670433574051
+          ],
+          [
+            0.021329005348612113,
+            -0.07749283510129078,
+            -0.99676473354325,
+            0.01429692220210462
+          ],
+          [
+            -0.8516884523603804,
+            0.5207493842263242,
+            -0.05870995606810522,
+            3.8658460188495924
+          ]
+        ],
+        [
+          [
+            0.37514770216036936,
+            0.9255964437801102,
+            -0.050353002144071866,
+            -0.019171002101482017
+          ],
+          [
+            -0.0042738117001628745,
+            -0.052592623180539755,
+            -0.9986069049016604,
+            0.13597746262367252
+          ],
+          [
+            -0.9269551963790211,
+            0.3748402849862895,
+            -0.015774176825709085,
+            3.8357187718660124
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "popcorn__g01",
+      "dataset": "RealX3D",
+      "scene": "Popcorn",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/val/0007.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/train/0019.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/train/0003.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Popcorn/val/0021.png"
+      ],
+      "input_sha256": [
+        "ff466503cad1517e24c1c3c9ffdfebd5864e6ff2b01c89221359f713777d3543",
+        "faae0ab61152f2a89485d7f0ad13321273c8e656351520c55751f33971db4a67",
+        "7f9eb81acb491a391069a8cd555ba211a701d66a225b41674489c1363e9a1a11",
+        "d983a0671f85e823bc7203e5dbbe3d5e686037b3e8bba753b2cf2c29e9598ea5"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/val/0007.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/train/0019.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/train/0003.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Popcorn/val/0021.JPG"
+      ],
+      "frame_order": [
+        7,
+        19,
+        3,
+        21
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.019020222758548862,
+            0.9998010579227181,
+            -0.00600630525599961,
+            -0.036055182082268336
+          ],
+          [
+            -0.009354561102861125,
+            -0.006185083867840194,
+            -0.9999371164832539,
+            0.16766620754678624
+          ],
+          [
+            -0.9997753364178932,
+            -0.01896284035056974,
+            0.009470341759989873,
+            4.0496901632704025
+          ]
+        ],
+        [
+          [
+            0.19761574035182988,
+            0.9800301007911334,
+            -0.022113812615182867,
+            0.05197850291796584
+          ],
+          [
+            -0.014780862772192573,
+            -0.01957718143212777,
+            -0.9996990847548114,
+            0.06678516054964957
+          ],
+          [
+            -0.9801681209147906,
+            0.19788313599317686,
+            0.010616931229699767,
+            3.8242726804286726
+          ]
+        ],
+        [
+          [
+            -0.3926441659021339,
+            0.9162031889747955,
+            0.08001422057937196,
+            -0.08371654830355557
+          ],
+          [
+            0.0016999984270896229,
+            0.08772413116667581,
+            -0.996143356557252,
+            -0.0022325778175306243
+          ],
+          [
+            -0.9196888979351056,
+            -0.39099385330650244,
+            -0.03600191229158047,
+            4.1049018803527835
+          ]
+        ],
+        [
+          [
+            0.030166711992268648,
+            0.9995447799134899,
+            -0.0004499280651742274,
+            0.04965282322348091
+          ],
+          [
+            -0.027560778579323663,
+            0.00038183477054061005,
+            -0.9996200566630471,
+            0.09024829894984501
+          ],
+          [
+            -0.999164837736197,
+            0.030167650718954317,
+            0.027559751058866024,
+            4.063774809169179
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "ujikintoki__g00",
+      "dataset": "RealX3D",
+      "scene": "Ujikintoki",
+      "group_index": 0,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/val/0020.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/train/0019.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/train/0018.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/val/0024.png"
+      ],
+      "input_sha256": [
+        "f5cc146e29940127d6e4f3af64c00e70937dfe0829f5494145584830272124aa",
+        "1856fb48c425ef9087c46aba9a8219c945521977a3955a369f55b05441709451",
+        "c55551e82a340703319663c707b84e96b7787010b3ccf632d10e8f5fe6e62a7b",
+        "337b73525edfe8321263432facdd547e3ad09459e139b156582429c2ba06e1cf"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/val/0020.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/train/0019.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/train/0018.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/val/0024.JPG"
+      ],
+      "frame_order": [
+        20,
+        19,
+        18,
+        24
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            0.24689489923699023,
+            0.9665798176265601,
+            -0.06903886504816631,
+            -0.3085244535558133
+          ],
+          [
+            0.016105505200939552,
+            -0.0753275627669483,
+            -0.9970287713913942,
+            0.049006837170994536
+          ],
+          [
+            -0.9689084174602686,
+            0.24504941225105945,
+            -0.034165247299021546,
+            4.052523124369733
+          ]
+        ],
+        [
+          [
+            0.25180259535216165,
+            0.9660144238715663,
+            -0.05840878226232338,
+            -0.07737989382747622
+          ],
+          [
+            0.03070509471100119,
+            -0.06829754659227347,
+            -0.9971923797746738,
+            -0.011846166114411099
+          ],
+          [
+            -0.9672913987651742,
+            0.24930218210347546,
+            -0.046859063865289347,
+            4.064171953222518
+          ]
+        ],
+        [
+          [
+            0.1196706142381083,
+            0.9909315449549041,
+            -0.06110333297748971,
+            -0.09491557078101502
+          ],
+          [
+            0.033654960781285735,
+            -0.06555922183415407,
+            -0.9972809694563112,
+            -0.012904741661977344
+          ],
+          [
+            -0.9922430587789804,
+            0.11728879590898338,
+            -0.04119527462826182,
+            4.060126288524068
+          ]
+        ],
+        [
+          [
+            0.23164786465121315,
+            0.9709644080753881,
+            -0.05972759038160229,
+            -0.005508188435171421
+          ],
+          [
+            0.018732329927150817,
+            -0.06583845905579014,
+            -0.9976544477508575,
+            -0.06083877843195675
+          ],
+          [
+            -0.972619332838093,
+            0.22998568555447702,
+            -0.03343976409178901,
+            3.7900618984674384
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    },
+    {
+      "id": "ujikintoki__g01",
+      "dataset": "RealX3D",
+      "scene": "Ujikintoki",
+      "group_index": 1,
+      "input_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/val/0004.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/train/0029.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/train/0030.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/frames/Ujikintoki/val/0005.png"
+      ],
+      "input_sha256": [
+        "7e02b8578096a9caf7c9eaf2ad8b0c4370222503011d60c128144db66241a3e8",
+        "5d098c4d5f46a14adea9a95c052aeabb8fa47dfa0323d29f1e16219757c25022",
+        "3fc0af99cde98c365e9d319574ec81205f7c758b984b4dc530a13b1d5f71ee58",
+        "60fb0fc5b0331c6447d4e683c55c9b6ef00ffb104086af2e73b5b6f6780469f5"
+      ],
+      "original_source_paths": [
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/val/0004.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/train/0029.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/train/0030.JPG",
+        "/mnt/nvme1n1/RealX3D/data_4/dynamic/Ujikintoki/val/0005.JPG"
+      ],
+      "frame_order": [
+        4,
+        29,
+        30,
+        5
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "image_hw": [
+        336,
+        504
+      ],
+      "queries": [],
+      "mask_paths": {},
+      "mask_sha256": {},
+      "mask_known_views": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "mask_target": "object_only",
+      "evaluation_scope": "unseen_real_dataset",
+      "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+      "pose_reference_extrinsics": [
+        [
+          [
+            -0.7256968378372183,
+            0.6824817988570715,
+            0.08707866431018277,
+            -0.097009798324311
+          ],
+          [
+            -0.041429893100883304,
+            0.08298789124244603,
+            -0.9956889945445874,
+            -0.020157682303761488
+          ],
+          [
+            -0.686766090822119,
+            -0.7261760145694296,
+            -0.03194890228347506,
+            4.1015163458314445
+          ]
+        ],
+        [
+          [
+            -0.5396501862795477,
+            0.8409712261373435,
+            0.03930741985283201,
+            0.25912595630752827
+          ],
+          [
+            -0.038188871108579846,
+            0.022189142405485522,
+            -0.9990241498958575,
+            0.07628830569130536
+          ],
+          [
+            -0.841022762215319,
+            -0.5406246745833511,
+            0.020141366928479676,
+            3.7331970642921704
+          ]
+        ],
+        [
+          [
+            -0.6509521458635437,
+            0.7568115359583915,
+            0.05914053460130755,
+            -0.11436548519576759
+          ],
+          [
+            -0.05682805199021514,
+            0.029105692543783136,
+            -0.9979596340338256,
+            0.07966521414164159
+          ],
+          [
+            -0.7569886896744418,
+            -0.6529848066393579,
+            0.024061712294017882,
+            3.989273635395573
+          ]
+        ],
+        [
+          [
+            -0.652369768304106,
+            0.7543612860463775,
+            0.07316239139239601,
+            -0.26161312296352596
+          ],
+          [
+            -0.021290046907491835,
+            0.07825482960055961,
+            -0.9967060326592225,
+            -0.08777941029259459
+          ],
+          [
+            -0.7576017550784232,
+            -0.651778514342591,
+            -0.03499069789007116,
+            4.2722797734287115
+          ]
+        ]
+      ],
+      "pose_reference_info": {
+        "kind": "colmap_sfm",
+        "unit": "arbitrary_colmap_scale",
+        "source": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json",
+        "note": "Dataset-provided COLMAP-derived transforms; clean/clutter pair shares assigned pose"
+      },
+      "preprocessing": "Source cached PNG: resized and undistorted; exact source manifest input hashes"
+    }
+  ],
+  "correspondence": {
+    "hypersim_data_root": "/mnt/nvme1n1/MV_Restoration/hypersim/data",
+    "hypersim_camera_parameters": "/mnt/nvme1n1/yejichoi/hypersim-synthesis/workspace/hypersim/ml-hypersim/contrib/mikeroberts3000/metadata_camera_parameters.csv"
+  },
+  "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/result_eval/20261002_realx3d_multigroup/mixed/manifest.json"
+}

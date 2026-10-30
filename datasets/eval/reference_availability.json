@@ -1,0 +1,2106 @@
+{
+  "schema_version": "eval_reference_availability_v1",
+  "groups": 65,
+  "note": "Reference availability, not completed metric evaluation. COLMAP/provided poses and DA3 pseudo-GT must not be labeled measured geometry GT.",
+  "records": [
+    {
+      "id": "ai_001_001_group00",
+      "dataset": "Hypersim",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "synthetic_metric_gt",
+        "scope": "Original clean scene visible surfaces",
+        "full_clean_geometry_gt": true
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_007_group00",
+      "dataset": "Hypersim",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "synthetic_metric_gt",
+        "scope": "Original clean scene visible surfaces",
+        "full_clean_geometry_gt": true
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_008_group00",
+      "dataset": "Hypersim",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "synthetic_metric_gt",
+        "scope": "Original clean scene visible surfaces",
+        "full_clean_geometry_gt": true
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_009_group00",
+      "dataset": "Hypersim",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "synthetic_metric_gt",
+        "scope": "Original clean scene visible surfaces",
+        "full_clean_geometry_gt": true
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_010_group00",
+      "dataset": "Hypersim",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "synthetic_metric_gt",
+        "scope": "Original clean scene visible surfaces",
+        "full_clean_geometry_gt": true
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_006_cam_00_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_006_cam_00_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_006_cam_01_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_006_cam_01_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_shared_asset",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_independent_assets",
+      "dataset": "HypersimNegative",
+      "input_rgb": {
+        "type": "paired_clean_render_gt",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Original Hypersim geometry GT only on unchanged original surfaces; excludes inserted static asset and changed visibility"
+      },
+      "pose": {
+        "type": "synthetic_metric_gt",
+        "metric_gt": true
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "arcdetriomphe__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "arcdetriomphe__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "corner__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "corner__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "drone__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "drone__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "fountain__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "fountain__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "mountain__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "mountain__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "patio__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "patio__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "patio_high__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "patio_high__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "spot__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "spot__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "statue__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "statue__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "train__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "train__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "train_station__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "train_station__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "tree__g00",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "tree__g01",
+      "dataset": "OnTheGo",
+      "input_rgb": {
+        "type": "no_paired_clean_input_gt",
+        "available_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "alternative": "Actual clean held-out target RGB exists in source manifest; evaluate rendered RGB separately"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT",
+        "scope": "Existing protocol measures depth/cloud from held-out clean target camera, not direct input-view depth"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "type": "unavailable"
+      }
+    },
+    {
+      "id": "chocolate__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "chocolate__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "cupcake__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "cupcake__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "gearworks__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "gearworks__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "laboratory__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "laboratory__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "limon__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "limon__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "milkcookie__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "milkcookie__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "popcorn__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "popcorn__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "ujikintoki__g00",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "ujikintoki__g01",
+      "dataset": "RealX3D",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Paired captures use assigned matching poses; approximate registration"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "type": "clean_zero_only"
+      }
+    },
+    {
+      "id": "crab2_set01",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "crab2_set02",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "yoda_set01",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "yoda_set02",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "android_set01",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "android_set02",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "statue_set01",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          false,
+          true,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    },
+    {
+      "id": "statue_set02",
+      "dataset": "RobustNeRF",
+      "input_rgb": {
+        "type": "paired_clean_capture_reference",
+        "available_views": [
+          true,
+          false,
+          false,
+          true
+        ],
+        "registration": "Clean/clutter captures may differ in camera; explicit registration required"
+      },
+      "depth_and_cloud": {
+        "type": "no_full_geometry_gt",
+        "full_clean_geometry_gt": false,
+        "reference": "joint clean DA3 pseudo-GT"
+      },
+      "pose": {
+        "type": "provided_colmap_reference",
+        "metric_gt": false
+      },
+      "mask": {
+        "known_views": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "type": "object_mask_gt_or_known_clean_zero"
+      }
+    }
+  ]
+}

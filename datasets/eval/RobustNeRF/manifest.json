@@ -1,0 +1,788 @@
+{
+  "schema_version": "frozen_eval_v1",
+  "protocol": {
+    "seed": 42,
+    "noise_lvl": 0.3,
+    "reference_view": "first",
+    "process_res": 504,
+    "process_res_method": "upper_bound_resize",
+    "precision": "bf16",
+    "attention_layer": 9,
+    "capture_calls": [
+      0,
+      24,
+      48
+    ],
+    "own_trajectory": true,
+    "clutter_views_source": "per-group clutter_views"
+  },
+  "groups": [
+    {
+      "id": "crab2_set01",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/0clean50.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/2clutter41.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/2clutter60.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/0clean68.jpg"
+      ],
+      "frame_order": [
+        50,
+        41,
+        60,
+        68
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/masks/2clutter41.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/masks/2clutter60.png"
+        ]
+      },
+      "query_selection": "Provisional mask-interior patch centers; 50% occupancy minimum and image-border exclusion. View selection uses all six pose pairs.",
+      "image_hw": [
+        504,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 343,
+          "y": 301,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 1,
+          "x": 343,
+          "y": 329,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 2,
+          "x": 175,
+          "y": 371,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 175,
+          "y": 343,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "input_sha256": [
+        "55734384daeed9dc5cc37ceaa6f4fc4b76a4132a6a6696aa188008ce9e0966fe",
+        "b2571267283f251093de39bae85b053601d1b8f214c03bcc5ff85851fb1564dc",
+        "e861091ce4441072150e2281c7e1d7a687fd7272323246342158695ad5b18e7c",
+        "95e1bd63a57d390334bd392040878e52b66f4d914f847fb3175f3673fee70256"
+      ],
+      "scene": "crab2",
+      "pose_selection": {
+        "scene": "crab2",
+        "set": 1,
+        "names": [
+          "0clean50.jpg",
+          "2clutter41.jpg",
+          "2clutter60.jpg",
+          "0clean68.jpg"
+        ],
+        "minimum_required_rotation": 10,
+        "pair_metrics": [
+          {
+            "a": "0clean50.jpg",
+            "b": "2clutter41.jpg",
+            "rotation_degrees": 14.783783631582004,
+            "center_distance_over_camera_radius": 0.464452137474413,
+            "sparse_overlap": 0.23467164643635233
+          },
+          {
+            "a": "0clean50.jpg",
+            "b": "2clutter60.jpg",
+            "rotation_degrees": 21.487671501402193,
+            "center_distance_over_camera_radius": 0.650805536697802,
+            "sparse_overlap": 0.1668222844693433
+          },
+          {
+            "a": "0clean50.jpg",
+            "b": "0clean68.jpg",
+            "rotation_degrees": 13.045074143848593,
+            "center_distance_over_camera_radius": 0.43351267019776535,
+            "sparse_overlap": 0.34889511360099595
+          },
+          {
+            "a": "2clutter41.jpg",
+            "b": "2clutter60.jpg",
+            "rotation_degrees": 12.703271170996555,
+            "center_distance_over_camera_radius": 0.4381238883008426,
+            "sparse_overlap": 0.21923390383048086
+          },
+          {
+            "a": "2clutter41.jpg",
+            "b": "0clean68.jpg",
+            "rotation_degrees": 17.58194634100134,
+            "center_distance_over_camera_radius": 0.6001334441925555,
+            "sparse_overlap": 0.22684053246400435
+          },
+          {
+            "a": "2clutter60.jpg",
+            "b": "0clean68.jpg",
+            "rotation_degrees": 14.884834049222055,
+            "center_distance_over_camera_radius": 0.4391773463335989,
+            "sparse_overlap": 0.4227906976744186
+          }
+        ],
+        "camera_radius": 3.323321421343019
+      },
+      "mask_sha256": {
+        "1": [
+          "ca0d3eb67eebd1bb0489f17f4b20ed0b644961d569b53662e98cbcbfaac05ff2"
+        ],
+        "2": [
+          "2431a349b19e0bc81fb6aaa3e730e33456f1fb23847303f9ff306876f652f87a"
+        ]
+      },
+      "evaluation_scope": "same_scene_heldout_mask",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "crab2_set02",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/0clean94.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/2clutter46.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/2clutter66.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/images/0clean98.jpg"
+      ],
+      "frame_order": [
+        94,
+        46,
+        66,
+        98
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/masks/2clutter46.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/crab2/masks/2clutter66.png"
+        ]
+      },
+      "query_selection": "Provisional mask-interior patch centers; 50% occupancy minimum and image-border exclusion. View selection uses all six pose pairs.",
+      "image_hw": [
+        504,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 469,
+          "y": 469,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 1,
+          "x": 133,
+          "y": 315,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 2,
+          "x": 259,
+          "y": 455,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 287,
+          "y": 441,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "input_sha256": [
+        "3c87cacc8f3aa1ce0348d90250bae62a7ee17b4cd5004b5751e5507134968c77",
+        "c5c272dd8e0e450a7c6892dd4241b862a2a0394d44fb090db6c48a7f5e69020c",
+        "d532f5ddb87314fd49b02167653ee62c6703ef8e5dd0884db329de0c31156b95",
+        "41f8ada0fe0f0cb7e55ab69344cd066d086110a6231004c70d30e256b65a9c83"
+      ],
+      "scene": "crab2",
+      "pose_selection": {
+        "scene": "crab2",
+        "set": 2,
+        "names": [
+          "0clean94.jpg",
+          "2clutter46.jpg",
+          "2clutter66.jpg",
+          "0clean98.jpg"
+        ],
+        "minimum_required_rotation": 15,
+        "pair_metrics": [
+          {
+            "a": "0clean94.jpg",
+            "b": "2clutter46.jpg",
+            "rotation_degrees": 25.35169274497852,
+            "center_distance_over_camera_radius": 0.8605292393597421,
+            "sparse_overlap": 0.20988372093023255
+          },
+          {
+            "a": "0clean94.jpg",
+            "b": "2clutter66.jpg",
+            "rotation_degrees": 24.102243402111096,
+            "center_distance_over_camera_radius": 0.7082864836819891,
+            "sparse_overlap": 0.3395338892452427
+          },
+          {
+            "a": "0clean94.jpg",
+            "b": "0clean98.jpg",
+            "rotation_degrees": 11.478629856779136,
+            "center_distance_over_camera_radius": 0.3358785521733686,
+            "sparse_overlap": 0.5051893408134642
+          },
+          {
+            "a": "2clutter46.jpg",
+            "b": "2clutter66.jpg",
+            "rotation_degrees": 25.797372703627232,
+            "center_distance_over_camera_radius": 0.8472326067685649,
+            "sparse_overlap": 0.12790697674418605
+          },
+          {
+            "a": "2clutter46.jpg",
+            "b": "0clean98.jpg",
+            "rotation_degrees": 28.943446830510155,
+            "center_distance_over_camera_radius": 1.0071745093160147,
+            "sparse_overlap": 0.1511627906976744
+          },
+          {
+            "a": "2clutter66.jpg",
+            "b": "0clean98.jpg",
+            "rotation_degrees": 15.90717550501336,
+            "center_distance_over_camera_radius": 0.5185385931913361,
+            "sparse_overlap": 0.42933504383151594
+          }
+        ],
+        "camera_radius": 3.323321421343019,
+        "selection_override": "User requested 0clean91.jpg -> 0clean94.jpg; group remains crab2_set02 in saved numbering.",
+        "passes_original_pose_thresholds": false
+      },
+      "mask_sha256": {
+        "1": [
+          "debcb08d17b0d42cb29dc87efc9a979e1fd65524c282da78a698f77356de92c0"
+        ],
+        "2": [
+          "4d5deb5e5e7c005f806341a14d7d744903b9b7376de65f78cd2145c922bd60c1"
+        ]
+      },
+      "evaluation_scope": "same_scene_heldout_mask",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "yoda_set01",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/0clean1.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/2clutter21.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/2clutter31.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/0clean20.jpg"
+      ],
+      "frame_order": [
+        1,
+        21,
+        31,
+        20
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/masks/2clutter21.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/masks/2clutter31.png"
+        ]
+      },
+      "query_selection": "Provisional mask-interior patch centers; 50% occupancy minimum and image-border exclusion. View selection uses all six pose pairs.",
+      "image_hw": [
+        504,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 1,
+          "x": 231,
+          "y": 357,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 1,
+          "x": 203,
+          "y": 357,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 2,
+          "x": 315,
+          "y": 287,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 2,
+          "x": 315,
+          "y": 315,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "input_sha256": [
+        "04b0af38678c8408d26e937e94944cfa3277268d15ca7b38625384af0f3a1968",
+        "d45691887ad1142b019a9c462c2c5ada478bb956941d6fb45844ad4f649e037c",
+        "4ec87bd36962c2f45407e48fb05b8ce569c041f5ac15280ad359e2972f4c452a",
+        "26418fa7586a1a764eae6ec3beffdeb27dabace17263fbca6761b3b627bf6414"
+      ],
+      "scene": "yoda",
+      "pose_selection": {
+        "scene": "yoda",
+        "set": 1,
+        "names": [
+          "0clean1.jpg",
+          "2clutter21.jpg",
+          "2clutter31.jpg",
+          "0clean20.jpg"
+        ],
+        "minimum_required_rotation": 10,
+        "pair_metrics": [
+          {
+            "a": "0clean1.jpg",
+            "b": "2clutter21.jpg",
+            "rotation_degrees": 21.351724878510456,
+            "center_distance_over_camera_radius": 0.660541495969667,
+            "sparse_overlap": 0.37051230334812424
+          },
+          {
+            "a": "0clean1.jpg",
+            "b": "2clutter31.jpg",
+            "rotation_degrees": 12.347727342880926,
+            "center_distance_over_camera_radius": 0.42869948542967634,
+            "sparse_overlap": 0.4960091220068415
+          },
+          {
+            "a": "0clean1.jpg",
+            "b": "0clean20.jpg",
+            "rotation_degrees": 11.24679524729627,
+            "center_distance_over_camera_radius": 0.4395096644963421,
+            "sparse_overlap": 0.5728876508820798
+          },
+          {
+            "a": "2clutter21.jpg",
+            "b": "2clutter31.jpg",
+            "rotation_degrees": 26.077215420734547,
+            "center_distance_over_camera_radius": 0.8023603959456399,
+            "sparse_overlap": 0.26966518757563535
+          },
+          {
+            "a": "2clutter21.jpg",
+            "b": "0clean20.jpg",
+            "rotation_degrees": 11.460482749393888,
+            "center_distance_over_camera_radius": 0.3762566725425073,
+            "sparse_overlap": 0.5159338442920532
+          },
+          {
+            "a": "2clutter31.jpg",
+            "b": "0clean20.jpg",
+            "rotation_degrees": 14.833706948015797,
+            "center_distance_over_camera_radius": 0.5054270956547161,
+            "sparse_overlap": 0.5146332193082478
+          }
+        ],
+        "camera_radius": 3.3408797869860853
+      },
+      "mask_sha256": {
+        "1": [
+          "616a70ae7e28b0ee1fb9c1910a2b6b7c5f3c6da93031bd718d19be33d078f744"
+        ],
+        "2": [
+          "cc88b3e4acf509124bda32a284d24e74c70d7a9fdbdc9c92391e5214ef3821c6"
+        ]
+      },
+      "evaluation_scope": "same_scene_heldout_mask",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "yoda_set02",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/0clean75.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/0clean76.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/2clutter77.jpg",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/images/2clutter79.jpg"
+      ],
+      "frame_order": [
+        75,
+        76,
+        77,
+        79
+      ],
+      "clutter_views": [
+        2,
+        3
+      ],
+      "mask_paths": {
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/masks/2clutter77.png"
+        ],
+        "3": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/yoda/masks/2clutter79.png"
+        ]
+      },
+      "query_selection": "Provisional mask-interior patch centers; 50% occupancy minimum and image-border exclusion. View selection uses all six pose pairs.",
+      "image_hw": [
+        504,
+        504
+      ],
+      "queries": [
+        {
+          "id": 1,
+          "view": 2,
+          "x": 217,
+          "y": 385,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 2,
+          "view": 2,
+          "x": 273,
+          "y": 399,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 3,
+          "view": 3,
+          "x": 259,
+          "y": 105,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        },
+        {
+          "id": 4,
+          "view": 3,
+          "x": 315,
+          "y": 105,
+          "target": "distractor",
+          "patch_occupancy": 1.0
+        }
+      ],
+      "input_sha256": [
+        "834c36c3ff88c2e5141c8ee5a98d64456ec62f84eaf06aa83b9f5ee5eb07791b",
+        "4bc125014fc25f4fcb328f6cd6a8a544c950fdc9efab8bb63501bae2be4e2d60",
+        "eeabbf56f792a8a34503856fa6e5ecc520d6b1839b283fb89430ac58b8eb80fb",
+        "e4577cb2bc1214474165fade790f9e6bcfc55e253baa1f9694e584c889932e0c"
+      ],
+      "scene": "yoda",
+      "selection_note": "User-selected 75 clean, 76 clean, 77 clutter, 79 clutter; preserves requested input order.",
+      "mask_sha256": {
+        "2": [
+          "425b10c2ac34d91e1ae5c4a012f662c694eb2b4158b2b2dd160265a38b99ca7f"
+        ],
+        "3": [
+          "c1bf406991dfce61d77e7a9fa48c8cd09a50da2f107256f9ead1b70b56ff0126"
+        ]
+      },
+      "evaluation_scope": "same_scene_heldout_mask",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "android_set01",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/0clean059.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/2clutter108.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/2clutter107.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/0clean074.JPG"
+      ],
+      "frame_order": [
+        59,
+        108,
+        107,
+        74
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/masks/2clutter108.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/masks/2clutter107.png"
+        ]
+      },
+      "group_selection": "Two disjoint pose-neighbor groups; clean anchor, nearest two clutter poses, nearest other clean pose",
+      "pose_reference_path": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/sparse/0/images.bin",
+      "input_sha256": [
+        "274436191d35ab341c57a84c5298410abf4336808c0ceeece22866e068d26c86",
+        "6c58f243ef5e8adea34b137a765574d94c5e71fa797e3e6fb1d31f1181b92786",
+        "3fa74b4a3465eb99316f0918ffe7bd87c3efa91b9d1ed689a392701f1f70debb",
+        "dc83dec420c8480ccfd971e2076ecf5976f62220e61bd4f7cee9b13d425b89f1"
+      ],
+      "mask_sha256": {
+        "1": [
+          "0c9add327840990fce9a92c26a8bdf5db08c8ff088777442ccdbb54a47198c6f"
+        ],
+        "2": [
+          "7d71ad44ab0e86b0c51eaa4b42842479836db9d73086876ea8168c9e91388a2d"
+        ]
+      },
+      "evaluation_scope": "unseen_real_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "query_selection": "No attention queries; fixed mask/RGB/pose visualization group"
+    },
+    {
+      "id": "android_set02",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/0clean080.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/2clutter135.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/2clutter140.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/images/0clean064.JPG"
+      ],
+      "frame_order": [
+        80,
+        135,
+        140,
+        64
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/masks/2clutter135.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/masks/2clutter140.png"
+        ]
+      },
+      "group_selection": "Two disjoint pose-neighbor groups; clean anchor, nearest two clutter poses, nearest other clean pose",
+      "pose_reference_path": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/android/sparse/0/images.bin",
+      "input_sha256": [
+        "e7264c58e2794cc561cc965eff0567c5b5680eae39a3b807083d6ec59f77ef1d",
+        "e368b7473ff2f402080cde5cc6d382f05b598edffde7c4a146cdc5e8f83cac67",
+        "12a35899fb81da185a1faeee27e03f8b5281d0f43d8a24ff386ebe362e65df58",
+        "fc260aa0415e96ee141ed4f64328098d15edc79bd54e8b130cd3ecfa3d3d11cd"
+      ],
+      "mask_sha256": {
+        "1": [
+          "f48371167588ec3e711feecce743edf6129739eb05d85e10fadf14b67d419953"
+        ],
+        "2": [
+          "5e84df4480da82a5ae6685ce621c8309fd770b90049520bd610b42a8703e1506"
+        ]
+      },
+      "evaluation_scope": "unseen_real_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "query_selection": "No attention queries; fixed mask/RGB/pose visualization group"
+    },
+    {
+      "id": "statue_set01",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/0clean066.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/2clutter228.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/2clutter097.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/0clean067.JPG"
+      ],
+      "frame_order": [
+        66,
+        228,
+        97,
+        67
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/masks/2clutter228.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/masks/2clutter097.png"
+        ]
+      },
+      "group_selection": "Two disjoint pose-neighbor groups; clean anchor, nearest two clutter poses, nearest other clean pose",
+      "pose_reference_path": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/sparse/0/images.bin",
+      "input_sha256": [
+        "85a651b3634c39e36a4b56b5c2849c88b250eefe374208cb8d1d9de25a31ad19",
+        "57448a6f33c3d9b1897ba0678e43501d4ada29c235d9e993c129f2bfe3b0b062",
+        "599803b3e4369f702b58a7bfdef4ab6b6bd21cc26a7cc997d62a922a6a9766a1",
+        "c5310a7f91e6939b2dd7b9656c0833eedbc523dbfb0033a378c3d6fde621d24c"
+      ],
+      "mask_sha256": {
+        "1": [
+          "33e95e70f0076d70714a47469f5f66b20c94d667b54ef0b62002f6063c1548cf"
+        ],
+        "2": [
+          "a3d4a7d44cbf2127f5ec0a7fa1c9164d932bfccb2c9f688de8c2432c5d3615ef"
+        ]
+      },
+      "evaluation_scope": "unseen_real_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "query_selection": "No attention queries; fixed mask/RGB/pose visualization group"
+    },
+    {
+      "id": "statue_set02",
+      "dataset": "RobustNeRF",
+      "input_paths": [
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/0clean090.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/2clutter215.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/2clutter214.JPG",
+        "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/images/0clean089.JPG"
+      ],
+      "frame_order": [
+        90,
+        215,
+        214,
+        89
+      ],
+      "clutter_views": [
+        1,
+        2
+      ],
+      "mask_paths": {
+        "1": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/masks/2clutter215.png"
+        ],
+        "2": [
+          "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/masks/2clutter214.png"
+        ]
+      },
+      "group_selection": "Two disjoint pose-neighbor groups; clean anchor, nearest two clutter poses, nearest other clean pose",
+      "pose_reference_path": "/mnt/nvme1n1/jaeeun/distractor-free/desplat/data/robustnerf/robustnerf/statue/sparse/0/images.bin",
+      "input_sha256": [
+        "a61618b0d59e0022e6b54e821932e5d3bb482c301480a24d0a3fe0bccbef2e5f",
+        "2efe60a60f8f6f0d0bca1c7162167be48ee4ce5bf167ac77d57ccb2f1c39c48f",
+        "a37d1f7a87d0197edc2a57ae23649e7c5e0d4be814a3961b45d9eb81486e5981",
+        "43a980b6bab72b23e32b2d284c287e88b7c5e4aec5756597ddbeb0441b9a5309"
+      ],
+      "mask_sha256": {
+        "1": [
+          "a203d1e1b6f129fdda19483a511df649db972f8afb771e94bef681d82c6f9ee5"
+        ],
+        "2": [
+          "5ca9bb4416dbb053c07e6bb2ccab739f8b787da605816f360b0b953efcc69b22"
+        ]
+      },
+      "evaluation_scope": "unseen_real_scene",
+      "mask_target": "object_only",
+      "mask_known_views": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "image_hw": [
+        378,
+        504
+      ],
+      "queries": [],
+      "query_selection": "No attention queries; fixed mask/RGB/pose visualization group"
+    }
+  ],
+  "correspondence": {
+    "hypersim_data_root": "/mnt/nvme1n1/MV_Restoration/hypersim/data",
+    "hypersim_camera_parameters": "/mnt/nvme1n1/yejichoi/hypersim-synthesis/workspace/hypersim/ml-hypersim/contrib/mikeroberts3000/metadata_camera_parameters.csv"
+  }
+}

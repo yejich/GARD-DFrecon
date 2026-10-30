@@ -1,0 +1,299 @@
+{
+  "schema_version": "hypersim_negative_nvs_v1",
+  "source_manifest": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/manifest.json",
+  "source_manifest_sha256": "a26f64ab530fe30d5d6924a5664c9ce4227360c5c799a27d3401b1f16c2230f0",
+  "V": 4,
+  "M": 1,
+  "N": 5,
+  "reference_view": "first",
+  "groups": [
+    {
+      "id": "ai_001_006_cam_00_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0095/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/shared_asset/frame.0087/clean.png"
+      ],
+      "source_frames": [
+        72,
+        95,
+        73,
+        87
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/clean.png",
+      "target_sha256": "0d02341f2ddb20482bec04b3e5313cacf8aafc2579ff51ee5d067a964ca5c4e5",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/metadata.json",
+      "target_frame": 70,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00",
+      "world_vertex_sha256": "1491550d508a4d8af03eda2e88fcab19813fe2c2740c568883d0263b65d03340",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_006_cam_00_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0072/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0095/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_00/group_000240/variant_00/independent_assets/frame.0087/clean.png"
+      ],
+      "source_frames": [
+        72,
+        95,
+        73,
+        87
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/clean.png",
+      "target_sha256": "0d02341f2ddb20482bec04b3e5313cacf8aafc2579ff51ee5d067a964ca5c4e5",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_00/group_000240/variant_00/frame.0070/metadata.json",
+      "target_frame": 70,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_00/group_000240/variant_00",
+      "world_vertex_sha256": "1491550d508a4d8af03eda2e88fcab19813fe2c2740c568883d0263b65d03340",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_006_cam_01_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0011/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0099/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/shared_asset/frame.0097/clean.png"
+      ],
+      "source_frames": [
+        84,
+        11,
+        99,
+        97
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/clean.png",
+      "target_sha256": "e05eab05569f654c1a9353b5b52dd853622727561dfa0af181fcf682006449ed",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/metadata.json",
+      "target_frame": 83,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00",
+      "world_vertex_sha256": "89e2698e37d7d00e7621f8508f449050d22d4883c681963639f3b592b160173a",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_006_cam_01_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0084/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0011/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0099/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_001_006/cam_01/group_000264/variant_00/independent_assets/frame.0097/clean.png"
+      ],
+      "source_frames": [
+        84,
+        11,
+        99,
+        97
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/clean.png",
+      "target_sha256": "e05eab05569f654c1a9353b5b52dd853622727561dfa0af181fcf682006449ed",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_001_006/cam_01/group_000264/variant_00/frame.0083/metadata.json",
+      "target_frame": 83,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_001_006/cam_01/group_000264/variant_00",
+      "world_vertex_sha256": "89e2698e37d7d00e7621f8508f449050d22d4883c681963639f3b592b160173a",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0002/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0000/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/shared_asset/frame.0001/clean.png"
+      ],
+      "source_frames": [
+        11,
+        2,
+        0,
+        1
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/clean.png",
+      "target_sha256": "691f11263b0ab927864d39d53c26471aff79df07df4557d374b31ee094798035",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/metadata.json",
+      "target_frame": 16,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00",
+      "world_vertex_sha256": "927b335700862e3e7e9b4b7b0ff4d0db174e5f6b1a19391e209177b5ff4d85da",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000581_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0011/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0002/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0000/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000581/variant_00/independent_assets/frame.0001/clean.png"
+      ],
+      "source_frames": [
+        11,
+        2,
+        0,
+        1
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/clean.png",
+      "target_sha256": "691f11263b0ab927864d39d53c26471aff79df07df4557d374b31ee094798035",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000581/variant_00/frame.0016/metadata.json",
+      "target_frame": 16,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000581/variant_00",
+      "world_vertex_sha256": "927b335700862e3e7e9b4b7b0ff4d0db174e5f6b1a19391e209177b5ff4d85da",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0007/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0004/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/shared_asset/frame.0008/clean.png"
+      ],
+      "source_frames": [
+        6,
+        7,
+        4,
+        8
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/clean.png",
+      "target_sha256": "f05f32fce994bbc89450dfdf07ee46abf34b749a6df86322a668ffbffd26b946",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/metadata.json",
+      "target_frame": 3,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00",
+      "world_vertex_sha256": "26a63e22d936f94bdad2795100ea55ada2e4db4b9c46584d269af3044d88a9b4",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_003_006_cam_00_group_000582_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0006/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0007/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0004/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative/scenes_006/ai_003_006/cam_00/group_000582/variant_00/independent_assets/frame.0008/clean.png"
+      ],
+      "source_frames": [
+        6,
+        7,
+        4,
+        8
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/clean.png",
+      "target_sha256": "f05f32fce994bbc89450dfdf07ee46abf34b749a6df86322a668ffbffd26b946",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_006/ai_003_006/cam_00/group_000582/variant_00/frame.0003/metadata.json",
+      "target_frame": 3,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_v1/scenes_006/ai_003_006/cam_00/group_000582/variant_00",
+      "world_vertex_sha256": "26a63e22d936f94bdad2795100ea55ada2e4db4b9c46584d269af3044d88a9b4",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0086/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0038/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/shared_asset/frame.0033/clean.png"
+      ],
+      "source_frames": [
+        57,
+        86,
+        38,
+        33
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/clean.png",
+      "target_sha256": "0cd35ac9cef31426c768e1e80a84a0b91fbc07822bebc6d1c346be20d9ea8434",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/metadata.json",
+      "target_frame": 35,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00",
+      "world_vertex_sha256": "3281fcb94380b48c32c9e8cd2d820900b2fd997e29d2bc38e875aa78ab0cae0b",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000000_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0057/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0086/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0038/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00/independent_assets/frame.0033/clean.png"
+      ],
+      "source_frames": [
+        57,
+        86,
+        38,
+        33
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/clean.png",
+      "target_sha256": "0cd35ac9cef31426c768e1e80a84a0b91fbc07822bebc6d1c346be20d9ea8434",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000000/variant_00/frame.0035/metadata.json",
+      "target_frame": 35,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_007_010/scenes_007/ai_001_007/cam_00/group_000000/variant_00",
+      "world_vertex_sha256": "3281fcb94380b48c32c9e8cd2d820900b2fd997e29d2bc38e875aa78ab0cae0b",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_shared_asset",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0055/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/shared_asset/frame.0083/clean.png"
+      ],
+      "source_frames": [
+        46,
+        55,
+        73,
+        83
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/clean.png",
+      "target_sha256": "dcc8955991b62a36e75bf3925954c110fe8b4fe20609b7ff947eee4dc547bef4",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/metadata.json",
+      "target_frame": 47,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00",
+      "world_vertex_sha256": "19ce6ce4e7404bd5b300800024cfae48bb8b457b471d924b6d52f6ad746efe36",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    },
+    {
+      "id": "ai_001_007_cam_00_group_000003_independent_assets",
+      "source_paths": [
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0046/clean.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0055/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0073/distractor.png",
+        "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_negative_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00/independent_assets/frame.0083/clean.png"
+      ],
+      "source_frames": [
+        46,
+        55,
+        73,
+        83
+      ],
+      "target_path": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/clean.png",
+      "target_sha256": "dcc8955991b62a36e75bf3925954c110fe8b4fe20609b7ff947eee4dc547bef4",
+      "target_static_mask": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/static_mask.png",
+      "target_metadata": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/eval/HypersimNegative/nvs/scenes_007/ai_001_007/cam_00/group_000003/variant_00/frame.0047/metadata.json",
+      "target_frame": 47,
+      "source_static_group": "/mnt/nvme1n1/yejichoi/GARD-DFrecon/datasets/hypersim_static_007_010/scenes_007/ai_001_007/cam_00/group_000003/variant_00",
+      "world_vertex_sha256": "19ce6ce4e7404bd5b300800024cfae48bb8b457b471d924b6d52f6ad746efe36",
+      "target_is_clean": true,
+      "source_target_disjoint": true
+    }
+  ]
+}
