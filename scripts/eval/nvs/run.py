@@ -160,9 +160,10 @@ def main():
  eval_root=Path(os.environ.get('GARD_EVAL_ROOT',str(ROOT/'datasets/eval')))
  source_views=len(items[0]['group']['input_paths']) if items else 0
  camera_pose_mode=str(cfg.get('camera_pose_mode','da3_aligned')).lower()
- if camera_pose_mode not in ('da3_aligned','first_relative'):
-  raise ValueError("checkpoint camera_pose_mode must be 'da3_aligned' or 'first_relative'")
- dump(out/'provenance.json',dict(checkpoint=args.checkpoint,checkpoint_sha256=digest(args.checkpoint),weights='EMA',epoch=checkpoint_epoch,registry_sha256=data['registry_sha256'],protocol_sha256=digest(eval_root/'evaluation_protocol.json'),eval_plan_sha256=digest(plan),clean_inputs=args.clean_inputs,clean_input_policy='first four reference_paths per frozen group' if args.clean_inputs else 'fixed input_paths',source_only_DA3=True,target_RGB_in_model_condition=False,V=source_views,M=1 if nvs_branch else 0,N=source_views+(1 if nvs_branch else 0),seed=42,sampler='repository Sampler.sample_ode(euler)',num_grid_points=args.num_steps,velocity_calls=args.num_steps-1,time_dist_shift=float(np.sqrt(1492992/4096)),noise_V=.3,noise_M=1.,initial_V='noise for flowmap=noise; 0.3*noise+z_lq for flowmap_from=noise_lq',model_condition='transport adds z_lq to x on every velocity call',camera_pose_mode=camera_pose_mode,source_camera_condition=False,mask_head=False,tokenwise_oracle=tokenwise,tokenwise_clean_steps=args.tokenwise_clean_steps,tokenwise_distractor_steps=args.tokenwise_distractor_steps,tokenwise_mask_semantics='source-view object GT when available; any non-zero patch occupancy; CLS clean; novel view full-grid',allow_missing_masks=args.allow_missing_masks))
+ if camera_pose_mode not in ('da3_aligned','first_relative','source_target_relative'):
+  raise ValueError("checkpoint camera_pose_mode must be 'da3_aligned', 'first_relative', or 'source_target_relative'")
+ source_camera_condition = camera_pose_mode == 'source_target_relative'
+ dump(out/'provenance.json',dict(checkpoint=args.checkpoint,checkpoint_sha256=digest(args.checkpoint),weights='EMA',epoch=checkpoint_epoch,registry_sha256=data['registry_sha256'],protocol_sha256=digest(eval_root/'evaluation_protocol.json'),eval_plan_sha256=digest(plan),clean_inputs=args.clean_inputs,clean_input_policy='first four reference_paths per frozen group' if args.clean_inputs else 'fixed input_paths',source_only_DA3=True,target_RGB_in_model_condition=False,V=source_views,M=1 if nvs_branch else 0,N=source_views+(1 if nvs_branch else 0),seed=42,sampler='repository Sampler.sample_ode(euler)',num_grid_points=args.num_steps,velocity_calls=args.num_steps-1,time_dist_shift=float(np.sqrt(1492992/4096)),noise_V=.3,noise_M=1.,initial_V='noise for flowmap=noise; 0.3*noise+z_lq for flowmap_from=noise_lq',model_condition='transport adds z_lq to x on every velocity call',camera_pose_mode=camera_pose_mode,source_camera_condition=source_camera_condition,mask_head=False,tokenwise_oracle=tokenwise,tokenwise_clean_steps=args.tokenwise_clean_steps,tokenwise_distractor_steps=args.tokenwise_distractor_steps,tokenwise_mask_semantics='source-view object GT when available; any non-zero patch occupancy; CLS clean; novel view full-grid',allow_missing_masks=args.allow_missing_masks))
  model=MultiViewDA3RestoreModel(pretrained=cfg.encoder,device='cuda');decoder=build_rae_da3(device='cpu')
  import lpips
  lp=lpips.LPIPS(net='alex',spatial=True).cuda().eval().requires_grad_(False)
@@ -188,7 +189,13 @@ def main():
    norm=InputProcessor()(g['input_paths'],process_res=504,process_res_method='upper_bound_resize',sequential=True)[0];h,w=norm.shape[-2:];assert [h,w]==g['image_hw'];image=norm[None].cuda();inputrgb=(norm*std+mean).clamp(0,1).permute(0,2,3,1).numpy()
    base_output,_=model.model.forward(image,export_feat_layers=[17],ref_view_strategy='first',export_rgb_feat_layers=True);model._check_ref(base_output);cond=base_output.aux['feat_layer_17'].float().clone();base=model._geometry_from_output(base_output);base['rgb']=decode(base_output,h,w);del base_output
    if nvs_branch:
-    target_pose,scale,residual=target_cameras_for_condition(np.array(item['source_target_c2w']),base['extrinsics'],v,camera_pose_mode);rays=target_plucker_rays(torch.tensor(target_pose,dtype=torch.float32,device='cuda')[None],torch.tensor(item['source_target_intrinsics'][v:],dtype=torch.float32,device='cuda')[None],(h,w));fullrays=torch.cat([torch.zeros(1,v,rays.shape[2],6,device='cuda'),rays],1);mask=torch.tensor([[False]*v+[True]],device='cuda')
+    conditioned_pose,scale,residual=target_cameras_for_condition(np.array(item['source_target_c2w']),base['extrinsics'],v,camera_pose_mode)
+    intrinsics=np.array(item['source_target_intrinsics']) if source_camera_condition else np.array(item['source_target_intrinsics'][v:])
+    rays=target_plucker_rays(torch.tensor(conditioned_pose,dtype=torch.float32,device='cuda')[None],torch.tensor(intrinsics,dtype=torch.float32,device='cuda')[None],(h,w))
+    if source_camera_condition:
+     fullrays=rays;mask=torch.ones((1,v+1),device='cuda',dtype=torch.bool)
+    else:
+     fullrays=torch.cat([torch.zeros(1,v,rays.shape[2],6,device='cuda'),rays],1);mask=torch.tensor([[False]*v+[True]],device='cuda')
     condition=torch.cat([cond,torch.zeros_like(cond[:,:1])],1)
    else:
     # Restoration-only checkpoints were trained with exactly the source V

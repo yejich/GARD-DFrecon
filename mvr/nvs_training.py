@@ -1,4 +1,4 @@
-"""Opt-in restoration+NVS primitives with target-only camera conditioning.
+"""Opt-in restoration+NVS primitives with optional source/target camera conditioning.
 
 GLD reference: https://github.com/cvlab-kaist/GLD
 Source L17 MUST come from a source-only DA3 forward. Teacher L17 comes from
@@ -463,7 +463,8 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
                       group_mse_cfg=None, alignment_target=None, alignment_aux=None, alignment_cfg=None,
                       distractor_suppression_cfg=None,
                       geometry_contrastive_cfg=None,
-                      full_view_loss=False,
+                      full_view_loss=False, camera_view_mask=None,
+                      source_camera_condition=False,
                       loss_tracker=None):
     """Single shared-model forward: N restoration and M NVS velocity losses."""
     b,v=source_lq.shape[:2]
@@ -485,8 +486,20 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
                            double_condition=True,
                            flowmap_from=flowmap_from)
     m=clean_teacher.shape[1]-v
-    if nvs_branch and target_rays.shape!=(b,m,clean_teacher.shape[2]-1,6):raise ValueError('Target rays must match only M patch grids')
-    rays=torch.cat([target_rays.new_zeros(b,v,target_rays.shape[2],6),target_rays],dim=1) if nvs_branch else None
+    if nvs_branch:
+        if source_camera_condition:
+            if target_rays.shape!=(b,v+m,clean_teacher.shape[2]-1,6):
+                raise ValueError('Source+target rays must match all N+M view grids')
+            rays=target_rays
+            if camera_view_mask is None:
+                camera_view_mask=torch.ones((b,v+m),device=target_rays.device,dtype=torch.bool)
+        else:
+            if target_rays.shape!=(b,m,clean_teacher.shape[2]-1,6):
+                raise ValueError('Target rays must match only M patch grids')
+            rays=torch.cat([target_rays.new_zeros(b,v,target_rays.shape[2],6),target_rays],dim=1)
+            camera_view_mask=batch.novel_view_mask
+    else:
+        rays=None;camera_view_mask=None
     analysis=None
     hard_self_view = bool((alignment_cfg or {}).get('hard_self_view_for_distractor', False))
     if alignment_cfg and alignment_cfg.get('use',False):
@@ -503,7 +516,7 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
             analysis.mvrm_hard_attn_mask = build_hard_self_view_mask(full_distractor_mask)
     model_kwargs = dict(analysis=analysis)
     if nvs_branch:
-        model_kwargs.update(nvs_rays=rays, nvs_view_mask=batch.novel_view_mask)
+        model_kwargs.update(nvs_rays=rays, nvs_view_mask=camera_view_mask)
     distractor_cfg=distractor_suppression_cfg or {}
     geometry_cfg=geometry_contrastive_cfg or {}
     loss_mode=str(distractor_cfg.get('mode','none'))

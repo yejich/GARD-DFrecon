@@ -43,7 +43,7 @@ def align_target_camera(gt_c2w,predicted_source_w2c):
  residual=np.linalg.norm(scale*(gt[:,:3,3]@rotation.T)+translation-pc[:,:3,3],axis=-1).mean()
  return result,scale,float(residual)
 
-def relative_camera_condition(gt_c2w, source_views, *, scale_mode='max_distance'):
+def relative_camera_condition(gt_c2w, source_views, *, scale_mode='max_distance', include_source=False):
  """Return target cameras in the first-source relative coordinate frame.
 
  The input contains source cameras followed by target cameras.  The first
@@ -65,7 +65,8 @@ def relative_camera_condition(gt_c2w, source_views, *, scale_mode='max_distance'
   raise ValueError('Degenerate relative camera baseline')
  relative=relative.copy()
  relative[:,:3,3] /= scale
- return relative[int(source_views):],scale,0.0
+ selected = relative if include_source else relative[int(source_views):]
+ return selected,scale,0.0
 
 def target_cameras_for_condition(gt_c2w, predicted_source_w2c, source_views, mode='da3_aligned'):
  """Select the target-camera coordinate convention for NVS conditioning.
@@ -78,7 +79,9 @@ def target_cameras_for_condition(gt_c2w, predicted_source_w2c, source_views, mod
   return align_target_camera(gt_c2w,predicted_source_w2c)
  if mode == 'first_relative':
   return relative_camera_condition(gt_c2w,source_views)
- raise ValueError("camera pose mode must be 'da3_aligned' or 'first_relative'")
+ if mode == 'source_target_relative':
+  return relative_camera_condition(gt_c2w,source_views,include_source=True)
+ raise ValueError("camera pose mode must be 'da3_aligned', 'first_relative', or 'source_target_relative'")
 
 def align_target_camera_single(gt_c2w,predicted_source_w2c,scale=1.0):
  """Align target cameras when only one source view is available.

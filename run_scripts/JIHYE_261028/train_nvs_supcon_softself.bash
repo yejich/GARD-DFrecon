@@ -16,7 +16,7 @@ Main ablations:
   --supcon on|off                    geometry SupCon (default: on)
   --attention-alignment on|off       attention alignment (default: on)
   --distractor-aware on|off          distractor-aware alignment (default: on)
-  --camera-pose-mode MODE            da3_aligned|first_relative (default: da3_aligned)
+  --camera-pose-mode MODE            da3_aligned|first_relative|source_target_relative (default: da3_aligned)
 
 SupCon options:
   --supcon-lambda FLOAT              loss coefficient (default: 0.05)
@@ -73,7 +73,7 @@ while [[ $# -gt 0 ]]; do
     --supcon) GEOMETRY_CONTRASTIVE_USE="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
     --attention-alignment) ATTENTION_ALIGNMENT="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
     --distractor-aware) DISTRACTOR_AWARE_ATTN_ALIGN="$(as_bool "${2:?$1 requires on/off}")"; shift 2 ;;
-    --camera-pose-mode) CAMERA_POSE_MODE="${2:?$1 requires da3_aligned or first_relative}"; shift 2 ;;
+    --camera-pose-mode) CAMERA_POSE_MODE="${2:?$1 requires a camera pose mode}"; shift 2 ;;
     --supcon-lambda) GEOMETRY_CONTRASTIVE_LAMBDA="${2:?$1 requires a value}"; shift 2 ;;
     --supcon-temperature) GEOMETRY_CONTRASTIVE_TEMPERATURE="${2:?$1 requires a value}"; shift 2 ;;
     --supcon-max-negatives) GEOMETRY_CONTRASTIVE_MAX_NEGATIVE_TOKENS="${2:?$1 requires INT or none}"; shift 2 ;;
@@ -89,7 +89,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$FLOWMAP_FROM" in noise|noise_lq) ;; *) echo '--flow must be noise or noise_lq' >&2; exit 2 ;; esac
-case "$CAMERA_POSE_MODE" in da3_aligned|first_relative) ;; *) echo '--camera-pose-mode must be da3_aligned or first_relative' >&2; exit 2 ;; esac
+case "$CAMERA_POSE_MODE" in da3_aligned|first_relative|source_target_relative) ;; *) echo '--camera-pose-mode must be da3_aligned, first_relative, or source_target_relative' >&2; exit 2 ;; esac
 if [[ -z "${EXP_NAME:-}" ]]; then
   EXP_NAME="nvs_v4_n2-3"
 fi

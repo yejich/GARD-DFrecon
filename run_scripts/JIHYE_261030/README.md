@@ -11,6 +11,8 @@ relative camera pose를 사용하는 전달용 launcher입니다.
 - 첫 번째 source camera를 identity로 변환
 - 전체 camera translation을 최대 camera distance 기준으로 정규화
 - 기존 방식은 `--camera-pose-mode da3_aligned`로 선택 가능
+- source와 target 모두 첫 번째 source 기준 relative pose conditioning을 사용하려면
+  `--camera-pose-mode source_target_relative`를 지정
 
 저장소 루트에서 실행합니다.
 
@@ -26,6 +28,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 \
 CUDA_VISIBLE_DEVICES=0,1,2,3 \
   bash run_scripts/JIHYE_261030/train_nvs_supcon_softself.bash \
   --nvs on --supcon on --camera-pose-mode da3_aligned
+```
+
+Source와 target pose를 모두 conditioning하는 학습:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+  bash run_scripts/JIHYE_261030/train_nvs_supcon_softself.bash \
+  --nvs on --supcon on --camera-pose-mode source_target_relative
 ```
 
 새 pose 방식으로 생성된 checkpoint에는 `camera_pose_mode: first_relative`가

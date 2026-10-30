@@ -31,8 +31,9 @@ def main():
  cfg.nvs_branch = bool(cfg.get('nvs_branch', True))
  cfg.flowmap_from = str(cfg.get('flowmap_from', 'noise_lq'))
  cfg.camera_pose_mode = str(cfg.get('camera_pose_mode', 'da3_aligned')).lower()
- if cfg.camera_pose_mode not in ('da3_aligned','first_relative'):
-  raise ValueError("camera_pose_mode must be 'da3_aligned' or 'first_relative'")
+ if cfg.camera_pose_mode not in ('da3_aligned','first_relative','source_target_relative'):
+  raise ValueError("camera_pose_mode must be 'da3_aligned', 'first_relative', or 'source_target_relative'")
+ source_camera_condition = cfg.camera_pose_mode == 'source_target_relative'
  if cfg.flowmap_from not in ('noise', 'noise_lq'):
   raise ValueError("flowmap_from must be 'noise' or 'noise_lq'")
  precision=cfg.get('precision','fp32')
@@ -112,7 +113,7 @@ def main():
   pose=source.extrinsics.float().cpu().numpy()
   hq_prediction,_=encoder.forward((hqs-mean)/std,export_feat_layers=[17],ref_view_strategy='first')
   if hq_prediction.ref_b_idx is not None and not torch.all(hq_prediction.ref_b_idx==0):raise RuntimeError('Teacher reference changed')
-  teacher=hq_prediction.aux['feat_layer_17'].float().clone();rays=[];scales=[];residuals=[]
+  teacher=hq_prediction.aux['feat_layer_17'].float().clone();rays=[];camera_masks=[];scales=[];residuals=[]
   alignment_target=None;alignment_aux=None
   geometry_contrastive=cfg.get('geometry_contrastive_loss',{})
   need_geometry_aux=bool(geometry_contrastive.get('use',False))
@@ -124,20 +125,30 @@ def main():
     alignment_target=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment)
   for i,records in enumerate(batch.get('camera_records',[])):
    gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode);scales.append(scale);residuals.append(residual)
-   rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
+   if source_camera_condition:
+    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k,device=device,dtype=torch.float32)[None],v.shape[-2:]))
+    camera_masks.append(torch.ones((1,total_views),device=device,dtype=torch.bool))
+   else:
+    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
+    camera_masks.append(torch.tensor([[False]*source_views+[True]*(total_views-source_views)],device=device,dtype=torch.bool))
   if phase_c:
    for i in range(v.shape[0]):
     gt=batch['camera_c2w'][i].numpy()
-    if cfg.camera_pose_mode == 'first_relative':
+    if cfg.camera_pose_mode in ('first_relative','source_target_relative'):
      target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode)
     elif source_views==1:
      target,scale,residual=align_target_camera_single(gt,pose[i],scale=1.0)
     else:
      target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode)
     scales.append(scale);residuals.append(residual)
-    k=batch['camera_k'][i,source_views:].to(device=device,dtype=torch.float32)[None]
+    if source_camera_condition:
+     k=batch['camera_k'][i].to(device=device,dtype=torch.float32)[None]
+     camera_masks.append(torch.ones((1,total_views),device=device,dtype=torch.bool))
+    else:
+     k=batch['camera_k'][i,source_views:].to(device=device,dtype=torch.float32)[None]
+     camera_masks.append(torch.tensor([[False]*source_views+[True]*(total_views-source_views)],device=device,dtype=torch.bool))
     rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],k,v.shape[-2:]))
-  return lq,teacher,torch.cat(rays,0),v.shape[-2:],scales,residuals,alignment_target,alignment_aux
+  return lq,teacher,torch.cat(rays,0),torch.cat(camera_masks,0),v.shape[-2:],scales,residuals,alignment_target,alignment_aux
  def checkpoint(epoch,next_batch):
   state=dict(torch=torch.get_rng_state(),cuda=torch.cuda.get_rng_state(),python=random.getstate(),numpy=np.random.get_state());states=[None]*world
   if world>1:dist.all_gather_object(states,state)
@@ -148,7 +159,7 @@ def main():
  logger.info('Loaded real models/data; parameters=%s samples/epoch=%s',sum(p.numel() for p in model.parameters()),len(ds))
  if not args.resume:
   # One actual variable-N, fixed-V data batch is reused ONLY for the memory preflight.
-  first=next(iter(loader));lq,hq,rays,size,_,_,alignment_target,alignment_aux=extract(first)
+  first=next(iter(loader));lq,hq,rays,camera_mask,size,_,_,alignment_target,alignment_aux=extract(first)
   first_mask,first_flags=token_groups(first['pixel_masks'].to(device),first['distractor_views'].to(device),None)
   optimizer.zero_grad(set_to_none=True)
   # Allocate Adam state at step0, without changing model weights, for comparable peaks.
@@ -158,11 +169,11 @@ def main():
   peaks={}
   optimizer.zero_grad(set_to_none=True);torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats(device)
   with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)))['loss']
+   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),camera_view_mask=camera_mask,source_camera_condition=source_camera_condition)['loss']
   loss.backward();clear_attention(denoiser,cfg.attention_alignment);torch.cuda.synchronize()
   peaks['V4_peak_allocated_GiB']=torch.cuda.max_memory_allocated(device)/1024**3
   peaks['V4_peak_reserved_GiB']=torch.cuda.max_memory_reserved(device)/1024**3
-  optimizer.zero_grad(set_to_none=True);del first,lq,hq,rays,loss,alignment_target,alignment_aux;torch.cuda.empty_cache()
+  optimizer.zero_grad(set_to_none=True);del first,lq,hq,rays,camera_mask,loss,alignment_target,alignment_aux;torch.cuda.empty_cache()
   reports=[None]*world
   if world>1:dist.all_gather_object(reports,dict(rank=rank,**peaks))
   else:reports=[dict(rank=rank,**peaks)]
@@ -174,12 +185,12 @@ def main():
    if epoch==start_epoch and batch_idx<resume_batch:continue
    if resume_rng is not None:
     torch.set_rng_state(resume_rng['torch']);torch.cuda.set_rng_state(resume_rng['cuda']);random.setstate(resume_rng['python']);np.random.set_state(resume_rng['numpy']);resume_rng=None
-   lq,hq,rays,size,scales,residuals,alignment_target,alignment_aux=extract(batch);t,_,_=transport.sample(hq)
+   lq,hq,rays,camera_mask,size,scales,residuals,alignment_target,alignment_aux=extract(batch);t,_,_=transport.sample(hq)
    source_mask,_=token_groups(batch['pixel_masks'].to(device),batch['distractor_views'].to(device),None)
    sync=(micro+1)%cfg.accumulation==0
    with (denoiser.no_sync() if world>1 and not sync else contextlib.nullcontext()):
     with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),loss_tracker=meter)
+     losses=nvs_training_step(denoiser,lq,hq,rays,t,size,noise_lvl=.3,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=source_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),camera_view_mask=camera_mask,source_camera_condition=source_camera_condition,loss_tracker=meter)
      if not torch.isfinite(losses['loss']):raise RuntimeError('Nonfinite training loss')
      (losses['loss']/cfg.accumulation).backward()
      clear_attention(denoiser,cfg.attention_alignment)
