@@ -232,7 +232,11 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
                                         clean_teacher, distractor_mask,
                                         geometry_aux, *, temperature=0.07,
                                         max_negative_tokens=None,
-                                        time_weight='one_minus_t'):
+                                        time_weight='one_minus_t',
+                                        anchor_scope='distractor',
+                                        cross_positive_source='clean_gt',
+                                        include_self_positive=True,
+                                        positive_reduction='mean'):
     """Geometry-positive / mask-defined-global-negative SupCon loss.
 
     The anchor is the predicted clean latent x0-hat of a source distractor
@@ -245,8 +249,25 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
     ``geometry_aux`` is the ``(target, distances, visibility)`` tuple returned
     by ``geometry_target``.  All teacher/input keys are detached.  Positive
     terms are averaged per positive, so anchors with different numbers of
-    visible views have the same loss scale.
+    visible views have the same loss scale by default. With anchor_scope='all',
+    clean patches are anchors too (CLS and novel views remain excluded).
+    Self positives always use clean teacher keys; cross_positive_source only
+    selects cross-view keys. positive_reduction='self_plus_cross_mean' sums
+    self NLL and mean cross-view NLL using their shared softmax denominator.
+    Without cross-view support, only self NLL remains. Samples without
+    distractor negatives skip. Eligible anchors are pooled without separate
+    clean/distractor balancing. All keys are detached.
     """
+    if anchor_scope not in ('distractor', 'all'):
+        raise ValueError(f'Unsupported SupCon anchor_scope={anchor_scope!r}')
+    if cross_positive_source not in ('clean_gt', 'observed'):
+        raise ValueError(f'Unsupported SupCon cross_positive_source={cross_positive_source!r}')
+    if not isinstance(include_self_positive, bool):
+        raise ValueError('include_self_positive must be a bool')
+    if positive_reduction not in ('mean', 'self_plus_cross_mean'):
+        raise ValueError(f'Unsupported SupCon positive_reduction={positive_reduction!r}')
+    if positive_reduction == 'self_plus_cross_mean' and not include_self_positive:
+        raise ValueError('self_plus_cross_mean requires a self positive')
     if prediction.ndim != 4 or batch.model_input.ndim != 4:
         raise ValueError('Expected prediction and model_input [B,V,T,C]')
     if source_lq.ndim != 4 or clean_teacher.ndim != 4 or distractor_mask.ndim != 3:
@@ -275,10 +296,13 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
     x0_hat = batch.model_input - batch.source_condition - time[:, None, None, None] * prediction
     anchor = F.normalize(x0_hat[:, :n, 1:].float(), dim=-1)
     clean_keys = F.normalize(clean_teacher[:, :n, 1:].detach().float(), dim=-1)
+    cross_keys = clean_keys if cross_positive_source == 'clean_gt' else F.normalize(
+        source_lq[:, :n, 1:].detach().float(), dim=-1)
     distractor_keys = F.normalize(source_lq[:, :n, 1:].detach().float(), dim=-1)
     query_mask = distractor_mask[:, :, 1:].bool()
+    anchor_mask = query_mask if anchor_scope == 'distractor' else torch.ones_like(query_mask)
     if not query_mask.any():
-        return prediction.new_zeros(())
+        return prediction.sum() * 0.
 
     geo_target, _, visibility = geometry_aux
     patch_count = tokens - 1
@@ -296,9 +320,9 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
         # One global negative pool per sample: all distractor input tokens in
         # all source views. Keep the anchor's own input token whenever capped.
         flat_negative = (negative_positions[:, 0] * patch_count + negative_positions[:, 1])
-        for view, patch in negative_positions.tolist():
+        for view, patch in anchor_mask[bi].nonzero(as_tuple=False).tolist():
             row = view * patch_count + patch
-            positive_keys=[clean_keys[bi, view, patch]]  # self-positive
+            positive_keys = [clean_keys[bi, view, patch]] if include_self_positive else []
 
             # Geometry correspondence is selected independently per target
             # view. Visibility gates the candidate; mask=0 makes it positive.
@@ -313,15 +337,20 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
                 masked_weights = row_weights.masked_fill(~row_valid, float('-inf'))
                 target_patch = int(masked_weights.argmax().item())
                 if not bool(distractor_mask[bi, target_view, target_patch + 1]):
-                    positive_keys.append(clean_keys[bi, target_view, target_patch])
+                    positive_keys.append(cross_keys[bi, target_view, target_patch])
+
+            if not positive_keys:
+                continue  # No cross-view support: no self-positive fallback.
 
             # Cap negatives without instance matching. Keep self-negative and
             # sample the rest uniformly; within the sampled set, InfoNCE's
             # exponential weighting automatically emphasizes hard negatives.
             keep = flat_negative == row
             remaining = (~keep).nonzero(as_tuple=False).flatten()
-            slots = None if max_negative_tokens is None else max_negative_tokens - 1
-            if slots is not None and slots > 0 and remaining.numel() > slots:
+            slots = None if max_negative_tokens is None else max_negative_tokens - int(keep.sum().item())
+            if slots == 0:
+                remaining = remaining[:0]
+            elif slots is not None and remaining.numel() > slots:
                 remaining = remaining[torch.randperm(remaining.numel(), device=remaining.device)[:slots]]
             selected_indices = torch.cat([keep.nonzero(as_tuple=False).flatten(), remaining])
             if max_negative_tokens is not None:
@@ -334,9 +363,15 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
                 anchor[bi, view, patch][None] @ negative_keys.transpose(0, 1),
             ], dim=1).squeeze(0) / temperature
             log_prob = logits - torch.logsumexp(logits, dim=0)
-            # Average over positives, not sum them, so visibility does not
-            # change the scale of an anchor's loss.
-            losses.append(-log_prob[:pos.shape[0]].mean())
+            # Legacy: mean over all positives. Ablation: self + cross mean.
+            positive_nll = -log_prob[:pos.shape[0]]
+            if positive_reduction == 'self_plus_cross_mean':
+                value = positive_nll[0]
+                if positive_nll.numel() > 1:
+                    value = value + positive_nll[1:].mean()
+                losses.append(value)
+            else:
+                losses.append(positive_nll.mean())
             if time_weight == 'one_minus_t':
                 weights.append((1. - time[bi]).float().clamp_min(0.))
             elif time_weight in ('none', None):
@@ -344,7 +379,7 @@ def geometry_correspondence_supcon_loss(prediction, batch, source_lq,
             else:
                 raise ValueError(f'Unsupported SupCon time_weight={time_weight!r}')
     if not losses:
-        return prediction.new_zeros(())
+        return prediction.sum() * 0.
     values = torch.stack(losses)
     weights = torch.stack(weights).to(values.device, values.dtype)
     return (values * weights).sum() / weights.sum().clamp_min(1e-8)
@@ -559,7 +594,11 @@ def nvs_training_step(model, source_lq, clean_teacher, target_rays, time, image_
             alignment_aux,
             temperature=float(geometry_cfg.get('temperature',0.07)),
             max_negative_tokens=geometry_cfg.get('max_negative_tokens',64),
-            time_weight=geometry_cfg.get('time_weight','one_minus_t'))
+            time_weight=geometry_cfg.get('time_weight','one_minus_t'),
+            anchor_scope=geometry_cfg.get('anchor_scope','distractor'),
+            cross_positive_source=geometry_cfg.get('cross_positive_source','clean_gt'),
+            include_self_positive=geometry_cfg.get('include_self_positive',True),
+            positive_reduction=geometry_cfg.get('positive_reduction','mean'))
     losses['geometry_contrastive_loss']=geometry_contrastive
     losses['weighted_geometry_contrastive_loss']=float(geometry_cfg.get('lambda_coeff',0.05))*geometry_contrastive
     losses['loss']=losses['loss']+losses['weighted_geometry_contrastive_loss']
