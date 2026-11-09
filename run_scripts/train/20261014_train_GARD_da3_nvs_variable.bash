@@ -49,7 +49,7 @@ fi
 LOG_EVERY_OPTIMIZER_STEPS="${LOG_EVERY_OPTIMIZER_STEPS:-4}"
 CHECKPOINT_INTERVAL="${CHECKPOINT_INTERVAL:-200}"
 SAVE_EPOCHS="${SAVE_EPOCHS:-1,3,10,20,30}"         # EMA; latest.pt에는 optimizer/RNG 포함
-EVAL_EPOCHS="${EVAL_EPOCHS:-1,3,10,20,30}" # registry V4+M1 RGB/depth/camera/cloud
+EVAL_EPOCHS="${EVAL_EPOCHS-1,3,10,20,30}" # registry V4+M1 RGB/depth/camera/cloud
 EVAL_PLAN="${EVAL_PLAN:-result_eval/20261008_nvs_epoch003_v4_m1/eval_plan.json}"
 WANDB_PROJECT="${WANDB_PROJECT:-GARD-DFrecon}"
 WANDB_ENTITY="${WANDB_ENTITY:-yejichoi_kaist-kaist}"

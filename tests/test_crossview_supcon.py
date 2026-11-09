@@ -93,6 +93,32 @@ class CrossViewSupConTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.loss(**kwargs)
 
+    def test_training_step_four_variants(self):
+        from mvr.nvs_training import NVSGARD, nvs_training_step
+        for mode in ('clean_gt', 'observed'):
+            for nvs in (True, False):
+                with self.subTest(mode=mode, nvs=nvs):
+                    model = NVSGARD(in_channels=16, hidden_size=[32, 32], depth=[2, 2],
+                                    num_heads=[2, 2], mlp_ratio=2., use_pos_embed=False)
+                    model._nonreentrant_checkpoint = True
+                    source = torch.randn(1, 3, 5, 16)
+                    teacher = torch.randn(1, 4, 5, 16)
+                    mask = torch.zeros(1, 3, 5, dtype=torch.bool)
+                    mask[0, 0, 1] = True
+                    cfg = dict(use=True, anchor_scope='all', cross_positive_source=mode,
+                               include_self_positive=True, positive_reduction='self_plus_cross_mean')
+                    geo = torch.eye(16)[None]
+                    result = nvs_training_step(
+                        model, source, teacher, torch.randn(1, 1, 4, 6),
+                        torch.tensor([.5]), (28, 28), nvs_branch=nvs,
+                        source_distractor_mask=mask,
+                        alignment_aux=(geo, torch.zeros_like(geo), torch.ones_like(geo, dtype=torch.bool)),
+                        geometry_contrastive_cfg=cfg)
+                    self.assertTrue(torch.isfinite(result['loss']))
+                    self.assertGreater(result['geometry_contrastive_loss'].item(), 0.)
+                    result['loss'].backward()
+                    self.assertTrue(any(p.grad is not None and p.grad.abs().sum() > 0 for p in model.parameters()))
+
     def test_configs_only_change_supcon_from_previous_handoff(self):
         root = Path(__file__).resolve().parents[1]
         base = OmegaConf.to_container(OmegaConf.load(root/'run_configs/train/train_GARD_da3_nvs_v4_n2_3_mixed_supcon_softself.yaml'))
