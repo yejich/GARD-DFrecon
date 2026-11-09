@@ -30,6 +30,10 @@
 
 ## 실행
 
+먼저 `git pull --ff-only origin main`으로 업데이트하세요. GPU당 batch 2의
+초기 메모리 검사 수정 commit `22d0dac`이 포함되어야 합니다.
+`git merge-base --is-ancestor 22d0dac HEAD`가 성공하는지 확인할 수 있습니다.
+
 기존 전달 때와 동일하게 `HYPERSIM_CAMERA_ROOT`, `HYPERSIM_CAMERA_PARAMETERS`
 환경변수에 서버의 카메라 데이터 폴더와 metadata CSV 경로를 설정하세요.
 기존 launcher의 경로 검사를 그대로 사용합니다.
@@ -86,13 +90,24 @@ legacy 기본값, config 차이 검사. 실제 장시간 GPU 학습은 지혜님
 
 ## 전달 전 검증 범위
 
-- 원격 최초 실험 commit `5f07295`를 별도 checkout하여 train.py import 및 기존 17개
-  테스트 통과를 확인했습니다. 이번 4종 wrapper는 모두 `--prepare-only`를 확인했습니다.
+- `22d0dac` 별도 checkout에서 train.py import 및 테스트 18개를 확인했습니다.
+  네 wrapper 모두 `--prepare-only` 성공, global batch 16, NVS 설정,
+  cross-positive 출처, self GT 유지, 자동 평가 OFF를 확인했습니다.
 - `--prepare-only`는 설정과 주요 경로 검사이며 모든 이미지 존재나 GPU 학습 성공을
   보장하지 않습니다. 기존에 학습했던 서버의 데이터 root/manifest 구성을 유지하세요.
 - 현재 개발 서버는 데이터 폴더명이 변경되어, 원격 manifest를 그대로 적용하면
   `hypersim_negative/scenes_002/.../clean.png`가 없는 경우가 확인되었습니다.
   이는 loss 변경과 별개인 데이터 경로 차이입니다. 지혜님 서버에서도 실제 경로가
   다르다면 서버의 데이터와 일치하는 manifest를 사용해야 합니다.
-- 실제 모델의 GPU 1-step 학습은 아직 검증하지 않았습니다. 각 wrapper에도
-  `--max-steps 1 --out /absolute/unique/smoke_directory`를 붙여 먼저 확인할 수 있습니다.
+- 개발 서버의 관측 cross-positive / NVS ON은 GPU 0,1, global batch 8
+  (per-GPU batch 1 × 2 GPUs × accumulation 4)로 실제 첫 optimizer step까지
+  확인했습니다. 서버에 맞게 조정된 기존 데이터 경로와 로컬 camera resolver를
+  사용했습니다. 지혜님 서버의 파일 존재나 나머지 세 설정의 실제 GPU 학습을
+  검증한 것은 아닙니다.
+- GPU당 batch 2에서도 실제 forward/backward 메모리 검사는 통과했습니다
+  (peak allocated 약 41.4 GiB). 다른 평가와 GPU를 공유하면 OOM이 발생했으므로
+  학습 GPU는 독점 사용하세요. 필요하면 `--per-gpu-batch 1`로 microbatch를 줄여도
+  global batch는 유지되고 accumulation이 자동 증가합니다.
+- 각 wrapper에 `--max-steps 1 --out /absolute/unique/smoke_directory`를 붙여
+  서버의 실제 데이터·모델로 먼저 확인할 수 있습니다. Smoke 출력은 본 학습과
+  다른 폴더를 사용하세요.
