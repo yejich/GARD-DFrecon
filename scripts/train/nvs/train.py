@@ -169,7 +169,7 @@ def main():
   peaks={}
   optimizer.zero_grad(set_to_none=True);torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats(device)
   with torch.autocast('cuda',dtype=torch.bfloat16,enabled=precision=='bf16'):
-   loss=nvs_training_step(denoiser,lq,hq,rays,torch.tensor([.9],device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),camera_view_mask=camera_mask,source_camera_condition=source_camera_condition)['loss']
+   loss=nvs_training_step(denoiser,lq,hq,rays,torch.full((lq.shape[0],),.9,device=device),size,flowmap_from=cfg.flowmap_from,nvs_branch=cfg.nvs_branch,novel_weight=cfg.novel_weight,source_distractor_mask=first_mask,group_mse_cfg=cfg.group_mse,alignment_target=alignment_target,alignment_aux=alignment_aux,alignment_cfg=cfg.attention_alignment,distractor_suppression_cfg=cfg.distractor_loss,geometry_contrastive_cfg=cfg.get('geometry_contrastive_loss',{}),full_view_loss=bool(cfg.get('full_view_loss',False)),camera_view_mask=camera_mask,source_camera_condition=source_camera_condition)['loss']
   loss.backward();clear_attention(denoiser,cfg.attention_alignment);torch.cuda.synchronize()
   peaks['V4_peak_allocated_GiB']=torch.cuda.max_memory_allocated(device)/1024**3
   peaks['V4_peak_reserved_GiB']=torch.cuda.max_memory_reserved(device)/1024**3
