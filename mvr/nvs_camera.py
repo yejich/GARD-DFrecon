@@ -4,6 +4,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 import torch
+from mvr.fixed_eval_paths import resolve_asset_path
 
 class HypersimCameraReferences:
  def __init__(self,root,camera_parameters):
@@ -15,7 +16,7 @@ class HypersimCameraReferences:
    if key not in self.cache:
     arrays=[]
     for name in ['frame_indices','orientations','positions']:
-     with h5py.File(self.root/scene/'_detail'/camera/f'camera_keyframe_{name}.hdf5') as f:arrays.append(f['dataset'][:])
+     with h5py.File(resolve_asset_path(self.root/scene/'_detail'/camera/f'camera_keyframe_{name}.hdf5')) as f:arrays.append(f['dataset'][:])
     self.cache[key]=(arrays[0].reshape(-1).tolist(),arrays[1],arrays[2])
    ids,rotations,centers=self.cache[key];idx=ids.index(frame);row=self.rows[scene]
    pose=np.eye(4);pose[:3,:3]=rotations[idx]@np.diag([1.,-1.,-1.]);pose[:3,3]=centers[idx]*float(row['settings_units_info_meters_scale']);poses.append(pose)

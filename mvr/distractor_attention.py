@@ -2,6 +2,47 @@
 import torch
 
 
+def build_hard_self_view_mask(distractor_mask):
+    """Return [B,V*T,V*T] allowed-key mask for hard self-view blocking.
+
+    ``distractor_mask`` includes the per-view CLS token at position 0. Only
+    distractor spatial queries lose self-view distractor keys; same-view
+    clean keys and clean queries are unchanged. This is intentionally separate from
+    ``distractor_aware.use`` so experiments can toggle it independently.
+    """
+    if distractor_mask.ndim != 3:
+        raise ValueError('Expected distractor_mask [B,V,T]')
+    b, v, t = distractor_mask.shape
+    view_ids = torch.arange(v, device=distractor_mask.device).repeat_interleave(t)
+    same_view = view_ids[:, None] == view_ids[None, :]
+    query_is_distractor = distractor_mask.reshape(b, v * t).bool()
+    allowed = torch.ones((b, v * t, v * t), dtype=torch.bool, device=distractor_mask.device)
+    # Only self-view distractor keys are hard-blocked. Same-view clean keys
+    # remain available, as do all keys in other views.
+    key_is_distractor = query_is_distractor
+    allowed &= ~(query_is_distractor[:, :, None] & key_is_distractor[:, None, :] & same_view[None])
+    return allowed
+
+
+def mask_self_view_target(target, distractor_mask):
+    """Mask and renormalize spatial geometry targets for hard self-view mode."""
+    if target.ndim != 3 or distractor_mask.ndim != 3:
+        raise ValueError('Expected target [B,V*P,V*P] and distractor_mask [B,V,P]')
+    b, v, p = distractor_mask.shape
+    if target.shape[1:] != (v * p, v * p):
+        raise ValueError('Target and distractor mask token shapes do not match')
+    view_ids = torch.arange(v, device=target.device).repeat_interleave(p)
+    same_view = view_ids[:, None] == view_ids[None, :]
+    allowed = torch.ones_like(target, dtype=torch.bool)
+    query_is_distractor = distractor_mask.reshape(b, v * p).bool()
+    key_is_distractor = query_is_distractor
+    allowed &= ~(query_is_distractor[:, :, None] & key_is_distractor[:, None, :] & same_view[None])
+    target = target * allowed
+    mass = target.sum(-1, keepdim=True)
+    valid = mass.squeeze(-1) > 0
+    return target / mass.clamp_min(1e-8), valid
+
+
 def distractor_aware_target(neg_l2, geo_target, visibility, distractor_mask, temperature, cfg):
     """Filter only the HQ target. Distances are in the HQ backbone's 3D units."""
     b, v, n = distractor_mask.shape

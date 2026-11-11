@@ -24,10 +24,23 @@ def save_json(path,data):
  tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(data,indent=2));tmp.replace(path)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--checkpoint-dir',type=Path);p.add_argument('--max-steps',type=int,default=0);p.add_argument('--resume',type=Path);p.add_argument('--until-epoch',type=int,default=0);args=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--config',type=Path,required=True);p.add_argument('--out',type=Path,required=True);p.add_argument('--checkpoint-dir',type=Path);p.add_argument('--max-steps',type=int,default=0);p.add_argument('--resume',type=Path);p.add_argument('--until-epoch',type=int,default=0)
+ p.add_argument('--camera-loss-mode',choices=['joint','separate'],default=None,help='Source camera token: legacy clean-group mean or separate mean')
+ p.add_argument('--camera-loss-weight',type=float,default=None,help='Weight of separate source camera loss')
+ p.add_argument('--novel-camera-loss-mode',choices=['joint','separate'],default=None,help='Novel camera token: legacy all-token mean or separate mean')
+ p.add_argument('--novel-camera-loss-weight',type=float,default=None,help='Novel camera weight before applying novel_weight')
+ p.add_argument('--warm-start-ema',action='store_true',help='Initialize EMA weights with fresh optimizer; continue checkpoint epoch numbering and epoch-based LR schedule')
+ args=p.parse_args()
+ if args.warm_start_ema and args.resume:p.error('--warm-start-ema and --resume are mutually exclusive')
  checkpoint_dir=args.checkpoint_dir or args.out
  checkpoint_dir.mkdir(parents=True,exist_ok=True)
  cfg=OmegaConf.load(args.config)
+ for key,value in [('camera_mode',args.camera_loss_mode),('lambda_camera',args.camera_loss_weight),('novel_camera_mode',args.novel_camera_loss_mode),('lambda_novel_camera',args.novel_camera_loss_weight)]:
+  if value is not None:OmegaConf.update(cfg,'group_mse.'+key,value,merge=False)
+ from mvr.grouped_mse import camera_loss_options
+ source_camera_mode,novel_camera_mode,_,_=camera_loss_options(cfg.get('group_mse',{}))
+ if cfg.get('full_view_loss',False) and (source_camera_mode!='joint' or novel_camera_mode!='joint'):
+  raise ValueError('Separate camera losses require full_view_loss=false')
  cfg.nvs_branch = bool(cfg.get('nvs_branch', True))
  cfg.flowmap_from = str(cfg.get('flowmap_from', 'noise_lq'))
  cfg.camera_pose_mode = str(cfg.get('camera_pose_mode', 'da3_aligned')).lower()
@@ -78,7 +91,7 @@ def main():
  expected=set(model.state_dict());filtered={k:v for k,v in weights.items() if not k.startswith('mask_head.')}
  missing=expected-set(filtered);extra=set(filtered)-expected
  allowed={k for k in expected if k.startswith(('nvs_camera_embedder.','destination_projector.'))}
- if extra or (missing and (args.resume or missing!=allowed)):raise ValueError(f'Invalid checkpoint keys: missing={sorted(missing)}, extra={sorted(extra)}')
+ if extra or (missing and (args.resume or (not missing<=allowed if args.warm_start_ema else missing!=allowed))):raise ValueError(f'Invalid checkpoint keys: missing={sorted(missing)}, extra={sorted(extra)}')
  model.load_state_dict(filtered,strict=not bool(missing));del filtered,weights
  if cfg.distractor_loss.get('mode','none') != 'infoNCE':
   # The destination head is only used by the InfoNCE ablation. Freeze it in
@@ -96,6 +109,17 @@ def main():
   optimizer.load_state_dict(ckpt['optimizer']);step=ckpt['step'];start_epoch=ckpt['epoch'];resume_batch=ckpt['next_batch']
   resume_rng=ckpt['rng'][rank]
  else:resume_rng=None
+ if args.warm_start_ema:
+  if 'ema' not in ckpt or 'epoch' not in ckpt:raise ValueError('EMA warm start requires ema and completed epoch metadata')
+  start_epoch=int(ckpt['epoch'])
+  if not 0<=start_epoch<cfg.epochs:raise ValueError('Warm-start epoch must be below target epochs')
+  step=start_epoch*(len(loader)//cfg.accumulation)
+  warmup=cfg.warmup_epochs*len(loader)//cfg.accumulation;total_steps=cfg.epochs*len(loader)//cfg.accumulation
+  ratio=1. if step<=warmup else max(.1,1-(step-warmup)/max(total_steps-warmup,1))
+  for group in optimizer.param_groups:group['lr']=cfg.lr*ratio
+  if rank==0:
+   save_json(args.out/'warm_start.json',dict(checkpoint=str(cfg.checkpoint),source_epoch=start_epoch,source_step=ckpt.get('step'),schedule_start_step=step,optimizer='fresh AdamW',rng='fresh seeded',missing_initialized_keys=sorted(missing),global_batch_size=world*int(cfg.get('per_gpu_batch_size',1))*cfg.accumulation))
+   logger.info('EMA warm start: completed epoch=%s schedule step=%s; fresh optimizer/RNG',start_epoch,step)
  del ckpt
  denoiser=DDP(model,device_ids=[local],gradient_as_bucket_view=True) if world>1 else model
  encoder=DepthAnything3.from_pretrained(cfg.encoder).to(device).eval().requires_grad_(False)
@@ -123,14 +147,17 @@ def main():
     alignment_aux=(alignment_target,neg_l2,visibility)
    else:
     alignment_target=geometry_target(hq_prediction.depth,hq_prediction.extrinsics,hq_prediction.intrinsics,cfg.attention_alignment)
-  for i,records in enumerate(batch.get('camera_records',[])):
-   gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode);scales.append(scale);residuals.append(residual)
-   if source_camera_condition:
-    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k,device=device,dtype=torch.float32)[None],v.shape[-2:]))
-    camera_masks.append(torch.ones((1,total_views),device=device,dtype=torch.bool))
-   else:
-    rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
-    camera_masks.append(torch.tensor([[False]*source_views+[True]*(total_views-source_views)],device=device,dtype=torch.bool))
+  # Restoration-only runs do not consume camera rays.  In particular, do not
+  # require the separate Hypersim camera-reference tree when NVS is disabled.
+  if cfg.nvs_branch:
+   for i,records in enumerate(batch.get('camera_records',[])):
+    gt,k=cameras.cameras(records,v.shape[-2:]);target,scale,residual=target_cameras_for_condition(gt,pose[i],source_views,cfg.camera_pose_mode);scales.append(scale);residuals.append(residual)
+    if source_camera_condition:
+     rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k,device=device,dtype=torch.float32)[None],v.shape[-2:]))
+     camera_masks.append(torch.ones((1,total_views),device=device,dtype=torch.bool))
+    else:
+     rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],torch.tensor(k[source_views:],device=device,dtype=torch.float32)[None],v.shape[-2:]))
+     camera_masks.append(torch.tensor([[False]*source_views+[True]*(total_views-source_views)],device=device,dtype=torch.bool))
   if phase_c:
    for i in range(v.shape[0]):
     gt=batch['camera_c2w'][i].numpy()
@@ -148,7 +175,9 @@ def main():
      k=batch['camera_k'][i,source_views:].to(device=device,dtype=torch.float32)[None]
      camera_masks.append(torch.tensor([[False]*source_views+[True]*(total_views-source_views)],device=device,dtype=torch.bool))
     rays.append(target_plucker_rays(torch.tensor(target,device=device,dtype=torch.float32)[None],k,v.shape[-2:]))
-  return lq,teacher,torch.cat(rays,0),torch.cat(camera_masks,0),v.shape[-2:],scales,residuals,alignment_target,alignment_aux
+  ray_batch = torch.cat(rays,0) if rays else None
+  camera_mask_batch = torch.cat(camera_masks,0) if camera_masks else None
+  return lq,teacher,ray_batch,camera_mask_batch,v.shape[-2:],scales,residuals,alignment_target,alignment_aux
  def checkpoint(epoch,next_batch):
   state=dict(torch=torch.get_rng_state(),cuda=torch.cuda.get_rng_state(),python=random.getstate(),numpy=np.random.get_state());states=[None]*world
   if world>1:dist.all_gather_object(states,state)

@@ -104,10 +104,13 @@ class NVSTests(unittest.TestCase):
   self.assertIsNone(tracker.totals)
  def test_ddp_reduces_sums_and_counts_before_average(self):
   tracker=NVSLossTracker();tracker.update(dict(zip(tracker.keys,[torch.tensor(x) for x in [3.,1.,4.,2.,1.,4.,0.,0.,0.,0.]])),1)
-  def add_remote(totals):totals.add_(torch.tensor([30.,6.,48.,24.,6.,48.,0.,0.,0.,0.,0.,0.,0.,0.,3.],dtype=torch.float64))
+  def add_remote(totals):
+   remote={'loss':30.,'restoration_loss':6.,'nvs_loss':48.,'weighted_nvs_loss':24.,'restoration_clean_loss':6.,'restoration_distractor_loss':48.,'restoration_camera_loss':12.}
+   totals.add_(torch.tensor([remote.get(k,0.) for k in tracker.keys]+[3.],dtype=torch.float64))
   with patch('torch.distributed.is_initialized',return_value=True),patch('torch.distributed.all_reduce',side_effect=add_remote):
    p=tracker.compute(prefix='eval')
   self.assertEqual(p['eval/loss'],8.25);self.assertEqual(p['eval/restoration_loss'],1.75);self.assertEqual(p['eval/nvs_loss'],13);self.assertEqual(p['eval/samples'],4)
+  self.assertAlmostEqual(p['eval/restoration_camera_loss'],3.)
  def test_no_target_RGB_in_inference_endpoint(self):
   s=torch.randn(2,4,5,16);h=torch.randn(2,5,5,16);noise=torch.randn_like(h)
   a=prepare_nvs_flow(s,h,torch.ones(2),noise=noise);b=prepare_nvs_flow(s,h*10,torch.ones(2),noise=noise)

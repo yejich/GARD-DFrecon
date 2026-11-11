@@ -1,7 +1,7 @@
 """Legacy DA3 point-cloud attention alignment over all N+M views."""
 import torch
 from depth_anything_3.utils.geometry import unproject_depth, affine_inverse, as_homogeneous
-from mvr.distractor_attention import distractor_aware_target, distractor_aware_attn_loss
+from mvr.distractor_attention import distractor_aware_target, distractor_aware_attn_loss, mask_self_view_target
 
 @torch.no_grad()
 def geometry_target(depth, extrinsics, intrinsics, cfg, patch_size=14, return_aux=False):
@@ -51,7 +51,9 @@ def attention_loss(model, target, cfg, views, tokens, *, distractor_mask=None, a
     spatial=torch.arange(views*tokens,device=prediction.device)%tokens!=0
     prediction=prediction[:,spatial][:,:,spatial].float()
     if prediction.shape!=target.shape:raise ValueError('Attention/geometry target shapes differ')
-    if distractor_mask is not None:
+    hard_self_view = bool(cfg.get('hard_self_view_for_distractor', False))
+    distractor_aware = cfg.get('distractor_aware', {})
+    if distractor_mask is not None and distractor_aware.get('use', False):
         if alignment_aux is None:
             raise ValueError('Distractor-aware attention requires geometry target auxiliaries')
         _, neg_l2, visibility = alignment_aux
@@ -60,6 +62,10 @@ def attention_loss(model, target, cfg, views, tokens, *, distractor_mask=None, a
             cfg['da3_point_cloud']['vis_pc_temperature'], cfg['distractor_aware'])
         return distractor_aware_attn_loss(prediction, target, valid,
                                           distractor_mask[:, :, 1:], cfg['distractor_aware'])
+    if distractor_mask is not None and hard_self_view:
+        target, valid = mask_self_view_target(target, distractor_mask[:, :, 1:])
+        return distractor_aware_attn_loss(prediction, target, valid,
+                                          distractor_mask[:, :, 1:], distractor_aware)
     per_row=-(target*(prediction+1e-8).log()).sum(-1)
     valid=target.sum(-1)>0
     return per_row[valid].mean()

@@ -106,7 +106,7 @@ def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=No
     are included in the same average; there is no separate camera loss.
     The legacy branch is retained for the existing restoration+NVS runs.
     """
-    from mvr.grouped_mse import grouped_mse
+    from mvr.grouped_mse import grouped_mse, camera_loss_options
     if not math.isfinite(float(novel_weight)) or novel_weight < 0:
         raise ValueError('novel_weight must be finite and nonnegative')
     if prediction.shape!=batch.target_velocity.shape:raise ValueError('Prediction/velocity shapes must match')
@@ -122,6 +122,9 @@ def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=No
     if source_distractor_mask[:,:,0].any():raise ValueError('Camera tokens must be clean')
     cfg=group_mse_cfg or dict(mode='group2',lambda_clean=1.,lambda_distractor=1.)
     if cfg.get('mode','group2')!='group2':raise ValueError('NVS restoration requires group2')
+    camera_mode, novel_camera_mode, camera_weight, novel_camera_weight = camera_loss_options(cfg)
+    if full_view_loss and (camera_mode != 'joint' or novel_camera_mode != 'joint'):
+        raise ValueError('Separate camera losses require full_view_loss=false')
     if full_view_loss:
         errors=(prediction.float()-batch.target_velocity.float()).square().mean(-1)
         all_view_loss=errors.mean()
@@ -139,10 +142,21 @@ def nvs_flow_losses(prediction,batch,*,novel_weight=1.,source_distractor_mask=No
     restoration,parts=grouped_mse(prediction[:,:n],batch.target_velocity[:,:n],source_distractor_mask,
                                 source_distractor_mask.any(-1),cfg)
     novel=(prediction[:,n:].float()-batch.target_velocity[:,n:].float()).square().mean() if n < total else prediction.new_zeros(())
+    camera = parts.get('camera', prediction.new_zeros(()))
+    novel_camera = prediction.new_zeros(())
+    novel_patches = prediction.new_zeros(())
+    if novel_camera_mode == 'separate' and n < total:
+        novel_errors = (prediction[:, n:].float()-batch.target_velocity[:, n:].float()).square()
+        novel_camera = novel_errors[:, :, 0].mean()
+        novel_patches = novel_errors[:, :, 1:].mean()
+        novel = novel_patches + novel_camera_weight * novel_camera
     weighted_novel=novel_weight*novel
     return dict(loss=restoration+weighted_novel,restoration_loss=restoration,
                 nvs_loss=novel,weighted_nvs_loss=weighted_novel,
                 restoration_clean_loss=parts['clean'],restoration_distractor_loss=parts['distractor'],
+                restoration_camera_loss=camera,weighted_restoration_camera_loss=camera_weight*camera,
+                nvs_camera_loss=novel_camera,weighted_nvs_camera_loss=novel_weight*novel_camera_weight*novel_camera,
+                nvs_patch_loss=novel_patches,
                 attention_alignment_loss=novel.new_zeros(()),weighted_attention_alignment_loss=novel.new_zeros(()))
 
 
@@ -397,7 +411,9 @@ class NVSLossTracker:
             'attention_alignment_loss', 'weighted_attention_alignment_loss',
             'distractor_suppression_loss', 'weighted_distractor_suppression_loss',
             'distractor_infonce_loss', 'weighted_distractor_infonce_loss',
-            'geometry_contrastive_loss', 'weighted_geometry_contrastive_loss')
+            'geometry_contrastive_loss', 'weighted_geometry_contrastive_loss',
+            'restoration_camera_loss', 'weighted_restoration_camera_loss',
+            'nvs_camera_loss', 'weighted_nvs_camera_loss', 'nvs_patch_loss')
 
     def __init__(self):
         self.totals = None

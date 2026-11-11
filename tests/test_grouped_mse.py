@@ -29,6 +29,16 @@ class GroupedMSETests(unittest.TestCase):
         self.assertFalse(m[:,:,0].any())
         self.assertEqual(m[:,:,1].tolist(),v.tolist())
 
+    def test_any_positive_occupancy_is_distractor(self):
+        # A single occupied pixel is below the old 50% threshold, but must
+        # still mark the patch as distractor in a distractor view.
+        pixels = torch.zeros(1, 2, 14, 28)
+        pixels[0, 1, 0, 0] = 1
+        masks, _ = token_groups(pixels, torch.tensor([[False, True]]), None)
+        self.assertFalse(masks[0, 0, 1:].any())
+        self.assertTrue(masks[0, 1, 1])
+        self.assertFalse(masks[0, 1, 2])
+
     def test_group3_and_view2_differ(self):
         p=torch.tensor([[[[1.],[1.]],[[2.],[3.]]]])
         mask=torch.tensor([[[False,False],[False,True]]]);v=torch.tensor([[False,True]])

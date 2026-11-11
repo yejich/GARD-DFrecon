@@ -1,4 +1,5 @@
 """Per-sample means for token/view groups; independent of their sizes."""
+import math
 import torch
 import torch.nn.functional as F
 
@@ -30,11 +31,28 @@ def token_groups(pixel_masks, distractor_views, reference_indices, patch_size=14
     return mask,views
 
 
+def camera_loss_options(cfg):
+    """Opt-in camera-token weighting; absent keys preserve legacy losses."""
+    cfg = cfg or {}
+    source_mode = cfg.get('camera_mode', 'joint')
+    novel_mode = cfg.get('novel_camera_mode', 'joint')
+    if source_mode not in ('joint', 'separate') or novel_mode not in ('joint', 'separate'):
+        raise ValueError('camera_mode and novel_camera_mode must be joint or separate')
+    source_weight = float(cfg.get('lambda_camera', 1.))
+    novel_weight = float(cfg.get('lambda_novel_camera', 1.))
+    if any(not math.isfinite(w) or w < 0 for w in (source_weight, novel_weight)):
+        raise ValueError('Camera loss weights must be finite and nonnegative')
+    if source_mode == 'separate' and cfg.get('mode', 'group2') != 'group2':
+        raise ValueError('Separate source camera loss requires group2')
+    return source_mode, novel_mode, source_weight, novel_weight
+
+
 def grouped_mse(prediction, target, mask, distractor_views, cfg):
     errors=(prediction.float()-target.float()).square().mean(-1)  # B,V,T
     if mask.shape != errors.shape:
         raise ValueError(f'Token mask {mask.shape} does not match features {errors.shape}')
     mode=cfg.get('mode','group2')
+    camera_mode, _, camera_weight, _ = camera_loss_options(cfg)
     def mean(selected):
         count=selected.sum(dim=(1,2))
         values=(errors*selected).sum(dim=(1,2))/count.clamp_min(1)
@@ -45,6 +63,14 @@ def grouped_mse(prediction, target, mask, distractor_views, cfg):
     if mode=='group2':
         groups={'distractor':mask,'clean':~mask}
         weights={'distractor':cfg.get('lambda_distractor',1.),'clean':cfg.get('lambda_clean',1.)}
+        if camera_mode == 'separate':
+            if mask.dtype != torch.bool or mask.shape[-1] < 2 or mask[..., 0].any():
+                raise ValueError('Separate camera loss requires boolean patch masks and clean token zero')
+            camera = torch.zeros_like(mask)
+            camera[..., 0] = True
+            groups['clean'] = ~mask & ~camera
+            groups['camera'] = camera
+            weights['camera'] = camera_weight
     elif mode=='view2':
         selected=distractor_views[...,None].expand_as(mask)
         groups={'distractor':selected,'clean':~selected}
